@@ -1,0 +1,8 @@
+[package]
+name = "rust_cumulus"
+version = "0.1.0"
+authors = ["Wadjetz <egor.neon@gmail.com>"]
+
+[dependencies]
+rocket = "0.2.6"
+rocket_codegen = "0.2.6"
