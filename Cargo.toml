@@ -4,5 +4,6 @@ version = "0.1.0"
 authors = ["Wadjetz <egor.neon@gmail.com>"]
 
 [dependencies]
-rocket = "0.2.6"
-rocket_codegen = "0.2.6"
+rocket = "0.2.8"
+rocket_codegen = "0.2.8"
+juniper = { git = "https://github.com/mhallin/juniper", features = ["rocket-handlers", "expose-test-schema"] }
