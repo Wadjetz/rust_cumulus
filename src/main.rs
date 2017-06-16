@@ -24,7 +24,7 @@ use rocket_contrib::{JSON, Value};
 
 #[macro_use]
 extern crate juniper;
-use juniper::{EmptyMutation, RootNode};
+use juniper::RootNode;
 use juniper::rocket_handlers;
 
 extern crate jsonwebtoken;
@@ -33,16 +33,19 @@ extern crate uuid;
 mod errors;
 mod pg;
 mod query;
+mod mutation;
 mod file;
 mod token;
 mod auth;
 mod user;
 mod user_repository;
+mod user_ql;
 
 use query::Query;
+use mutation::Mutation;
 use token::AuthData;
 
-type Schema = RootNode<'static, Query, EmptyMutation<Query>>;
+type Schema = RootNode<'static, Query, Mutation>;
 
 #[get("/")]
 fn graphiql() -> content::HTML<String> {
@@ -71,7 +74,7 @@ fn unauthorized() -> JSON<Value> {
 fn main() {
     rocket::ignite()
         .manage(Query::new())
-        .manage(Schema::new(Query::new(), EmptyMutation::<Query>::new()))
+        .manage(RootNode::new(Query::new(), Mutation))
         .mount("/", routes![graphiql, post_graphql_handler, upload])
         .launch();
 }

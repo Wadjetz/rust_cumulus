@@ -5,6 +5,8 @@ use r2d2::Pool;
 use pg::create_db_pool;
 use file::File;
 use auth::Auth;
+use user::User;
+use user_repository::find_by_email;
 
 pub struct Query {
     pub connection: Pool<PostgresConnectionManager>,
@@ -32,6 +34,11 @@ graphql_object!(Query: Query as "Query" |&self| {
         let rows = c.query("SELECT 1 + 2 AS test", &[]).unwrap();
         let r: Vec<i32> = rows.iter().map(|ref row| row.get("test")).collect();
         format!("{:?}", r)
+    }
+
+    field user(&executor, email: String as "email") -> Option<User> as "User" {
+        let connection = executor.context().connection.clone().get().expect("Error connection pool");
+        find_by_email(&connection, &email).ok()
     }
 
     field auth(
