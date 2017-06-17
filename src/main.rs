@@ -28,6 +28,7 @@ use juniper::RootNode;
 use juniper::rocket_handlers;
 
 extern crate jsonwebtoken;
+extern crate bcrypt;
 extern crate uuid;
 
 mod errors;
