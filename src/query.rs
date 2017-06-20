@@ -6,7 +6,8 @@ use pg::create_db_pool;
 use file::File;
 use auth::Auth;
 use user::User;
-use user_repository::find_by_email;
+use user_repository::{verify_user, find_by_email};
+use token;
 
 pub struct Query {
     pub connection: Pool<PostgresConnectionManager>,
@@ -42,9 +43,13 @@ graphql_object!(Query: Query as "Query" |&self| {
     }
 
     field auth(
+        &executor,
         token: String as "Auth token"
-    ) -> Auth as "Auth" {
-        // TODO check token
-        Auth
+    ) -> Result<Auth, String> as "Auth" {
+      let connection = executor.context().connection.clone().get().expect("Error connection pool");
+      token::decode_auth(&token)
+            .and_then(|auth_data| verify_user(&connection, auth_data))
+            .map(Auth::new)
+            .map_err(|e| e.description().to_string())
     }
 });

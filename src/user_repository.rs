@@ -4,7 +4,7 @@ use postgres::rows::Row;
 use postgres::rows::Rows;
 use postgres::error::Error;
 use postgres_shared::error::{SqlState};
-
+use token::AuthData;
 use user::User;
 
 use errors::*;
@@ -58,4 +58,9 @@ pub fn find_by_email(connection: &PooledConnection<PostgresConnectionManager>, s
         Some(user) => Ok(user),
         _ => Err(ErrorKind::NotFound.into())
     }
+}
+
+pub fn verify_user(connection: &PooledConnection<PostgresConnectionManager>, auth_data: AuthData) -> Result<User> {
+  let user = find_by_email(connection, &auth_data.email)?;
+  Ok(user)
 }

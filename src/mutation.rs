@@ -44,5 +44,5 @@ graphql_object!(Mutation: Query as "Mutation" |&self| {
             })
             .map_err(|e| e.description().to_string())
     }
-    
+
 });
