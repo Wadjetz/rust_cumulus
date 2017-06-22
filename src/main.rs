@@ -2,6 +2,7 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
 #![feature(custom_attribute)]
+#![feature(custom_derive)]
 
 #![cfg_attr(feature="clippy", plugin(clippy))]
 #![cfg_attr(feature="clippy", allow(needless_pass_by_value))]
@@ -36,6 +37,7 @@ mod pg;
 mod query;
 mod mutation;
 mod file;
+mod file_ql;
 mod token;
 mod auth;
 mod user;
@@ -62,9 +64,24 @@ fn post_graphql_handler(
     request.execute(&schema, &context)
 }
 
-#[get("/upload")]
-fn upload(auth_data: AuthData) -> String {
-    auth_data.email
+use rocket::Data;
+use std::path::PathBuf;
+
+#[derive(FromForm)]
+struct FileForm {
+    path: String
+}
+
+#[post("/upload/<path..>", data = "<file_data>")]
+fn upload(auth_data: AuthData, file_data: Data, path: PathBuf) -> Result<String, String> {
+    println!("{:?}", path);
+    match file::save_file(file_data, path.clone()) {
+        Ok(_) => Ok(format!("Ok")),
+        Err(err) => Err(err.description().to_string()),
+    }
+    //let p = Path::new("upload/").join(path);
+    //let f = File::create(p).unwrap();
+    //file_data.stream_to_file(f.path())?;
 }
 
 #[error(401)]

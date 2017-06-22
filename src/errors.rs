@@ -7,6 +7,7 @@ error_chain! {
     }
 
     foreign_links {
+        IO(::std::io::Error);
         Jwt(::jsonwebtoken::errors::Error);
         Uuid(::uuid::ParseError);
         Db(::postgres::error::Error);
