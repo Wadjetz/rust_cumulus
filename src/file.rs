@@ -1,10 +1,11 @@
-use errors::*;
-use rocket::Data;
-use std::path::Path;
-use std::path::PathBuf;
-use std::fs::File as FsFile;
-use std::io::prelude::*;
-use uuid::Uuid;
+#![allow(dead_code)]
+//use errors::*;
+//use rocket::Data;
+//use std::path::Path;
+//use std::path::PathBuf;
+//use std::fs::File as FsFile;
+//use std::io::prelude::*;
+//use uuid::Uuid;
 
 #[derive(Debug)]
 pub struct File {
@@ -39,6 +40,7 @@ impl File {
     }
 }
 
+/*
 pub fn save_file(data: Data, path: PathBuf) -> Result<File> {
     let p = Path::new("upload/").join(path);
     let pa = path.clone().to_string();
@@ -52,3 +54,4 @@ pub fn save_file(data: Data, path: PathBuf) -> Result<File> {
 pub fn hash_file(file: &FsFile) -> Result<String> {
     Ok(Uuid::new_v4().hyphenated().to_string())
 }
+*/

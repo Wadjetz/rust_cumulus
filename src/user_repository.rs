@@ -10,7 +10,7 @@ use user::User;
 use errors::*;
 
 impl User {
-    pub fn from(row: &Row) -> User {
+    pub fn from(row: &Row) -> Self {
         User::new(
             row.get("uuid"),
             row.get("login"),
@@ -32,7 +32,6 @@ fn insert_query(connection: &PooledConnection<PostgresConnectionManager>, user: 
     })
 }
 
-#[allow(dead_code)]
 pub fn insert(connection: &PooledConnection<PostgresConnectionManager>, user: &User) -> Result<u64> {
     let inerted_rows = insert_query(connection, user)?;
     if inerted_rows == 0 {
@@ -50,7 +49,6 @@ fn find_by_email_query(connection: &PooledConnection<PostgresConnectionManager>,
     Ok(user)
 }
 
-#[allow(dead_code)]
 pub fn find_by_email(connection: &PooledConnection<PostgresConnectionManager>, searched_email: &str) -> Result<User> {
     let rows = find_by_email_query(connection, searched_email)?;
     let mut users: Vec<User> = rows.iter().map(|row| User::from(&row)).collect();

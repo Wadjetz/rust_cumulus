@@ -9,6 +9,8 @@
 
 #[macro_use] extern crate rocket_contrib;
 extern crate serde;
+#[macro_use] extern crate validator_derive;
+extern crate validator;
 #[macro_use] extern crate serde_derive;
 extern crate dotenv;
 #[macro_use]
@@ -31,22 +33,21 @@ use juniper::rocket_handlers;
 extern crate jsonwebtoken;
 extern crate bcrypt;
 extern crate uuid;
+extern crate chrono;
 
 mod errors;
 mod pg;
-mod query;
-mod mutation;
 mod file;
-mod file_ql;
 mod token;
-mod auth;
 mod user;
 mod user_repository;
-mod user_ql;
+mod graphql;
+mod bookmark;
+mod bookmark_repository;
 
-use query::Query;
-use mutation::Mutation;
-use token::AuthData;
+use graphql::query::Query;
+use graphql::mutation::Mutation;
+//use token::AuthData;
 
 type Schema = RootNode<'static, Query, Mutation>;
 
@@ -64,25 +65,30 @@ fn post_graphql_handler(
     request.execute(&schema, &context)
 }
 
+/*
 use rocket::Data;
 use std::path::PathBuf;
 
 #[derive(FromForm)]
 struct FileForm {
-    path: String
+    pub path: String
 }
 
-#[post("/upload/<path..>", data = "<file_data>")]
-fn upload(auth_data: AuthData, file_data: Data, path: PathBuf) -> Result<String, String> {
+#[post("/upload/<path..>", data = "<_file_data>")]
+fn upload(_auth_data: AuthData, _file_data: Data, path: PathBuf) -> Result<String, String> {
     println!("{:?}", path);
+    /*
     match file::save_file(file_data, path.clone()) {
         Ok(_) => Ok(format!("Ok")),
         Err(err) => Err(err.description().to_string()),
     }
+    */
+    Ok("".to_string())
     //let p = Path::new("upload/").join(path);
     //let f = File::create(p).unwrap();
     //file_data.stream_to_file(f.path())?;
 }
+*/
 
 #[error(401)]
 fn unauthorized() -> JSON<Value> {
@@ -93,6 +99,6 @@ fn main() {
     rocket::ignite()
         .manage(Query::new())
         .manage(RootNode::new(Query::new(), Mutation))
-        .mount("/", routes![graphiql, post_graphql_handler, upload])
+        .mount("/", routes![graphiql, post_graphql_handler])
         .launch();
 }

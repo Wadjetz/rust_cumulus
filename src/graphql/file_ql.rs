@@ -1,4 +1,4 @@
-use query::Query;
+use graphql::query::Query;
 use file::File;
 
 graphql_object!(File: Query as "File" |&self| {

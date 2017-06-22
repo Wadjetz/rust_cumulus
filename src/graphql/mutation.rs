@@ -1,7 +1,9 @@
 use uuid::Uuid;
-use query::Query;
+use graphql::query::Query;
+use graphql::auth_mutation::AuthMutation;
 use user::{User, hash_password, verify_password};
 use user_repository;
+use user_repository::{verify_user};
 use token;
 
 use errors::ErrorKind;
@@ -45,4 +47,14 @@ graphql_object!(Mutation: Query as "Mutation" |&self| {
             .map_err(|e| e.description().to_string())
     }
 
+    field auth(
+        &executor,
+        token: String as "Auth token"
+    ) -> Result<AuthMutation, String> as "Auth" {
+      let connection = executor.context().connection.clone().get().expect("Error connection pool");
+      token::decode_auth(&token)
+            .and_then(|auth_data| verify_user(&connection, auth_data))
+            .map(AuthMutation::new)
+            .map_err(|e| e.description().to_string())
+    }
 });

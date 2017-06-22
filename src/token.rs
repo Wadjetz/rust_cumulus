@@ -29,7 +29,6 @@ pub struct Claime {
     pub email: String,
 }
 
-#[allow(dead_code)]
 impl Claime {
     pub fn new(uuid: String, email: String) -> Self {
         Claime {
@@ -43,7 +42,6 @@ impl Claime {
     }
 }
 
-#[allow(dead_code)]
 pub fn create_token(uuid: Uuid, email: String) -> Result<String> {
     let claims = Claime::new(uuid.hyphenated().to_string(), email.clone());
     let token = encode(&Header::default(), &claims, SECRET.as_ref())?;

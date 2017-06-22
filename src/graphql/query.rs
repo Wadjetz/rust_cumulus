@@ -3,7 +3,7 @@ use r2d2_postgres::PostgresConnectionManager;
 use r2d2::Pool;
 
 use pg::create_db_pool;
-use auth::Auth;
+use graphql::auth_query_ql::AuthQuery;
 use user_repository::{verify_user};
 use token;
 
@@ -27,11 +27,11 @@ graphql_object!(Query: Query as "Query" |&self| {
     field auth(
         &executor,
         token: String as "Auth token"
-    ) -> Result<Auth, String> as "Auth" {
+    ) -> Result<AuthQuery, String> as "Auth" {
       let connection = executor.context().connection.clone().get().expect("Error connection pool");
       token::decode_auth(&token)
             .and_then(|auth_data| verify_user(&connection, auth_data))
-            .map(Auth::new)
+            .map(AuthQuery::new)
             .map_err(|e| e.description().to_string())
     }
 });
