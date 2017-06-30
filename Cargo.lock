@@ -9,6 +9,7 @@ dependencies = [
  "error-chain 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "jsonwebtoken 2.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "juniper 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lazy_static 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "postgres 0.14.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "postgres-protocol 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "postgres-shared 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",

@@ -33,6 +33,9 @@ use rocket::State;
 use rocket_contrib::{JSON, Value};
 
 #[macro_use]
+extern crate lazy_static;
+
+#[macro_use]
 extern crate juniper;
 use juniper::RootNode;
 use juniper::rocket_handlers;
@@ -53,6 +56,7 @@ mod graphql;
 mod upload;
 mod download;
 mod app_state;
+mod config;
 
 use graphql::query::Query;
 use graphql::mutation::Mutation;
@@ -82,7 +86,7 @@ fn unauthorized() -> JSON<Value> {
 }
 
 fn main() {
-    let connection = create_db_pool();
+    let connection = create_db_pool(&config::CONFIG);
     rocket::ignite()
         .manage(Query::new(connection.clone()))
         .manage(AppState::new(connection.clone()))

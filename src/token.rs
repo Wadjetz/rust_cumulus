@@ -5,8 +5,7 @@ use rocket::outcome::Outcome;
 use rocket::http::Status;
 
 use errors::*;
-
-const SECRET: &'static str = "secret"; // TODO move to conf
+use config;
 
 #[derive(Debug)]
 pub struct AuthData {
@@ -44,12 +43,12 @@ impl Claime {
 
 pub fn create_token(uuid: Uuid, email: String) -> Result<String> {
     let claims = Claime::new(uuid.hyphenated().to_string(), email.clone());
-    let token = encode(&Header::default(), &claims, SECRET.as_ref())?;
+    let token = encode(&Header::default(), &claims, &config::CONFIG.secret_key.as_ref())?;
     Ok(token)
 }
 
 pub fn decode_auth(token: &str) -> Result<AuthData> {
-    let claims = decode::<Claime>(token, SECRET.as_ref(), &Validation::default())?;
+    let claims = decode::<Claime>(token, &config::CONFIG.secret_key.as_ref(), &Validation::default())?;
     let claims = claims.claims;
     let auth = claims.to_auth()?;
     Ok(auth)
