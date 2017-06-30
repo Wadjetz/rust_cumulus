@@ -1,12 +1,13 @@
+use uuid::Uuid;
 use r2d2_postgres::PostgresConnectionManager;
 use r2d2::PooledConnection;
 use postgres::rows::Row;
 use postgres::rows::Rows;
 use postgres::error::Error;
 use postgres_shared::error::{SqlState};
+
 use models::user::User;
 use models::file::File;
-
 use errors::*;
 
 impl File {
@@ -67,4 +68,21 @@ pub fn find(connection: &PooledConnection<PostgresConnectionManager>, limit: i32
     let rows = find_query(connection, limit, offset, user)?;
     let files = rows.iter().map(|row| File::from(&row)).collect();
     Ok(files)
+}
+
+fn find_by_uuid_query(connection: &PooledConnection<PostgresConnectionManager>, uuid: &Uuid) -> Result<Rows<'static>> {
+    let files = connection.query(
+        "SELECT * FROM files WHERE uuid = $1",
+        &[uuid]
+    )?;
+    Ok(files)
+}
+
+pub fn find_by_uuid(connection: &PooledConnection<PostgresConnectionManager>, uuid: &Uuid) -> Result<File> {
+    let rows = find_by_uuid_query(connection, uuid)?;
+    let mut files: Vec<File> = rows.iter().map(|row| File::from(&row)).collect();
+    match files.pop() {
+        Some(file) => Ok(file),
+        _ => Err(ErrorKind::NotFound.into())
+    }
 }

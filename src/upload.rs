@@ -1,5 +1,6 @@
 use std::os::unix::fs::MetadataExt;
 use std::path::PathBuf;
+use std::error::Error;
 
 use rocket::State;
 use rocket::Data;
@@ -14,7 +15,8 @@ use token::AuthData;
 
 #[post("/upload/<path..>", data = "<file_data>")]
 pub fn upload(auth_data: AuthData, app_state: State<AppState>, file_data: Data, path: PathBuf) -> Result<String, String> {
-    let connection: PooledConnection<PostgresConnectionManager> = app_state.connection.clone().get().expect("Error connection pool"); // TODO handle error
+    let connection: PooledConnection<PostgresConnectionManager> = app_state.connection.clone().get()
+                        .map_err(|e| e.description().to_string())?;
     let maybe_file_name = path.file_name()
                   .and_then(|os_str| os_str.to_str())
                   .map(|s| s.to_string());

@@ -50,6 +50,7 @@ mod repositories;
 mod token;
 mod graphql;
 mod upload;
+mod download;
 mod app_state;
 
 use graphql::query::Query;
@@ -85,6 +86,6 @@ fn main() {
         .manage(Query::new(connection.clone()))
         .manage(AppState::new(connection.clone()))
         .manage(RootNode::new(Query::new(connection), Mutation))
-        .mount("/", routes![graphiql, post_graphql_handler, upload::upload])
+        .mount("/", routes![graphiql, post_graphql_handler, upload::upload, download::download])
         .launch();
 }
