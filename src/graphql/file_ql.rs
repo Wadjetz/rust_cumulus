@@ -31,4 +31,8 @@ graphql_object!(File: Query as "File" |&self| {
     field size() -> String as "size" {
         format!("{}", self.size)
     }
+
+    field user_uuid() -> String as "uuid" {
+        self.user_uuid.hyphenated().to_string()
+    }
 });
