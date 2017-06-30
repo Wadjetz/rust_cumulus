@@ -2,21 +2,31 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
 #![feature(custom_attribute)]
+#![feature(custom_derive)]
 
 #![cfg_attr(feature="clippy", plugin(clippy))]
 #![cfg_attr(feature="clippy", allow(needless_pass_by_value))]
 
-#[macro_use] extern crate rocket_contrib;
+//#[macro_use] extern crate validator_derive;
+//extern crate validator;
+#[macro_use]
+extern crate serde_derive;
 extern crate serde;
-#[macro_use] extern crate serde_derive;
 extern crate dotenv;
 #[macro_use]
 extern crate error_chain;
 extern crate postgres;
+#[macro_use]
 extern crate postgres_shared;
+extern crate postgres_protocol;
 extern crate r2d2;
 extern crate r2d2_postgres;
+extern crate strum;
+#[macro_use]
+extern crate strum_macros;
 
+#[macro_use]
+extern crate rocket_contrib;
 extern crate rocket;
 use rocket::response::content;
 use rocket::State;
@@ -29,22 +39,24 @@ use juniper::rocket_handlers;
 
 extern crate jsonwebtoken;
 extern crate bcrypt;
+extern crate crypto;
 extern crate uuid;
+extern crate chrono;
 
 mod errors;
 mod pg;
-mod query;
-mod mutation;
-mod file;
+mod models;
+mod repositories;
 mod token;
-mod auth;
-mod user;
-mod user_repository;
-mod user_ql;
+mod graphql;
+mod upload;
+mod app_state;
 
-use query::Query;
-use mutation::Mutation;
-use token::AuthData;
+use graphql::query::Query;
+use graphql::mutation::Mutation;
+
+use app_state::AppState;
+use pg::create_db_pool;
 
 type Schema = RootNode<'static, Query, Mutation>;
 
@@ -62,20 +74,17 @@ fn post_graphql_handler(
     request.execute(&schema, &context)
 }
 
-#[get("/upload")]
-fn upload(auth_data: AuthData) -> String {
-    auth_data.email
-}
-
 #[error(401)]
 fn unauthorized() -> JSON<Value> {
     JSON(json!({ "message": "error" }))
 }
 
 fn main() {
+    let connection = create_db_pool();
     rocket::ignite()
-        .manage(Query::new())
-        .manage(RootNode::new(Query::new(), Mutation))
-        .mount("/", routes![graphiql, post_graphql_handler, upload])
+        .manage(Query::new(connection.clone()))
+        .manage(AppState::new(connection.clone()))
+        .manage(RootNode::new(Query::new(connection), Mutation))
+        .mount("/", routes![graphiql, post_graphql_handler, upload::upload])
         .launch();
 }

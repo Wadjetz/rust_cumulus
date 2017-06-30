@@ -19,6 +19,16 @@ impl User {
             uuid, login, email, password,
         }
     }
+
+    #[allow(dead_code)]
+    pub fn new_secure(login: String, email: String, password: String) -> Result<User, BcryptError> {
+        hash_password(&password).map(|hashed_password| User {
+            uuid: Uuid::new_v4(),
+            login,
+            email,
+            password: hashed_password,
+        })
+    }
 }
 
 pub fn hash_password(password: &str) -> Result<String, BcryptError> {

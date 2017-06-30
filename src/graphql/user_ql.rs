@@ -1,5 +1,5 @@
-use query::Query;
-use user::User;
+use graphql::query::Query;
+use models::user::User;
 
 graphql_object!(User: Query as "User" |&self| {
     description: "User"
