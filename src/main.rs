@@ -45,6 +45,7 @@ extern crate chrono;
 
 mod errors;
 mod pg;
+mod file_system;
 mod models;
 mod repositories;
 mod token;
