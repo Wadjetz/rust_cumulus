@@ -23,18 +23,18 @@ pub struct File {
     pub parent: String,
     pub location: String,
     pub file_type: FileType,
-    pub size: u64,
+    pub size: i64,
     pub user_uuid: Uuid,
 }
 
-#[derive(Debug)]
+#[derive(Debug, EnumString, ToString)]
 pub enum FileType {
     File,
     Directory,
 }
 
 impl File {
-    pub fn new(uuid: Uuid, hash: String, name: String, parent: String, location: String, file_type: FileType, size: u64, user_uuid: Uuid) -> Self {
+    pub fn new(uuid: Uuid, hash: String, name: String, parent: String, location: String, file_type: FileType, size: i64, user_uuid: Uuid) -> Self {
         File {
             uuid, hash, name, parent, location, file_type, size, user_uuid
         }

@@ -15,3 +15,14 @@ CREATE TABLE bookmarks (
     updated TIMESTAMP,
     user_uuid UUID NOT NULL REFERENCES users(uuid)
 );
+
+CREATE TABLE files (
+    uuid UUID PRIMARY KEY,
+    hash TEXT NOT NULL,
+    name TEXT NOT NULL,
+    parent TEXT NOT NULL,
+    location TEXT NOT NULL,
+    file_type TEXT NOT NULL,
+    size BIGINT NOT NULL,
+    user_uuid UUID NOT NULL REFERENCES users(uuid)
+);

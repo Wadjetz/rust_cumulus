@@ -1,5 +1,5 @@
 use graphql::query::Query;
-use models::file::{File, FileType};
+use models::file::File;
 
 graphql_object!(File: Query as "File" |&self| {
     description: "A file"
@@ -25,10 +25,7 @@ graphql_object!(File: Query as "File" |&self| {
     }
 
     field file_type() -> String as "file_type" {
-        match self.file_type {
-            FileType::File => "file".to_string(),
-            FileType::Directory => "directory".to_string(),
-        }
+        self.file_type.to_string()
     }
 
     field size() -> String as "size" {

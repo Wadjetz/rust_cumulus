@@ -7,23 +7,29 @@
 #![cfg_attr(feature="clippy", plugin(clippy))]
 #![cfg_attr(feature="clippy", allow(needless_pass_by_value))]
 
-#[macro_use] extern crate rocket_contrib;
-extern crate serde;
 //#[macro_use] extern crate validator_derive;
 //extern crate validator;
-#[macro_use] extern crate serde_derive;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde;
 extern crate dotenv;
 #[macro_use]
 extern crate error_chain;
 extern crate postgres;
+#[macro_use]
 extern crate postgres_shared;
+extern crate postgres_protocol;
 extern crate r2d2;
 extern crate r2d2_postgres;
+extern crate strum;
+#[macro_use]
+extern crate strum_macros;
 
+#[macro_use]
+extern crate rocket_contrib;
 extern crate rocket;
 use rocket::response::content;
 use rocket::State;
-use rocket::Data;
 use rocket_contrib::{JSON, Value};
 
 #[macro_use]
