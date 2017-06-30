@@ -4,8 +4,8 @@ use postgres::rows::Row;
 use postgres::rows::Rows;
 use postgres::error::Error;
 use postgres_shared::error::{SqlState};
-use user::User;
-use bookmark::Bookmark;
+use models::user::User;
+use models::bookmark::Bookmark;
 
 use errors::*;
 

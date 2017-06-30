@@ -1,7 +1,7 @@
 use graphql::query::Query;
-use user::User;
-use bookmark::Bookmark;
-use bookmark_repository;
+use models::user::User;
+use models::bookmark::Bookmark;
+use repositories::bookmark_repository;
 
 use std::error::Error;
 

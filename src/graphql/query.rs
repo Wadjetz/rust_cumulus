@@ -2,9 +2,9 @@ use juniper::Context;
 use r2d2_postgres::PostgresConnectionManager;
 use r2d2::Pool;
 
-use pg::create_db_pool;
+
 use graphql::auth_query_ql::AuthQuery;
-use user_repository::{verify_user};
+use repositories::user_repository::{verify_user};
 use token;
 
 pub struct Query {
@@ -12,10 +12,8 @@ pub struct Query {
 }
 
 impl Query {
-    pub fn new() -> Self {
-        Query {
-            connection: create_db_pool()
-        }
+    pub fn new(connection: Pool<PostgresConnectionManager>) -> Self {
+        Query { connection }
     }
 }
 

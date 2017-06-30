@@ -1,5 +1,5 @@
 use graphql::query::Query;
-use file::{File, FileType};
+use models::file::{File, FileType};
 
 graphql_object!(File: Query as "File" |&self| {
     description: "A file"

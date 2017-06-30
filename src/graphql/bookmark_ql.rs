@@ -1,5 +1,5 @@
 use graphql::query::Query;
-use bookmark::Bookmark;
+use models::bookmark::Bookmark;
 
 graphql_object!(Bookmark: Query as "Bookmark" |&self| {
     description: "Bookmark"
