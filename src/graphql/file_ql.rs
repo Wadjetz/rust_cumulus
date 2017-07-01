@@ -8,7 +8,7 @@ graphql_object!(File: Query as "File" |&self| {
         self.uuid.hyphenated().to_string()
     }
 
-    field hash() -> &String as "hash" {
+    field hash() -> &Option<String> as "hash" {
         &self.hash
     }
 
@@ -28,8 +28,8 @@ graphql_object!(File: Query as "File" |&self| {
         self.file_type.to_string()
     }
 
-    field size() -> String as "size" {
-        format!("{}", self.size)
+    field size() -> Option<String> as "size" {
+        self.size.map(|s| s.to_string())
     }
 
     field user_uuid() -> String as "uuid" {

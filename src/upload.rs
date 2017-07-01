@@ -30,12 +30,12 @@ pub fn upload(auth_data: AuthData, app_state: State<AppState>, file_data: Data, 
                         .unwrap_or("/".to_string());
         let f = models::file::File::new(
             Uuid::new_v4(),
-            hash,
+            Some(hash),
             file_name.clone(),
             parent.clone(),
             format!("{}/{}", parent, file_name),
             models::file::FileType::File,
-            metadata.size() as i64,
+            Some(metadata.size() as i64),
             auth_data.uuid,
         );
         file_repository::insert(&connection, &f).map(|inserted| format!("Ok {}", inserted))

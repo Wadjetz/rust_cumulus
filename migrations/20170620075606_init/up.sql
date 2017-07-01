@@ -18,11 +18,11 @@ CREATE TABLE bookmarks (
 
 CREATE TABLE files (
     uuid UUID PRIMARY KEY,
-    hash TEXT NOT NULL,
+    hash TEXT,
     name TEXT NOT NULL,
     parent TEXT NOT NULL,
     location TEXT NOT NULL,
     file_type TEXT NOT NULL,
-    size BIGINT NOT NULL,
+    size BIGINT,
     user_uuid UUID NOT NULL REFERENCES users(uuid)
 );
