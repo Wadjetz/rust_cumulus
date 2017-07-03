@@ -12,16 +12,16 @@ use errors::*;
 
 impl File {
     pub fn from(row: &Row) -> Self {
-        File::new(
-            row.get("uuid"),
-            row.get("hash"),
-            row.get("name"),
-            row.get("parent"),
-            row.get("location"),
-            row.get("file_type"),
-            row.get("size"),
-            row.get("user_uuid"),
-        )
+        File {
+            uuid: row.get("uuid"),
+            hash: row.get("hash"),
+            name: row.get("name"),
+            parent: row.get("parent"),
+            location: row.get("location"),
+            file_type: row.get("file_type"),
+            size: row.get("size"),
+            user_uuid: row.get("user_uuid"),
+        }
     }
 }
 

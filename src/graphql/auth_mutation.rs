@@ -1,10 +1,12 @@
 use graphql::query::Query;
 use models::user::User;
 use models::bookmark::Bookmark;
+use models::file::File;
 use repositories::bookmark_repository;
 use errors;
 
 use std::error::Error;
+use std::path::Path;
 
 #[derive(Debug)]
 pub struct AuthMutation {
@@ -22,6 +24,23 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
 
     field me() -> Option<&User> as "User" {
         Some(&self.user)
+    }
+
+    field create_directory(
+        &executor,
+        name: String as "name",
+        path: String as "path",
+    ) -> Result<File, String> {
+        let connection = executor.context().connection.clone().get().map_err(|e| e.description().to_string())?;
+        let path = Path::new(&path);
+        let maybe_parent_path = path.parent();
+        let parent = maybe_parent_path
+                        .and_then(|path| path.to_str())
+                        .map(|s| s.to_string())
+                        .unwrap_or("/".to_string());
+        let directory = File::new_directory(&name, &parent, &format!("{}/{}", parent, name), self.user.uuid.clone());
+        println!("{:?}", directory);
+        Ok(directory)
     }
 
     field add_bookmark(
