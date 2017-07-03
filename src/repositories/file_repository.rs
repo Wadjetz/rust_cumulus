@@ -16,7 +16,6 @@ impl File {
             uuid: row.get("uuid"),
             hash: row.get("hash"),
             name: row.get("name"),
-            parent: row.get("parent"),
             location: row.get("location"),
             file_type: row.get("file_type"),
             size: row.get("size"),
@@ -27,12 +26,11 @@ impl File {
 
 fn insert_query(connection: &PooledConnection<PostgresConnectionManager>, file: &File) -> Result<u64> {
     connection.execute(
-        "INSERT INTO files (uuid, hash, name, parent, location, file_type, size, user_uuid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+        "INSERT INTO files (uuid, hash, name, location, file_type, size, user_uuid) VALUES ($1, $2, $3, $4, $5, $6, $7)",
         &[
           &file.uuid,
           &file.hash,
           &file.name,
-          &file.parent,
           &file.location,
           &file.file_type,
           &file.size,

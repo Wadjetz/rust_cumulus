@@ -35,20 +35,20 @@ impl Claime {
             email: email
         }
     }
-    pub fn to_auth(self) -> Result<AuthData> {
-        let auth_data = Uuid::parse_str(&self.uuid).map(move |uuid| AuthData::new(uuid, self.email))?;
+    pub fn to_auth(&self) -> Result<AuthData> {
+        let auth_data = Uuid::parse_str(&self.uuid).map(move |uuid| AuthData::new(uuid, self.email.clone()))?;
         Ok(auth_data)
     }
 }
 
 pub fn create_token(uuid: Uuid, email: String) -> Result<String> {
     let claims = Claime::new(uuid.hyphenated().to_string(), email.clone());
-    let token = encode(&Header::default(), &claims, &config::CONFIG.secret_key.as_ref())?;
+    let token = encode(&Header::default(), &claims, config::CONFIG.secret_key.as_ref())?;
     Ok(token)
 }
 
 pub fn decode_auth(token: &str) -> Result<AuthData> {
-    let claims = decode::<Claime>(token, &config::CONFIG.secret_key.as_ref(), &Validation::default())?;
+    let claims = decode::<Claime>(token, config::CONFIG.secret_key.as_ref(), &Validation::default())?;
     let claims = claims.claims;
     let auth = claims.to_auth()?;
     Ok(auth)

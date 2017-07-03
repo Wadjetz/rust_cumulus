@@ -6,9 +6,10 @@
 
 #![cfg_attr(feature="clippy", plugin(clippy))]
 #![cfg_attr(feature="clippy", allow(needless_pass_by_value))]
+#![allow(op_ref)]
+#![allow(unused_io_amount)]
+#![allow(too_many_arguments)]
 
-//#[macro_use] extern crate validator_derive;
-//extern crate validator;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde;

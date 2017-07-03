@@ -20,7 +20,6 @@ CREATE TABLE files (
     uuid UUID PRIMARY KEY,
     hash TEXT,
     name TEXT NOT NULL,
-    parent TEXT NOT NULL,
     location TEXT NOT NULL,
     file_type TEXT NOT NULL,
     size BIGINT,

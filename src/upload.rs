@@ -21,19 +21,13 @@ pub fn upload(auth_data: AuthData, app_state: State<AppState>, file_data: Data, 
     let maybe_file_name = path.file_name()
                   .and_then(|os_str| os_str.to_str())
                   .map(|s| s.to_string());
-    let maybe_parent_path = path.parent();
     file_system::save_file(file_data, path.clone()).and_then(|(hash, metadata)| {
-        let file_name = maybe_file_name.unwrap_or(hash.clone());
-        let parent = maybe_parent_path
-                        .and_then(|path| path.to_str())
-                        .map(|s| s.to_string())
-                        .unwrap_or("/".to_string());
+        let file_name = maybe_file_name.unwrap_or_else(|| hash.clone());
         let f = models::file::File::new(
             Uuid::new_v4(),
             Some(hash),
             &file_name,
-            &parent,
-            &format!("{}/{}", parent, file_name),
+            path.to_str().unwrap_or("/"),
             models::file::FileType::File,
             Some(metadata.size() as i64),
             auth_data.uuid,

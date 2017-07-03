@@ -33,7 +33,7 @@ impl Bookmark {
             uuid: Uuid::new_v4(),
             url,
             title,
-            description: description.unwrap_or("".to_string()),
+            description: description.unwrap_or_else(|| "".to_string()),
             path,
             created: UTC::now().naive_utc(),
             updated: UTC::now().naive_utc(),

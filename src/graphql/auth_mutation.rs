@@ -34,11 +34,7 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
         let connection = executor.context().connection.clone().get().map_err(|e| e.description().to_string())?;
         let path = Path::new(&path);
         let maybe_parent_path = path.parent();
-        let parent = maybe_parent_path
-                        .and_then(|path| path.to_str())
-                        .map(|s| s.to_string())
-                        .unwrap_or("/".to_string());
-        let directory = File::new_directory(&name, &parent, &format!("{}/{}", parent, name), self.user.uuid.clone());
+        let directory = File::new_directory(&name, path.to_str().unwrap_or("/"), self.user.uuid);
         println!("{:?}", directory);
         Ok(directory)
     }

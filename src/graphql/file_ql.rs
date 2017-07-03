@@ -16,10 +16,6 @@ graphql_object!(File: Query as "File" |&self| {
         &self.name
     }
 
-    field parent() -> &String as "parent" {
-        &self.parent
-    }
-
     field location() -> &String as "location" {
         &self.location
     }
