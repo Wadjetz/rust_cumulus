@@ -28,7 +28,7 @@ graphql_object!(Mutation: Query as "Mutation" |&self| {
             token::create_token(uuid, email)
         }).map_err(|e| e.description().to_string())
     }
-    
+
     field login(
         &executor,
         email: String as "Email",

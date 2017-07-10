@@ -5,10 +5,7 @@
 #![feature(custom_derive)]
 
 #![cfg_attr(feature="clippy", plugin(clippy))]
-#![cfg_attr(feature="clippy", allow(needless_pass_by_value))]
-#![allow(op_ref)]
-#![allow(unused_io_amount)]
-#![allow(too_many_arguments)]
+#![cfg_attr(feature="clippy", allow(needless_pass_by_value, op_ref, unused_io_amount, too_many_arguments))]
 
 #[macro_use]
 extern crate serde_derive;
@@ -25,6 +22,11 @@ extern crate r2d2_postgres;
 extern crate strum;
 #[macro_use]
 extern crate strum_macros;
+extern crate rss;
+extern crate feed_rs;
+#[macro_use]
+extern crate hyper;
+extern crate reqwest;
 
 #[macro_use]
 extern crate rocket_contrib;
@@ -58,6 +60,8 @@ mod upload;
 mod download;
 mod app_state;
 mod config;
+mod services;
+mod resolvers;
 
 use graphql::query::Query;
 use graphql::mutation::Mutation;

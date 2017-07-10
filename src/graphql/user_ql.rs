@@ -11,7 +11,7 @@ graphql_object!(User: Query as "User" |&self| {
     field email() -> &String as "email" {
         &self.email
     }
-    
+
     field login() -> &String as "login" {
         &self.login
     }

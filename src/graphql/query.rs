@@ -5,6 +5,8 @@ use r2d2::Pool;
 
 use graphql::auth_query_ql::AuthQuery;
 use repositories::user_repository::{verify_user};
+use repositories::feed_source_repository;
+use models::feed_source::FeedSource;
 use token;
 
 pub struct Query {
@@ -30,6 +32,16 @@ graphql_object!(Query: Query as "Query" |&self| {
       token::decode_auth(&token)
             .and_then(|auth_data| verify_user(&connection, auth_data))
             .map(AuthQuery::new)
+            .map_err(|e| e.description().to_string())
+    }
+
+    field feeds_sources(
+        &executor,
+        limit: Option<i32> as "Limit",
+        offset: Option<i32> as "Offset",
+    ) -> Result<Vec<FeedSource>, String> {
+        let connection = executor.context().connection.clone().get().expect("Error connection pool");
+        feed_source_repository::find(&connection, limit.unwrap_or(50), offset.unwrap_or(0))
             .map_err(|e| e.description().to_string())
     }
 });
