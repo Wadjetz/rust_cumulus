@@ -3,6 +3,9 @@ name = "rust_cumulus"
 version = "0.1.0"
 authors = ["Wadjetz <egor.neon@gmail.com>"]
 
+[profile.release]
+#lto = true # Binary size optiomisation, but longuer compile time
+
 [dependencies]
 rocket = "0.2.8"
 rocket_codegen = "0.2.8"

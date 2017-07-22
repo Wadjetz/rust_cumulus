@@ -1,3 +1,4 @@
+use uuid::Uuid;
 use r2d2_postgres::PostgresConnectionManager;
 use r2d2::PooledConnection;
 use postgres::rows::Row;
@@ -5,9 +6,15 @@ use postgres::rows::Rows;
 use postgres::error::Error;
 use postgres_shared::error::{SqlState};
 
+use models::user::User;
 use models::feed_source::FeedSource;
-//use models::user::User;
 use errors::*;
+
+struct UserFeedSource {
+    uuid: Uuid,
+    user_uuid: Uuid,
+    feeds_sources_uuid: Uuid,
+}
 
 impl FeedSource {
     pub fn from(row: &Row) -> Self {
@@ -65,5 +72,12 @@ pub fn find(connection: &PooledConnection<PostgresConnectionManager>, limit: i32
     let rows = find_query(connection, limit, offset)?;
     let feeds_sources = rows.iter().map(|row| FeedSource::from(&row)).collect();
     Ok(feeds_sources)
+}
+
+fn follow_feed_source_query(connection: &PooledConnection<PostgresConnectionManager>, feed_source: &FeedSource, user: &User) -> Result<u64> {
+    Ok(connection.execute(
+        "INSERT INTO users_feeds_sources (uuid, user_uuid, feeds_sources_uuid) VALUES ($1::uuid, $2::uuid, $3::uuid)",
+        &[&Uuid::new_v4(), &user.uuid, &feed_source.uuid]
+    )?)
 }
 

@@ -13,5 +13,6 @@ error_chain! {
         Db(::postgres::error::Error);
         R2D2(::r2d2::GetTimeout);
         WS(::reqwest::Error);
+        JSON(::serde_json::Error);
     }
 }
