@@ -1,0 +1,38 @@
+{
+  "name": "cumulus",
+  "version": "0.1.0",
+  "description": "Cumulus Cloud",
+  "main": "main.js",
+  "directories": {
+    "test": "test"
+  },
+  "private": true,
+  "scripts": {
+    "test": "echo 'soon'",
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wadjetz/rust_cumulus.git"
+  },
+  "keywords": [
+    "Cloud"
+  ],
+  "author": "Cumulus-Cloud",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Wadjetz/rust_cumulus/issues"
+  },
+  "homepage": "https://github.com/Wadjetz/rust_cumulus#readme",
+  "devDependencies": {
+    "tslint": "^5.4.3",
+    "typescript": "^2.4.1"
+  },
+  "dependencies": {
+    "@types/react": "^15.0.33",
+    "@types/react-dom": "^15.5.1",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  }
+}
