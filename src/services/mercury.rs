@@ -23,9 +23,8 @@ pub struct ReadableData {
 }
 
 #[allow(dead_code)]
-pub fn fetch_readable(url: &str) -> Result<Option<ReadableData>> {
+pub fn fetch_readable(client: &Client, url: &str) -> Result<Option<ReadableData>> {
     let url = format!("http://mercury.postlight.com/parser?url={}", url);
-    let client = Client::new()?;
     let api_key = &CONFIG.mercury_api_key;
     let mut response = client.get(&url)?
         .header(XApiKey(api_key.to_owned()))
