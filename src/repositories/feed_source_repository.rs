@@ -10,6 +10,7 @@ use models::user::User;
 use models::feed_source::FeedSource;
 use errors::*;
 
+#[allow(dead_code)]
 struct UserFeedSource {
     uuid: Uuid,
     user_uuid: Uuid,
@@ -74,6 +75,7 @@ pub fn find(connection: &PooledConnection<PostgresConnectionManager>, limit: i32
     Ok(feeds_sources)
 }
 
+#[allow(dead_code)]
 fn follow_feed_source_query(connection: &PooledConnection<PostgresConnectionManager>, feed_source: &FeedSource, user: &User) -> Result<u64> {
     Ok(connection.execute(
         "INSERT INTO users_feeds_sources (uuid, user_uuid, feeds_sources_uuid) VALUES ($1::uuid, $2::uuid, $3::uuid)",

@@ -1,8 +1,9 @@
+use reqwest::Client;
+use config::CONFIG;
+
 use errors::*;
 
-// Custom header type
-header! { (XPoweredBy, "X-Powered-By") => [String] }
-
+header! { (XApiKey, "x-api-key") => [String] }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ReadableData {
@@ -21,7 +22,14 @@ pub struct ReadableData {
     pub next_page_url: Option<String>,
 }
 
-pub fn fetch_readable(url: &str) -> Result<()> {
-    //let client = reqwest::Client::new()?;
-    Ok(())
+#[allow(dead_code)]
+pub fn fetch_readable(url: &str) -> Result<Option<ReadableData>> {
+    let url = format!("http://mercury.postlight.com/parser?url={}", url);
+    let client = Client::new()?;
+    let api_key = &CONFIG.mercury_api_key;
+    let mut response = client.get(&url)?
+        .header(XApiKey(api_key.to_owned()))
+        .send()?;
+    let readable_data: Option<ReadableData> = response.json()?;
+    Ok(readable_data)
 }

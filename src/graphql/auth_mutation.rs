@@ -3,7 +3,6 @@ use models::user::User;
 use models::bookmark::Bookmark;
 use models::file::File;
 use models::feed_source::FeedSource;
-use errors;
 use resolvers::feeds_sources_resolvers;
 use resolvers::bookmarks_resolvers;
 
