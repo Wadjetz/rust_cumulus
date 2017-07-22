@@ -68,6 +68,7 @@ use graphql::mutation::Mutation;
 
 use app_state::AppState;
 use pg::create_db_pool;
+use services::rss_job;
 
 type Schema = RootNode<'static, Query, Mutation>;
 
@@ -92,6 +93,7 @@ fn unauthorized() -> JSON<Value> {
 
 fn main() {
     let connection = create_db_pool(&config::CONFIG);
+    rss_job::run(connection.clone());
     rocket::ignite()
         .manage(Query::new(connection.clone()))
         .manage(AppState::new(connection.clone()))
