@@ -72,7 +72,7 @@ use services::rss_job;
 
 type Schema = RootNode<'static, Query, Mutation>;
 
-#[get("/")]
+#[get("/graphql")]
 fn graphiql() -> content::HTML<String> {
     rocket_handlers::graphiql_source("/graphql")
 }
@@ -93,7 +93,8 @@ fn unauthorized() -> JSON<Value> {
 
 fn main() {
     let connection = create_db_pool(&config::CONFIG);
-    rss_job::run(connection.clone());
+    let client = reqwest::Client::new().unwrap();
+    rss_job::run(client, connection.clone());
     rocket::ignite()
         .manage(Query::new(connection.clone()))
         .manage(AppState::new(connection.clone()))

@@ -44,6 +44,17 @@ CREATE TABLE users_feeds_sources (
 
 CREATE TABLE feeds (
     uuid UUID PRIMARY KEY,
+    url TEXT UNIQUE NOT NULL,
+    rss JSONB,
+    readable JSONB,
+    twitter JSONB,
+    created TIMESTAMP,
+    updated TIMESTAMP
+)
+
+/*
+CREATE TABLE feeds (
+    uuid UUID PRIMARY KEY,
     rss_url TEXT,
     rss_guid TEXT,
     rss_title TEXT,
@@ -79,3 +90,4 @@ CREATE TABLE feeds_feeds_sources (
     feed_uuid UUID NOT NULL REFERENCES feeds(uuid),
     feed_source_uuid UUID NOT NULL REFERENCES feeds_sources(uuid)
 );
+*/
