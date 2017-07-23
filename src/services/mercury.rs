@@ -5,7 +5,7 @@ use errors::*;
 
 header! { (XApiKey, "x-api-key") => [String] }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ReadableData {
     pub url: String,
     pub domain: Option<String>,

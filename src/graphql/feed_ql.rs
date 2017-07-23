@@ -1,5 +1,5 @@
 use graphql::query::Query;
-use models::feed::Feed;
+use models::feed::{Rss, Feed};
 use services::mercury::ReadableData;
 
 graphql_object!(Feed: Query as "Feed" |&self| {
@@ -13,11 +13,9 @@ graphql_object!(Feed: Query as "Feed" |&self| {
         &self.url
     }
 
-    /*
-    field rss() -> &Option<Entry> as "rss" {
+    field rss() -> &Option<Rss> as "rss" {
         &self.rss
     }
-    */
 
     field readable() -> &Option<ReadableData> as "readable" {
         &self.readable
