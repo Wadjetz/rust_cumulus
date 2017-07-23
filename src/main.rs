@@ -3,7 +3,6 @@
 #![plugin(rocket_codegen)]
 #![feature(custom_attribute)]
 #![feature(custom_derive)]
-
 //#![cfg_attr(feature="clippy", plugin(clippy))]
 //#![cfg_attr(feature="clippy", allow(needless_pass_by_value, op_ref, unused_io_amount, too_many_arguments))]
 
@@ -12,8 +11,15 @@ extern crate serde_derive;
 extern crate serde;
 extern crate serde_json;
 extern crate dotenv;
+extern crate jsonwebtoken;
+extern crate bcrypt;
+extern crate crypto;
+extern crate uuid;
+extern crate chrono;
 #[macro_use]
 extern crate error_chain;
+#[macro_use]
+extern crate lazy_static;
 extern crate postgres;
 #[macro_use]
 extern crate postgres_shared;
@@ -27,27 +33,11 @@ extern crate feed_rs;
 #[macro_use]
 extern crate hyper;
 extern crate reqwest;
-
 #[macro_use]
 extern crate rocket_contrib;
 extern crate rocket;
-use rocket::response::content;
-use rocket::State;
-use rocket_contrib::{JSON, Value};
-
-#[macro_use]
-extern crate lazy_static;
-
 #[macro_use]
 extern crate juniper;
-use juniper::RootNode;
-use juniper::rocket_handlers;
-
-extern crate jsonwebtoken;
-extern crate bcrypt;
-extern crate crypto;
-extern crate uuid;
-extern crate chrono;
 
 mod errors;
 mod pg;
@@ -63,16 +53,23 @@ mod config;
 mod services;
 mod resolvers;
 
+use std::path::{Path, PathBuf};
+
+use rocket::response::{NamedFile, content};
+use rocket::State;
+use rocket_contrib::{JSON, Value};
+use juniper::RootNode;
+use juniper::rocket_handlers;
+
 use graphql::query::Query;
 use graphql::mutation::Mutation;
-
 use app_state::AppState;
 use pg::create_db_pool;
 use services::rss_job;
 
 type Schema = RootNode<'static, Query, Mutation>;
 
-#[get("/graphql")]
+#[get("/graphql", rank=2)]
 fn graphiql() -> content::HTML<String> {
     rocket_handlers::graphiql_source("/graphql")
 }
@@ -84,6 +81,16 @@ fn post_graphql_handler(
     schema: State<Schema>
 ) -> rocket_handlers::GraphQLResponse {
     request.execute(&schema, &context)
+}
+
+#[get("/")]
+fn index() -> Option<NamedFile> {
+    NamedFile::open(Path::new("static/index.html")).ok()
+}
+
+#[get("/<file..>")]
+fn files(file: PathBuf) -> Option<NamedFile> {
+    NamedFile::open(Path::new("static/").join(file)).ok()
 }
 
 #[error(401)]
@@ -99,6 +106,6 @@ fn main() {
         .manage(Query::new(connection.clone()))
         .manage(AppState::new(connection.clone()))
         .manage(RootNode::new(Query::new(connection), Mutation))
-        .mount("/", routes![graphiql, post_graphql_handler, upload::upload, download::download])
+        .mount("/", routes![index, files, graphiql, post_graphql_handler, upload::upload, download::download])
         .launch();
 }
