@@ -30,7 +30,6 @@ fn insert_query(connection: &PooledConnection<PostgresConnectionManager>, feed: 
         "INSERT INTO feeds (uuid, url, rss, readable, twitter, created, updated) VALUES ($1, $2, $3, $4, $5, $6, $7)",
         &[&feed.uuid, &feed.url, &serde_json::to_value(&feed.rss).ok(), &serde_json::to_value(&feed.readable).ok(), &feed.twitter, &feed.created, &feed.updated]
     ).map_err(|e| {
-        println!("{:?}", e);
         match e {
             Error::Db(ref e) if e.code == SqlState::UniqueViolation => ErrorKind::AlreadyExist.into(),
             e => e.into(),
@@ -47,17 +46,32 @@ pub fn insert(connection: &PooledConnection<PostgresConnectionManager>, feed: &F
     }
 }
 
-fn find_query(connection: &PooledConnection<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Rows<'static>> {
-    let bookmarks = connection.query(
-      "SELECT * FROM bookmarks WHERE user_uuid = $1::uuid LIMIT $2::int OFFSET $3::int;",
-      &[&user.uuid, &limit, &offset]
+fn find_query(connection: &PooledConnection<PostgresConnectionManager>, limit: i32, offset: i32, _user: &User) -> Result<Rows<'static>> {
+    let feeds = connection.query(
+      "SELECT * FROM feeds LIMIT $1::int OFFSET $2::int;",
+      &[&limit, &offset]
     )?;
-    Ok(bookmarks)
+    Ok(feeds)
 }
 
 pub fn find(connection: &PooledConnection<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Feed>> {
     let rows = find_query(connection, limit, offset, user)?;
-    let bookmarks = rows.iter().map(|row| Feed::from(&row)).collect();
-    Ok(bookmarks)
+    let feeds = rows.iter().map(|row| Feed::from(&row)).collect();
+    Ok(feeds)
+}
+
+fn find_by_url_query(connection: &PooledConnection<PostgresConnectionManager>, url: &str) -> Result<Rows<'static>> {
+    let feed = connection.query(
+        "SELECT * FROM feeds WHERE url = $1",
+        &[&url]
+    )?;
+    Ok(feed)
+}
+
+pub fn find_by_url(connection: &PooledConnection<PostgresConnectionManager>, url: &str) -> Result<Option<Feed>> {
+    let rows = find_by_url_query(connection, url)?;
+    let mut feeds: Vec<Feed> = rows.iter().map(|row| Feed::from(&row)).collect();
+    let feed = feeds.pop();
+    Ok(feed)
 }
 

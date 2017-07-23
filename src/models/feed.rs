@@ -1,7 +1,6 @@
 use uuid::Uuid;
 use chrono::NaiveDateTime;
 use chrono::prelude::*;
-use serde_json;
 use serde_json::Value;
 
 use feed_rs::entry::Entry;

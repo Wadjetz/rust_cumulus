@@ -32,20 +32,19 @@ fn process_rss(client: &Client, pool: &Pool<PostgresConnectionManager>) -> Resul
         if let Some(feeds_channel) = maybe_feeds_channel {
             for rss_feed in &feeds_channel.entries {
                 for link in &rss_feed.alternate {
-                    if let Ok(Some(readable)) = mercury::fetch_readable(client, &link.href) {
-                        //let readable_json = serde_json::to_value(&readable).ok();
-                        //let rss_json = serde_json::to_value(&rss_feed).ok();
-                        let feed = Feed::new(&readable.url.clone(), Some(rss_feed.clone()), Some(readable), None);
-                        match repositories::feed_repository::insert(&conn, &feed) {
-                            Ok(_) => println!("readable inserted {:?}", feed.url),
-                            Err(error) => println!("readable error {:?}", error),
-                        }
-                    } else {
-                        //let rss_json = serde_json::to_value(&rss_feed).ok();
-                        let feed = Feed::new(&link.href, Some(rss_feed.clone()), None, None); // TODO remove clone, refactor
-                        match repositories::feed_repository::insert(&conn, &feed) {
-                            Ok(_) => println!("rss inserted {:?}", feed.url),
-                            Err(error) => println!("rss error {:?}", error),
+                    if let Ok(None) = repositories::feed_repository::find_by_url(&conn, &link.href) {
+                        if let Ok(Some(readable)) = mercury::fetch_readable(client, &link.href) {
+                            let feed = Feed::new(&readable.url.clone(), Some(rss_feed.clone()), Some(readable), None);
+                            match repositories::feed_repository::insert(&conn, &feed) {
+                                Ok(_) => println!("readable inserted {:?}", feed.url),
+                                Err(_error) => {},//println!("readable error {:?}", error),
+                            }
+                        } else {
+                            let feed = Feed::new(&link.href, Some(rss_feed.clone()), None, None); // TODO remove clone, refactor
+                            match repositories::feed_repository::insert(&conn, &feed) {
+                                Ok(_) => println!("rss inserted {:?}", feed.url),
+                                Err(_error) => {},//println!("rss error {:?}", error),
+                            }
                         }
                     }
                 }
