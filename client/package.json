@@ -9,8 +9,8 @@
   "private": true,
   "scripts": {
     "test": "echo 'soon'",
-    "build": "tsc",
-    "watch": "tsc -w"
+    "build": "webpack",
+    "watch": "webpack -w"
   },
   "repository": {
     "type": "git",
@@ -26,13 +26,16 @@
   },
   "homepage": "https://github.com/Wadjetz/rust_cumulus#readme",
   "devDependencies": {
-    "tslint": "^5.4.3",
-    "typescript": "^2.4.1"
+    "awesome-typescript-loader": "3.2.1",
+    "source-map-loader": "0.2.1",
+    "tslint": "5.4.3",
+    "typescript": "2.4.2",
+    "webpack": "3.3.0"
   },
   "dependencies": {
-    "@types/react": "^15.0.33",
-    "@types/react-dom": "^15.5.1",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "@types/react": "15.0.38",
+    "@types/react-dom": "15.5.1",
+    "react": "15.6.1",
+    "react-dom": "15.6.1"
   }
 }

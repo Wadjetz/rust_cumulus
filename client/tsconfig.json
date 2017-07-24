@@ -1,12 +1,13 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "jsx": "react",
-    "outDir": "../static"
-  },
-  "filesGlob": [
-    "src/**/*.*"
-  ]
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "target": "es5",
+        "jsx": "react"
+    },
+    "include": [
+        "./src/**/*"
+    ]
 }
