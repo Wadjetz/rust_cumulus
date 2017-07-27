@@ -1,15 +1,8 @@
-import { createStore, combineReducers } from "redux"
-import LoginReducer, { LoginState } from "./login/LoginReducer"
-
-const reducers = combineReducers({
-    login: LoginReducer
-})
+import { LoginState } from "./login/LoginReducer"
+import { Reducer } from "redux"
+import { RouterState } from "react-router-redux"
 
 export interface State {
     login: LoginState
+    router: Reducer<RouterState>
 }
-
-export let store = createStore(
-    reducers,
-    (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__()
-)
