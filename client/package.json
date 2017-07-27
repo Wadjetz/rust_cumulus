@@ -26,20 +26,22 @@
   },
   "homepage": "https://github.com/Wadjetz/rust_cumulus#readme",
   "devDependencies": {
-    "awesome-typescript-loader": "3.2.1",
-    "@types/react": "15.0.38",
+    "@types/react": "15.0.39",
     "@types/react-dom": "15.5.1",
-    "@types/react-redux": "^4.4.47",
+    "@types/react-redux": "4.4.47",
+    "awesome-typescript-loader": "3.2.2",
+    "redux-devtools": "3.4.0",
     "source-map-loader": "0.2.1",
-    "redux-devtools": "^3.4.0",
-    "tslint": "5.4.3",
+    "tslint": "5.5.0",
     "typescript": "2.4.2",
-    "webpack": "3.3.0"
+    "webpack": "3.4.1"
   },
   "dependencies": {
-    "react-redux": "^5.0.5",
-    "redux": "^3.7.2",
+    "history": "4.6.0",
     "react": "15.6.1",
-    "react-dom": "15.6.1"
+    "react-dom": "15.6.1",
+    "react-redux": "5.0.5",
+    "react-router-redux": "next",
+    "redux": "3.7.2"
   }
 }
