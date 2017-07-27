@@ -57,7 +57,6 @@ use std::path::{Path, PathBuf};
 
 use rocket::response::{NamedFile, content};
 use rocket::State;
-use rocket_contrib::{JSON, Value};
 use juniper::RootNode;
 use juniper::rocket_handlers;
 
@@ -69,7 +68,7 @@ use services::rss_job;
 
 type Schema = RootNode<'static, Query, Mutation>;
 
-#[get("/graphql", rank=2)]
+#[get("/graphql")]
 fn graphiql() -> content::HTML<String> {
     rocket_handlers::graphiql_source("/graphql")
 }
@@ -88,14 +87,9 @@ fn index() -> Option<NamedFile> {
     NamedFile::open(Path::new("static/index.html")).ok()
 }
 
-#[get("/<file..>")]
+#[get("/assets/<file..>")]
 fn files(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("static/").join(file)).ok()
-}
-
-#[error(401)]
-fn unauthorized() -> JSON<Value> {
-    JSON(json!({ "message": "error" }))
 }
 
 fn main() {
