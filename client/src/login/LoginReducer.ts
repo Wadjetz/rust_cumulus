@@ -23,7 +23,7 @@ const LoginReducer = (state: LoginState = initState, action: any) => {
             return { ...state, [field]: value }
         }
         case LOGIN_ON_SUBMIT: {
-            return { ...state, loading: true }
+            return { ...state, loading: true, error: undefined }
         }
         case LOGIN_ON_SUBMIT_SUCCESS: {
             return { ...state, token: action.token, loading: false }
