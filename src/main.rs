@@ -3,8 +3,6 @@
 #![plugin(rocket_codegen)]
 #![feature(custom_attribute)]
 #![feature(custom_derive)]
-//#![cfg_attr(feature="clippy", plugin(clippy))]
-//#![cfg_attr(feature="clippy", allow(needless_pass_by_value, op_ref, unused_io_amount, too_many_arguments))]
 
 #[macro_use]
 extern crate serde_derive;
@@ -33,8 +31,6 @@ extern crate feed_rs;
 #[macro_use]
 extern crate hyper;
 extern crate reqwest;
-#[macro_use]
-extern crate rocket_contrib;
 extern crate rocket;
 #[macro_use]
 extern crate juniper;
@@ -69,7 +65,7 @@ use services::rss_job;
 type Schema = RootNode<'static, Query, Mutation>;
 
 #[get("/graphql")]
-fn graphiql() -> content::HTML<String> {
+fn graphiql() -> content::Html<String> {
     rocket_handlers::graphiql_source("/graphql")
 }
 
