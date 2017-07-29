@@ -10,6 +10,7 @@ import LoginReducer from "./login/LoginReducer"
 import FeedsReducer from "./feeds/FeedsReducer"
 import LoginContainer from "./login/LoginContainer"
 import FeedsContainer from "./feeds/FeedsContainer"
+import Header from "./components/Header"
 
 const middleware = routerMiddleware(history)
 
@@ -31,6 +32,7 @@ ReactDOM.render(
     <Provider store={store}>
         <ConnectedRouter history={history}>
             <div>
+                <Header />
                 <Route exact path="/" component={FeedsContainer}/>
                 <Route path="/login" component={LoginContainer}/>
             </div>
