@@ -52,42 +52,14 @@ CREATE TABLE feeds (
     updated TIMESTAMP
 )
 
-/*
-CREATE TABLE feeds (
-    uuid UUID PRIMARY KEY,
-    rss_url TEXT,
-    rss_guid TEXT,
-    rss_title TEXT,
-    rss_description TEXT,
-    rss_summary TEXT,
-    rss_pubdate TEXT,
-    rss_image_url TEXT,
-    rss_image_title TEXT,
-    readable_url TEXT,
-    readable_domain TEXT,
-    readable_title TEXT,
-    readable_content TEXT,
-    readable_date_published TEXT,
-    readable_lead_image_url TEXT,
-    readable_dek TEXT,
-    readable_excerpt TEXT,
-    readable_word_count BIGINT,
-    readable_direction TEXT,
-    readable_total_pages BIGINT,
-    readable_rendered_pages BIGINT,
-    readable_next_page_url TEXT,
-    tweet_id Text
-);
-
-CREATE TABLE feeds_users (
+CREATE TABLE users_feeds (
     uuid UUID PRIMARY KEY,
     feed_uuid UUID NOT NULL REFERENCES feeds(uuid),
     user_uuid UUID NOT NULL REFERENCES users(uuid)
 );
 
-CREATE TABLE feeds_feeds_sources (
+CREATE TABLE feeds_sources_feeds (
     uuid UUID PRIMARY KEY,
     feed_uuid UUID NOT NULL REFERENCES feeds(uuid),
     feed_source_uuid UUID NOT NULL REFERENCES feeds_sources(uuid)
 );
-*/

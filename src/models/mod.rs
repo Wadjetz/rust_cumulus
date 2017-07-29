@@ -3,3 +3,4 @@ pub mod file;
 pub mod user;
 pub mod feed_source;
 pub mod feed;
+pub mod user_feed_source;

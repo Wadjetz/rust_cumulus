@@ -4,7 +4,7 @@ use models::file::File;
 use models::feed::Feed;
 use models::bookmark::Bookmark;
 use models::feed_source::FeedSource;
-use repositories::{bookmark_repository, file_repository, feed_repository, feed_source_repository};
+use repositories::{bookmark_repository, file_repository, feed_repository, users_feeds_sources_repository};
 
 use std::error::Error;
 
@@ -62,7 +62,7 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         offset: Option<i32> as "Offset"
     ) -> Result<Vec<FeedSource>, String> {
         let connection = executor.context().connection.clone().get().map_err(|e| e.description().to_string())?;
-        feed_source_repository::find_by_user(&connection, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
+        users_feeds_sources_repository::find_by_user(&connection, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
             .map_err(|e| e.description().to_string())
     }
 });
