@@ -5,9 +5,9 @@ export default class Header extends React.Component<{}, {}> {
     render() {
         return (
             <div className={styles.header}>
-                Header
+                <a className={styles.item} href="#/">Feeds</a>
+                <a className={styles.item} href="#/login">Login</a>
             </div>
         )
     }
 }
-

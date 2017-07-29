@@ -1,4 +1,19 @@
-
 .header {
+    display: flex;
+    align-content: center;
+
+    width: 100%;
+    border-bottom: 1px solid rgba(163, 163, 163, 0.20);
+    box-shadow: 0 2px 5px 1px rgba(194, 194, 194, 0.20);
+}
+
+.item {
+    color: #2D2D2D;
+    text-decoration: none;
+    padding: 10px 20px;
+    align-self: center;
+}
+
+.item:hover {
     background-color: #EEE;
 }
