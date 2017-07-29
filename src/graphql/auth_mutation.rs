@@ -60,4 +60,12 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
         feeds_sources_resolvers::add_feed_source(executor, &xml_url, title)
             .map_err(|e| e.description().to_string())
     }
+
+    field fallow_feed_source(
+        &executor,
+        uuid: String as "uuid",
+    ) -> Result<FeedSource, String> {
+        feeds_sources_resolvers::fallow_feed_source(executor, &uuid, &self.user)
+            .map_err(|e| e.description().to_string())
+    }
 });

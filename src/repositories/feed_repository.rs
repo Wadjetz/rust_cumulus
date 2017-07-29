@@ -48,7 +48,7 @@ pub fn insert(connection: &PooledConnection<PostgresConnectionManager>, feed: &F
 
 fn find_query(connection: &PooledConnection<PostgresConnectionManager>, limit: i32, offset: i32, _user: &User) -> Result<Rows<'static>> {
     let feeds = connection.query(
-      "SELECT * FROM feeds LIMIT $1::int OFFSET $2::int;",
+      "SELECT * FROM feeds ORDER BY created DESC LIMIT $1::int OFFSET $2::int;",
       &[&limit, &offset]
     )?;
     Ok(feeds)
