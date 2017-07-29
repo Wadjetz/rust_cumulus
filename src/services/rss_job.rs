@@ -36,13 +36,19 @@ fn process_rss(client: &Client, pool: &Pool<PostgresConnectionManager>) -> Resul
                         if let Ok(Some(readable)) = mercury::fetch_readable(client, &link.href) {
                             let feed = Feed::new(&readable.url.clone(), Some(rss_feed.clone().into()), Some(readable), None);
                             match repositories::feed_repository::insert(&conn, &feed) {
-                                Ok(_) => println!("readable inserted {:?}", feed.url),
+                                Ok(_) => {
+                                    println!("readable inserted {:?}", feed.url);
+                                    repositories::feeds_sources_feeds_repository::insert(&conn, &feed_source, &feed)?;
+                                },
                                 Err(_error) => {},//println!("readable error {:?}", error),
                             }
                         } else {
                             let feed = Feed::new(&link.href, Some(rss_feed.clone().into()), None, None); // TODO remove clone, refactor
                             match repositories::feed_repository::insert(&conn, &feed) {
-                                Ok(_) => println!("rss inserted {:?}", feed.url),
+                                Ok(_) => {
+                                    println!("rss inserted {:?}", feed.url);
+                                    repositories::feeds_sources_feeds_repository::insert(&conn, &feed_source, &feed)?;
+                                },
                                 Err(_error) => {},//println!("rss error {:?}", error),
                             }
                         }

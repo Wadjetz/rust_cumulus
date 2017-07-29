@@ -6,9 +6,7 @@ use postgres::rows::Rows;
 use postgres::error::Error;
 use postgres_shared::error::{SqlState};
 
-use models::user::User;
 use models::feed_source::FeedSource;
-use models::user_feed_source::UserFeedSource;
 use errors::*;
 
 impl FeedSource {

@@ -27,12 +27,13 @@ impl Feed {
 }
 
 struct UserFeed {
-    uuid: Uuid,
-    feed_uuid: Uuid,
-    user_uuid: Uuid,
+    pub uuid: Uuid,
+    pub feed_uuid: Uuid,
+    pub user_uuid: Uuid,
 }
 
 impl UserFeed {
+    #[allow(dead_code)]
     pub fn from(row: &Row) -> Self {
         UserFeed {
             uuid: row.get("uuid"),
@@ -42,6 +43,7 @@ impl UserFeed {
     }
 }
 
+#[allow(dead_code)]
 fn insert_user_feed_query(connection: &PooledConnection<PostgresConnectionManager>, feed: &Feed, user: &User) -> Result<u64> {
     Ok(connection.execute(
         "INSERT INTO users_feeds (uuid, feed_uuid, user_uuid) VALUES ($1, $2, $3)",
@@ -49,6 +51,7 @@ fn insert_user_feed_query(connection: &PooledConnection<PostgresConnectionManage
     )?)
 }
 
+#[allow(dead_code)]
 fn insert_user_feed(connection: &PooledConnection<PostgresConnectionManager>, feed: &Feed) -> Result<u64> {
     let inerted_rows = insert_query(connection, feed)?;
     if inerted_rows == 0 {

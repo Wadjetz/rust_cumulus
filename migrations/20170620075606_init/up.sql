@@ -39,7 +39,7 @@ CREATE TABLE feeds_sources (
 CREATE TABLE users_feeds_sources (
     uuid UUID PRIMARY KEY,
     user_uuid UUID NOT NULL REFERENCES users(uuid),
-    feeds_sources_uuid UUID NOT NULL REFERENCES feeds_sources(uuid)
+    feed_source_uuid UUID NOT NULL REFERENCES feeds_sources(uuid)
 );
 
 CREATE TABLE feeds (
@@ -50,7 +50,7 @@ CREATE TABLE feeds (
     twitter JSONB,
     created TIMESTAMP,
     updated TIMESTAMP
-)
+);
 
 CREATE TABLE users_feeds (
     uuid UUID PRIMARY KEY,
