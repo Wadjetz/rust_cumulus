@@ -36,6 +36,15 @@ CREATE TABLE feeds_sources (
     updated TIMESTAMP
 );
 
+CREATE TABLE sources (
+    uuid UUID PRIMARY KEY,
+    source_type TEXT NOT NULL,
+    data JSONB,
+    error TEXT,
+    created TIMESTAMP,
+    updated TIMESTAMP
+);
+
 CREATE TABLE users_feeds_sources (
     uuid UUID PRIMARY KEY,
     user_uuid UUID NOT NULL REFERENCES users(uuid),

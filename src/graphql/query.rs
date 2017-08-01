@@ -7,6 +7,8 @@ use graphql::auth_query_ql::AuthQuery;
 use repositories::user_repository::{verify_user};
 use repositories::feed_source_repository;
 use models::feed_source::FeedSource;
+use source::Source;
+use source;
 use token;
 
 pub struct Query {
@@ -43,5 +45,17 @@ graphql_object!(Query: Query as "Query" |&self| {
         let connection = executor.context().connection.clone().get().expect("Error connection pool");
         feed_source_repository::find(&connection, limit.unwrap_or(50), offset.unwrap_or(0))
             .map_err(|e| e.description().to_string())
+    }
+
+    field sources(
+        &executor,
+        limit: Option<i32> as "Limit",
+        offset: Option<i32> as "Offset",
+    ) -> Result<Vec<Source>, String> {
+        source::find_resolver(executor, limit.unwrap_or(50), offset.unwrap_or(0))
+            .map_err(|e| {
+                println!("{:?}", e);
+                e.description().to_string()
+            })
     }
 });

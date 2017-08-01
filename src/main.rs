@@ -3,10 +3,12 @@
 #![plugin(rocket_codegen)]
 #![feature(custom_attribute)]
 #![feature(custom_derive)]
+#![feature(associated_type_defaults)]
 
 #[macro_use]
 extern crate serde_derive;
 extern crate serde;
+#[macro_use]
 extern crate serde_json;
 extern crate dotenv;
 extern crate jsonwebtoken;
@@ -48,6 +50,7 @@ mod app_state;
 mod config;
 mod services;
 mod resolvers;
+mod source;
 
 use std::path::{Path, PathBuf};
 
