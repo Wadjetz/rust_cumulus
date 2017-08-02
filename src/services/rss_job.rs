@@ -1,4 +1,4 @@
-use std::thread;
+/*use std::thread;
 use std::time::Duration;
 
 use r2d2::Pool;
@@ -61,3 +61,4 @@ fn process_rss(client: &Client, pool: &Pool<PostgresConnectionManager>) -> Resul
     }
     Ok(())
 }
+*/

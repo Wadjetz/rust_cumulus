@@ -1,9 +1,6 @@
 pub mod bookmark_repository;
 pub mod user_repository;
 pub mod file_repository;
-pub mod feed_source_repository;
-pub mod users_feeds_sources_repository;
-pub mod feeds_sources_feeds_repository;
 pub mod feed_repository;
 
 use models::file::FileType;

@@ -95,7 +95,7 @@ fn files(file: PathBuf) -> Option<NamedFile> {
 fn main() {
     let connection = create_db_pool(&config::CONFIG);
     let client = reqwest::Client::new().unwrap();
-    rss_job::run(client, connection.clone());
+    //rss_job::run(client, connection.clone());
     rocket::ignite()
         .manage(Query::new(connection.clone()))
         .manage(AppState::new(connection.clone()))

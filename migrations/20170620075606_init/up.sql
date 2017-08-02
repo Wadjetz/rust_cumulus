@@ -26,16 +26,6 @@ CREATE TABLE files (
     user_uuid UUID NOT NULL REFERENCES users(uuid)
 );
 
-CREATE TABLE feeds_sources (
-    uuid UUID PRIMARY KEY,
-    title TEXT NOT NULL,
-    xml_url TEXT UNIQUE NOT NULL,
-    html_url TEXT NOT NULL,
-    error TEXT,
-    created TIMESTAMP,
-    updated TIMESTAMP
-);
-
 CREATE TABLE sources (
     uuid UUID PRIMARY KEY,
     source_type TEXT NOT NULL,
@@ -49,12 +39,6 @@ CREATE TABLE users_sources (
     uuid UUID PRIMARY KEY,
     user_uuid UUID NOT NULL REFERENCES users(uuid),
     source_uuid UUID NOT NULL REFERENCES sources(uuid)
-);
-
-CREATE TABLE users_feeds_sources (
-    uuid UUID PRIMARY KEY,
-    user_uuid UUID NOT NULL REFERENCES users(uuid),
-    feed_source_uuid UUID NOT NULL REFERENCES feeds_sources(uuid)
 );
 
 CREATE TABLE feeds (
@@ -71,10 +55,4 @@ CREATE TABLE users_feeds (
     uuid UUID PRIMARY KEY,
     feed_uuid UUID NOT NULL REFERENCES feeds(uuid),
     user_uuid UUID NOT NULL REFERENCES users(uuid)
-);
-
-CREATE TABLE feeds_sources_feeds (
-    uuid UUID PRIMARY KEY,
-    feed_uuid UUID NOT NULL REFERENCES feeds(uuid),
-    feed_source_uuid UUID NOT NULL REFERENCES feeds_sources(uuid)
 );

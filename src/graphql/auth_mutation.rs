@@ -2,8 +2,6 @@ use graphql::query::Query;
 use models::user::User;
 use models::bookmark::Bookmark;
 use models::file::File;
-use models::feed_source::FeedSource;
-use resolvers::feeds_sources_resolvers;
 use resolvers::bookmarks_resolvers;
 use sources::Source;
 use users_sources;
@@ -51,23 +49,6 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
     ) -> Result<Bookmark, String> as "Bookmark" {
         let bookmark = Bookmark::from_request(url, title, description, path, self.user.uuid);
         bookmarks_resolvers::add_bookmark(executor, bookmark, &self.user)
-            .map_err(|e| e.description().to_string())
-    }
-
-    field add_feed_source(
-        &executor,
-        xml_url: String as "Url",
-        title: Option<String> as "Title",
-    ) -> Result<FeedSource, String> as "Feed Source" {
-        feeds_sources_resolvers::add_feed_source(executor, &xml_url, title)
-            .map_err(|e| e.description().to_string())
-    }
-
-    field fallow_feed_source(
-        &executor,
-        uuid: String as "uuid",
-    ) -> Result<FeedSource, String> {
-        feeds_sources_resolvers::fallow_feed_source(executor, &uuid, &self.user)
             .map_err(|e| e.description().to_string())
     }
 
