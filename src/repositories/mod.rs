@@ -7,7 +7,7 @@ pub mod feeds_sources_feeds_repository;
 pub mod feed_repository;
 
 use models::file::FileType;
-use source::SourceType;
+use sources::SourceType;
 
 use postgres_shared::types::FromSql;
 use postgres_shared::types::ToSql;

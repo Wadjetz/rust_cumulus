@@ -185,7 +185,7 @@ pub fn add_source_resolver<'a>(executor: &Executor<'a, Query>, title: String, xm
     let rss_source = RssSource::new(&title, &xml_url, &html_url);
     let source = Source::new_rss(rss_source)?;
     let json_param = json!({ "xml_url": xml_url });
-    let exist = pg.exist(&Source::exist_query(), json_param)?;
+    let exist = pg.exist(&Source::exist_query(), &[&json_param])?;
     if !exist {
         pg.insert(&source)?;
         Ok(source)

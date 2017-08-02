@@ -46,8 +46,8 @@ impl PgDatabase {
         })
     }
 
-    pub fn exist<P>(&self, query: &str, param: P) -> Result<bool> where P: ToSql + ToString {
-        let rows = self.connection.query(query, &[&param])?;
+    pub fn exist<'a>(&self, query: &str, params: &[&'a ToSql]) -> Result<bool> {
+        let rows = self.connection.query(query, params)?;
         Ok(rows.iter().fold(false, |_, row| {
             let exist: i64 = row.get("exist");
             exist > 0
@@ -57,5 +57,11 @@ impl PgDatabase {
     pub fn find<'a, E>(&self, query: &str, params: &[&'a ToSql]) -> Result<Vec<E>> where E: for<'b> From<Row<'b>> {
         let rows = self.connection.query(query, params)?;
         Ok(rows.iter().map(|row| row.into()).collect())
+    }
+
+    pub fn find_one<'a, E>(&self, query: &str, params: &[&'a ToSql]) -> Result<Option<E>> where E: for<'b> From<Row<'b>> {
+        let rows = self.connection.query(query, params)?;
+        let mut items: Vec<E> = rows.iter().map(|row| row.into()).collect();
+        Ok(items.pop())
     }
 }

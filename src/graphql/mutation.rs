@@ -2,7 +2,7 @@ use uuid::Uuid;
 use graphql::query::Query;
 use graphql::auth_mutation::AuthMutation;
 use models::user::{User, hash_password, verify_password};
-use source::{Source, add_source_resolver};
+use sources::{Source, add_source_resolver};
 use repositories::user_repository;
 use token;
 use errors::ErrorKind;
@@ -63,9 +63,6 @@ graphql_object!(Mutation: Query as "Mutation" |&self| {
         xml_url: String as "xml_url",
         html_url: String as "html_url",
     ) -> Result<Source, String> {
-        add_source_resolver(executor, title, xml_url, html_url).map_err(|e| {
-            println!("Error {:?}", e);
-            e.description().to_string()
-        })
+        add_source_resolver(executor, title, xml_url, html_url).map_err(|e| e.description().to_string())
     }
 });

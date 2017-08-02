@@ -45,6 +45,12 @@ CREATE TABLE sources (
     updated TIMESTAMP
 );
 
+CREATE TABLE users_sources (
+    uuid UUID PRIMARY KEY,
+    user_uuid UUID NOT NULL REFERENCES users(uuid),
+    source_uuid UUID NOT NULL REFERENCES sources(uuid)
+);
+
 CREATE TABLE users_feeds_sources (
     uuid UUID PRIMARY KEY,
     user_uuid UUID NOT NULL REFERENCES users(uuid),
