@@ -1,4 +1,4 @@
-/*use std::thread;
+use std::thread;
 use std::time::Duration;
 
 use r2d2::Pool;
@@ -6,8 +6,9 @@ use r2d2_postgres::PostgresConnectionManager;
 use reqwest::Client;
 
 use errors::*;
-use models::feed::Feed;
-use repositories;
+use feeds::Feed;
+use sources;
+use pg::PgDatabase;
 use services::rss;
 use services::mercury;
 
@@ -26,6 +27,21 @@ pub fn run(client: Client, pool: Pool<PostgresConnectionManager>) {
 // TODO refactor
 fn process_rss(client: &Client, pool: &Pool<PostgresConnectionManager>) -> Result<()> {
     let conn = pool.get()?;
+    let pg = PgDatabase::new(conn);
+    let sources = sources::find_rss_sources(&pg, i32::max_value(), 0)?;
+    for source in &sources {
+        if let sources::SourceOption::Rss(rss_source) = source.options()? {
+            let maybe_feeds_channel = rss::fetch_feeds_channel(&rss_source.xml_url)?;
+            if let Some(feeds_channel) = maybe_feeds_channel {
+                for rss_feed in &feeds_channel.entries {
+                    for link in &rss_feed.alternate {
+                        println!("sources {:?} rss_feed {:?}", sources, rss_feed);
+                    }
+                }
+            }
+        }
+    }
+    /*
     let feeds_sources = repositories::feed_source_repository::find(&conn, i32::max_value(), 0)?;
     for feed_source in &feeds_sources {
         let maybe_feeds_channel = rss::fetch_feeds_channel(&feed_source.xml_url)?;
@@ -59,6 +75,6 @@ fn process_rss(client: &Client, pool: &Pool<PostgresConnectionManager>) -> Resul
             println!("Feed not found for {:?}", &feed_source.xml_url);
         }
     }
+    */
     Ok(())
 }
-*/

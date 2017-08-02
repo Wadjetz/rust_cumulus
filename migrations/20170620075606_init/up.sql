@@ -48,7 +48,8 @@ CREATE TABLE feeds (
     readable JSONB,
     twitter JSONB,
     created TIMESTAMP,
-    updated TIMESTAMP
+    updated TIMESTAMP,
+    source_uuid UUID NOT NULL REFERENCES sources(uuid)
 );
 
 CREATE TABLE users_feeds (

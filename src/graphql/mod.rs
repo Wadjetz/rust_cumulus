@@ -5,6 +5,3 @@ pub mod file_ql;
 pub mod mutation;
 pub mod query;
 pub mod user_ql;
-pub mod feed_ql;
-pub mod readable_ql;
-pub mod rss_ql;

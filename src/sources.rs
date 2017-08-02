@@ -201,3 +201,9 @@ pub fn find_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32
     let sources = pg.find(find_query, &[&limit, &offset])?;
     Ok(sources)
 }
+
+pub fn find_rss_sources(pg: &PgDatabase, limit: i32, offset: i32) -> Result<Vec<Source>> {
+    let find_rss_query = r#"SELECT * FROM sources WHERE source_type = 'Rss' LIMIT $1::int OFFSET $2::int;"#;
+    let sources = pg.find::<Source>(find_rss_query, &[&limit, &offset])?;
+    Ok(sources)
+}

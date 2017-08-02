@@ -57,14 +57,22 @@ impl Existable for UserSource {
     }
 }
 
+pub fn find_user_source_by_uuid(pg: &PgDatabase, uuid: Uuid) -> Result<Option<Source>> {
+    let find_query = r#"SELECT * FROM sources WHERE uuid = $1::uuid;"#;
+    Ok(pg.find_one::<Source>(find_query, &[&uuid])?)
+}
+
+pub fn user_source_exist(pg: &PgDatabase, uuid: &Uuid, user: &User) -> Result<bool> {
+    Ok(pg.exist(&UserSource::exist_query(), &[&user.uuid, &uuid])?)
+}
+
 pub fn fallow_source_resolver<'a>(executor: &Executor<'a, Query>, uuid: &str, user: &User) -> Result<Source> {
     let connection = executor.context().connection.clone().get()?;
     let pg = PgDatabase::new(connection);
     let uuid = Uuid::parse_str(uuid)?;
-    let find_query = r#"SELECT * FROM sources WHERE uuid = $1::uuid;"#;
-    let maybe_source = pg.find_one::<Source>(find_query, &[&uuid])?;
+    let maybe_source = find_user_source_by_uuid(&pg, uuid)?;
     if let Some(source) = maybe_source {
-        let exist = pg.exist(&UserSource::exist_query(), &[&user.uuid, &uuid])?;
+        let exist = user_source_exist(&pg, &uuid, user)?;
         if !exist {
             let user_source = UserSource::new(user.uuid.clone(), source.uuid.clone());
             pg.insert(&user_source)?;

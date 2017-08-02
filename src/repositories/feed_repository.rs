@@ -7,7 +7,7 @@ use postgres::error::Error;
 use postgres_shared::error::{SqlState};
 
 use models::user::User;
-use models::feed::Feed;
+use feeds::Feed;
 use errors::*;
 
 use serde_json;
@@ -22,6 +22,7 @@ impl Feed {
             twitter: row.get("twitter"),
             created: row.get("created"),
             updated: row.get("updated"),
+            source_uuid: row.get("source_uuid"),
         }
     }
 }
@@ -41,59 +42,6 @@ impl UserFeed {
             user_uuid: row.get("user_uuid"),
         }
     }
-}
-
-#[allow(dead_code)]
-fn insert_user_feed_query(connection: &PooledConnection<PostgresConnectionManager>, feed: &Feed, user: &User) -> Result<u64> {
-    Ok(connection.execute(
-        "INSERT INTO users_feeds (uuid, feed_uuid, user_uuid) VALUES ($1, $2, $3)",
-        &[&Uuid::new_v4(), &feed.uuid, &user.uuid]
-    )?)
-}
-
-#[allow(dead_code)]
-fn insert_user_feed(connection: &PooledConnection<PostgresConnectionManager>, feed: &Feed) -> Result<u64> {
-    let inerted_rows = insert_query(connection, feed)?;
-    if inerted_rows == 0 {
-        Err(ErrorKind::NotInserted.into())
-    } else {
-        Ok(inerted_rows)
-    }
-}
-
-fn insert_query(connection: &PooledConnection<PostgresConnectionManager>, feed: &Feed) -> Result<u64> {
-    connection.execute(
-        "INSERT INTO feeds (uuid, url, rss, readable, twitter, created, updated) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-        &[&feed.uuid, &feed.url, &serde_json::to_value(&feed.rss).ok(), &serde_json::to_value(&feed.readable).ok(), &feed.twitter, &feed.created, &feed.updated]
-    ).map_err(|e| {
-        match e {
-            Error::Db(ref e) if e.code == SqlState::UniqueViolation => ErrorKind::AlreadyExist.into(),
-            e => e.into(),
-        }
-    })
-}
-
-pub fn insert(connection: &PooledConnection<PostgresConnectionManager>, feed: &Feed) -> Result<u64> {
-    let inerted_rows = insert_query(connection, feed)?;
-    if inerted_rows == 0 {
-        Err(ErrorKind::NotInserted.into())
-    } else {
-        Ok(inerted_rows)
-    }
-}
-
-fn find_query(connection: &PooledConnection<PostgresConnectionManager>, limit: i32, offset: i32, _user: &User) -> Result<Rows<'static>> {
-    let feeds = connection.query(
-      "SELECT * FROM feeds ORDER BY created DESC LIMIT $1::int OFFSET $2::int;",
-      &[&limit, &offset]
-    )?;
-    Ok(feeds)
-}
-
-pub fn find(connection: &PooledConnection<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Feed>> {
-    let rows = find_query(connection, limit, offset, user)?;
-    let feeds = rows.iter().map(|row| Feed::from(&row)).collect();
-    Ok(feeds)
 }
 
 fn find_by_url_query(connection: &PooledConnection<PostgresConnectionManager>, url: &str) -> Result<Rows<'static>> {

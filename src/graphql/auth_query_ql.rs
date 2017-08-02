@@ -1,7 +1,8 @@
 use graphql::query::Query;
 use models::user::User;
 use models::file::File;
-use models::feed::Feed;
+use feeds;
+use feeds::Feed;
 use models::bookmark::Bookmark;
 use repositories::{bookmark_repository, file_repository, feed_repository};
 
@@ -50,8 +51,6 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset"
     ) -> Result<Vec<Feed>, String> {
-        let connection = executor.context().connection.clone().get().map_err(|e| e.description().to_string())?;
-        feed_repository::find(&connection, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
-            .map_err(|e| e.description().to_string())
+        feeds::find_resolver(executor, limit.unwrap_or(50), offset.unwrap_or(0)).map_err(|e| e.description().to_string())
     }
 });
