@@ -51,8 +51,9 @@ mod config;
 mod services;
 mod resolvers;
 mod sources;
-mod users_sources;
 mod feeds;
+mod users_sources;
+mod users_feeds;
 
 use std::path::{Path, PathBuf};
 

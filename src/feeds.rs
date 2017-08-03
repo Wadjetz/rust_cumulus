@@ -11,7 +11,7 @@ use feed_rs::entry::Entry;
 use errors::*;
 use graphql::query::Query;
 use services::mercury::ReadableData;
-use pg::{Insertable, Existable, PgDatabase};
+use pg::{Insertable, PgDatabase};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Rss {
@@ -251,14 +251,19 @@ pub fn insert_feed(pg: &PgDatabase, feed: &Feed) -> Result<u64> {
     Ok(pg.insert(feed)?)
 }
 
-pub fn find_feed(pg: PgDatabase, limit: i32, offset: i32) -> Result<Vec<Feed>> {
+pub fn find_feed(pg: &PgDatabase, limit: i32, offset: i32) -> Result<Vec<Feed>> {
     let find_query = r#"SELECT * FROM feeds ORDER BY created DESC LIMIT $1::int OFFSET $2::int;"#;
     pg.find(find_query, &[&limit, &offset])
+}
+
+pub fn exist(pg: &PgDatabase, url: &str) -> Result<bool> {
+    let exist_query = "SELECT COUNT(*) AS exist FROM feeds WHERE url = $1;";
+    Ok(pg.exist(exist_query, &[&url.to_owned()])?)
 }
 
 pub fn find_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32) -> Result<Vec<Feed>> {
     let connection = executor.context().connection.clone().get()?;
     let pg = PgDatabase::new(connection);
-    let feeds = find_feed(pg, limit, offset)?;
+    let feeds = find_feed(&pg, limit, offset)?;
     Ok(feeds)
 }

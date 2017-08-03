@@ -8,6 +8,7 @@ use reqwest::Client;
 use errors::*;
 use feeds::Feed;
 use sources;
+use feeds;
 use pg::PgDatabase;
 use services::rss;
 use services::mercury;
@@ -35,7 +36,17 @@ fn process_rss(client: &Client, pool: &Pool<PostgresConnectionManager>) -> Resul
             if let Some(feeds_channel) = maybe_feeds_channel {
                 for rss_feed in &feeds_channel.entries {
                     for link in &rss_feed.alternate {
-                        println!("sources {:?} rss_feed {:?}", sources, rss_feed);
+                        if !feeds::exist(&pg, &link.href)? {
+                            if let Ok(Some(readable)) = mercury::fetch_readable(client, &link.href) {
+                                let feed = Feed::new(&readable.url.clone(), Some(rss_feed.clone().into()), Some(readable), None, source.uuid);
+                                feeds::insert_feed(&pg, &feed)?;
+                                println!("readable inserted {:?}", feed.url);
+                            } else {
+                                let feed = Feed::new(&link.href, Some(rss_feed.clone().into()), None, None, source.uuid); // TODO remove clone, refactor
+                                feeds::insert_feed(&pg, &feed)?;
+                                println!("rss inserted {:?}", feed.url);
+                            }
+                        }
                     }
                 }
             }

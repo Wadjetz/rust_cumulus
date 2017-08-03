@@ -4,7 +4,7 @@ use models::file::File;
 use feeds;
 use feeds::Feed;
 use models::bookmark::Bookmark;
-use repositories::{bookmark_repository, file_repository, feed_repository};
+use repositories::{bookmark_repository, file_repository};
 
 use std::error::Error;
 
