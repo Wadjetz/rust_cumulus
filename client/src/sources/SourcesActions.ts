@@ -21,3 +21,22 @@ export function sourcesOnLoadError(error: any) {
         error
     }
 }
+
+export const FALLOW_SOURCE_ON_LOAD = "FALLOW_SOURCE_ON_LOAD"
+export const FALLOW_SOURCE_ON_LOAD_SUCCESS = "FALLOW_SOURCE_ON_LOAD_SUCCESS"
+export const FALLOW_SOURCE_ON_LOAD_ERROR = "FALLOW_SOURCE_ON_LOAD_ERROR"
+
+export function fallowSourcesOnLoad() {
+    return { type: FALLOW_SOURCE_ON_LOAD }
+}
+
+export function fallowSourcesOnLoadSuccess(source: Source) {
+    return { type: FALLOW_SOURCE_ON_LOAD_SUCCESS, source }
+}
+
+export function fallowSourcesOnLoadError(error: any) {
+    return {
+        type: FALLOW_SOURCE_ON_LOAD_ERROR,
+        error
+    }
+}

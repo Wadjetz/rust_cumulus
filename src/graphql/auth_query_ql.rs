@@ -7,7 +7,7 @@ use users_feeds::{unreaded_feeds, users_feeds_resolver};
 use models::bookmark::Bookmark;
 use repositories::{bookmark_repository, file_repository};
 use sources::Source;
-use users_sources::users_sources_resolver;
+use users_sources::{unfollowed_sources_resolver, users_sources_resolver};
 
 use std::error::Error;
 
@@ -65,9 +65,18 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
     field my_sources(
         &executor,
         limit: Option<i32> as "Limit",
-        offset: Option<i32> as "Offset"
+        offset: Option<i32> as "Offset",
     ) -> Result<Vec<Source>, String> {
         users_sources_resolver(executor, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
+            .map_err(|e| e.description().to_string())
+    }
+
+    field unfollowed_sources(
+        &executor,
+        limit: Option<i32> as "Limit",
+        offset: Option<i32> as "Offset",
+    ) -> Result<Vec<Source>, String> {
+        unfollowed_sources_resolver(executor, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
             .map_err(|e| e.description().to_string())
     }
 

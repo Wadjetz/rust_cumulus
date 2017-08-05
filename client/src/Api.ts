@@ -30,11 +30,11 @@ export function login(email: string, password: string): Promise<LoginResponse> {
 }
 
 
-export function loadSources(token: string): Promise<Source[]> {
+export function loadUnfollowedSources(token: string): Promise<Source[]> {
     const options = fetchOptions(`
         query {
             auth(token: "${token}") {
-                mySources {
+                unfollowedSources {
                     uuid
                     sourceType
                     rssSource {
@@ -50,7 +50,8 @@ export function loadSources(token: string): Promise<Source[]> {
     return fetch(`${BASE_URI}/graphql`, options)
     .then(response => response.json())
     .then(success)
-    .then(result => result.auth.mySources)
+    .then(log)
+    .then(result => result.auth.unfollowedSources)
 }
 
 export function loadUnreadedFeeds(token: string): Promise<Feed[]> {
@@ -80,6 +81,26 @@ export function loadUnreadedFeeds(token: string): Promise<Feed[]> {
     .then(response => response.json())
     .then(success)
     .then(result => result.auth.unreadedFeeds)
+}
+
+function log<T>(t: T): T {
+    console.log("fetch log", t)
+    return t
+}
+
+export function fallowSource(token: string, source: Source): Promise<void> {
+    const options = fetchOptions(`
+        mutation {
+            auth(token: "${token}") {
+                fallowSource(sourceUuid: "${source.uuid}") {
+                    uuid
+                }
+            }
+        }
+    `)
+    return fetch(`${BASE_URI}/graphql`, options)
+    .then(response => response.json())
+    .then(success)
 }
 
 export function readFeed(token: string, feed: Feed, reaction: Reaction): Promise<void> {

@@ -91,3 +91,19 @@ pub fn users_sources_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, of
     "#;
     Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
 }
+
+pub fn unfollowed_sources_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32, user: &User) -> Result<Vec<Source>> {
+    let connection = executor.context().connection.clone().get()?;
+    let pg = PgDatabase::new(connection);
+    let query = r#"
+        SELECT sources.* FROM sources
+        WHERE 0 = (
+            SELECT COUNT(*)
+            FROM users_sources
+            WHERE sources.uuid = users_sources.source_uuid
+                AND users_sources.user_uuid = $1
+        )
+        LIMIT $2::int OFFSET $3::int;
+    "#;
+    Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
+}
