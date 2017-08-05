@@ -1,4 +1,5 @@
 import { Feed, Reaction } from "./feeds/Feed"
+import { Source } from "./sources/Source"
 import * as router from "./router"
 
 const BASE_URI = "http://localhost:8000"
@@ -26,6 +27,30 @@ export function login(email: string, password: string): Promise<LoginResponse> {
     return fetch(`${BASE_URI}/graphql`, options)
     .then(response => response.json())
     .then(success)
+}
+
+
+export function loadSources(token: string): Promise<Source[]> {
+    const options = fetchOptions(`
+        query {
+            auth(token: "${token}") {
+                mySources {
+                    uuid
+                    sourceType
+                    rssSource {
+                        title
+                        xmlUrl
+                        htmlUrl
+                    }
+                    error
+                }
+            }
+        }
+    `)
+    return fetch(`${BASE_URI}/graphql`, options)
+    .then(response => response.json())
+    .then(success)
+    .then(result => result.auth.mySources)
 }
 
 export function loadUnreadedFeeds(token: string): Promise<Feed[]> {

@@ -7,6 +7,7 @@ export default class Header extends React.Component<{}, {}> {
             <div className={styles.header}>
                 <a className={styles.item} href="#/">MindStream</a>
                 <a className={styles.item} href="#/feeds">Feeds</a>
+                <a className={styles.item} href="#/sources">Sources</a>
                 <a className={styles.item} href="#/login">Login</a>
             </div>
         )

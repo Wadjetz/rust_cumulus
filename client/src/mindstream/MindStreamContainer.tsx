@@ -35,10 +35,10 @@ class MindStreamContainer extends React.Component<Props, {}> {
                     <button onClick={onReaction(login.token, feed, "Readed")}>Read</button>
                     <ReactCSSTransitionGroup
                         transitionName={{
-                            enter: styles.exampleEnter,
-                            enterActive: styles.exampleEnterActive,
-                            leave: styles.exampleLeave,
-                            leaveActive: styles.exampleLeaveActive,
+                            enter: styles.transitionEnter,
+                            enterActive: styles.transitionEnterActive,
+                            leave: styles.transitionLeave,
+                            leaveActive: styles.transitionLeaveActive,
                         }}
                         transitionEnterTimeout={400}
                         transitionLeaveTimeout={200}>

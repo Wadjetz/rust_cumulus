@@ -12,6 +12,8 @@ import LoginContainer from "./login/LoginContainer"
 import FeedsContainer from "./feeds/FeedsContainer"
 import MindStreamContainer from "./mindstream/MindStreamContainer"
 import MindStreamReducer from "./mindstream/MindStreamReducer"
+import SourcesContainer from "./sources/SourcesContainer"
+import SourcesReducer from "./sources/SourcesReducer"
 import Header from "./components/Header"
 
 const middleware = routerMiddleware(history)
@@ -20,6 +22,7 @@ const reducers = combineReducers({
     login: LoginReducer,
     feeds: FeedsReducer,
     mindStream: MindStreamReducer,
+    sources: SourcesReducer,
     router: routerReducer
 })
 
@@ -38,6 +41,7 @@ ReactDOM.render(
                 <Header />
                 <Route exact path="/" component={MindStreamContainer}/>
                 <Route exact path="/feeds" component={FeedsContainer}/>
+                <Route exact path="/sources" component={SourcesContainer}/>
                 <Route exact path="/login" component={LoginContainer}/>
             </div>
         </ConnectedRouter>
