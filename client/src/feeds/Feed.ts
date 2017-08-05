@@ -1,13 +1,17 @@
 
+export type Reaction = "Readed" | "ReadLater" | "Viewed" | "Liked" | "Disliked" | "Archived"
+
 export interface Feed {
     uuid: string
     url: string
-    readable?: Readable,
-    rss?: {
-        title: string
-        content?: string
-        summary?: string
-    }
+    readable?: Readable
+    rss?: Rss
+}
+
+export interface Rss {
+    title: string
+    content?: string
+    summary?: string
 }
 
 export interface Readable {

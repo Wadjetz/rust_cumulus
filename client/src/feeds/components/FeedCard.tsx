@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Feed } from "../Feed"
-import FeedReadable from "./FeedReadable"
+import FeedReadable from "../../components/FeedReadable"
 import * as styles from "./FeedCard.css"
 
 interface Props {

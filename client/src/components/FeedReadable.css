@@ -1,0 +1,28 @@
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.feed_readable {
+    max-width: 900px;
+    padding: 30px;
+}
+
+.container img {
+    width: 100%;
+}
+
+.title {
+    display: block;
+    text-decoration: none;
+    color: black;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 1.9rem;
+    margin-bottom: 15px;
+}
+
+.title:hover {
+    color: #3149AE;
+    text-decoration: underline;
+}

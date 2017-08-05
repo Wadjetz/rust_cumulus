@@ -36,7 +36,7 @@ const mapDispatchToProps = (dispatch: Dispatch<State>, state: any) => {
     return {
         onLoad: (token: string) => {
             dispatch(FeedsActions.feedsOnLoad())
-            Api.loadFeeds(token).then(feeds => {
+            Api.loadUnreadedFeeds(token).then(feeds => {
                 dispatch(FeedsActions.feedsOnLoadSuccess(feeds))
             }).catch(error => {
                 dispatch(FeedsActions.feedsOnLoadError(error))

@@ -1,4 +1,4 @@
-import { Feed } from "./feeds/Feed"
+import { Feed, Reaction } from "./feeds/Feed"
 import * as router from "./router"
 
 const BASE_URI = "http://localhost:8000"
@@ -6,58 +6,68 @@ const BASE_URI = "http://localhost:8000"
 interface LoginResponse {
     login: string
 }
-export function login(email: string, password: string): Promise<LoginResponse> {
-    const query = `mutation {
-        login(email: "${email}", password: "${password}")
-    }`.replace(/\s\s*/g, " ")
-    return fetch(`${BASE_URI}/graphql`, {
+
+function fetchOptions(query: string) {
+    return {
         method: "POST",
         body: JSON.stringify({
-            query: query,
+            query: query.replace(/\s\s*/g, " "),
         }),
         headers: {
             "Content-Type": "application/json"
         }
-    })
+    }
+}
+
+export function login(email: string, password: string): Promise<LoginResponse> {
+    const options = fetchOptions(`mutation {
+        login(email: "${email}", password: "${password}")
+    }`)
+    return fetch(`${BASE_URI}/graphql`, options)
     .then(response => response.json())
     .then(success)
 }
 
-export function loadFeeds(token: string): Promise<Feed[]> {
-    const query = `
-    query {
-        auth(token: "${token}") {
-            feeds {
-                uuid
-                url
-                readable {
+export function loadUnreadedFeeds(token: string): Promise<Feed[]> {
+    const options = fetchOptions(`
+        query {
+            auth(token: "${token}") {
+                unreadedFeeds {
+                    uuid
                     url
-                    title
-                    content
-                    excerpt
-                    leadImageUrl
-                }
-                rss {
-                    title
-                    content
-                    summary
+                    readable {
+                        url
+                        title
+                        content
+                        excerpt
+                        leadImageUrl
+                    }
+                    rss {
+                        title
+                        content
+                        summary
+                    }
                 }
             }
         }
-    }
-    `.replace(/\s\s*/g, " ")
-    return fetch(`${BASE_URI}/graphql`, {
-        method: "POST",
-        body: JSON.stringify({
-            query: query,
-        }),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
+    `)
+    return fetch(`${BASE_URI}/graphql`, options)
     .then(response => response.json())
     .then(success)
-    .then(result => result.auth.feeds)
+    .then(result => result.auth.unreadedFeeds)
+}
+
+export function readFeed(token: string, feed: Feed, reaction: Reaction): Promise<void> {
+    const options = fetchOptions(`
+        mutation {
+            auth(token: "${token}") {
+                feedReaction(feedUuid: "${feed.uuid}", reaction: "${reaction}")
+            }
+        }
+    `)
+    return fetch(`${BASE_URI}/graphql`, options)
+    .then(response => response.json())
+    .then(success)
 }
 
 export function success(result: any) {
