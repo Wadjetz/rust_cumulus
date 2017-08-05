@@ -22,7 +22,6 @@ pub struct ReadableData {
     pub next_page_url: Option<String>,
 }
 
-#[allow(dead_code)]
 pub fn fetch_readable(client: &Client, url: &str) -> Result<Option<ReadableData>> {
     let url = format!("http://mercury.postlight.com/parser?url={}", url);
     let api_key = &CONFIG.mercury_api_key;

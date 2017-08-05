@@ -256,7 +256,7 @@ pub fn find_feed(pg: &PgDatabase, limit: i32, offset: i32) -> Result<Vec<Feed>> 
     pg.find(find_query, &[&limit, &offset])
 }
 
-pub fn exist(pg: &PgDatabase, url: &str) -> Result<bool> {
+pub fn is_feed_exist(pg: &PgDatabase, url: &str) -> Result<bool> {
     let exist_query = "SELECT COUNT(*) AS exist FROM feeds WHERE url = $1;";
     Ok(pg.exist(exist_query, &[&url.to_owned()])?)
 }

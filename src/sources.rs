@@ -7,6 +7,7 @@ use chrono::NaiveDateTime;
 use chrono::prelude::*;
 use serde_json::Value;
 use serde_json;
+use services::rss;
 
 use errors::*;
 use graphql::query::Query;
@@ -184,9 +185,29 @@ pub fn add_source_resolver<'a>(executor: &Executor<'a, Query>, title: String, xm
     let pg = PgDatabase::new(connection);
     let rss_source = RssSource::new(&title, &xml_url, &html_url);
     let source = Source::new_rss(rss_source)?;
+    if !source_existe(&pg, &xml_url)? {
+        pg.insert(&source)?;
+        Ok(source)
+    } else {
+        Err(ErrorKind::AlreadyExist.into())
+    }
+}
+
+fn source_existe(pg: &PgDatabase, xml_url: &str) -> Result<bool> {
     let json_param = json!({ "xml_url": xml_url });
-    let exist = pg.exist(&Source::exist_query(), &[&json_param])?;
-    if !exist {
+    Ok(pg.exist(&Source::exist_query(), &[&json_param])?)
+}
+
+pub fn add_rss_source_resolver<'a>(executor: &Executor<'a, Query>, xml_url: &str) -> Result<Source> { 
+    let connection = executor.context().connection.clone().get()?;
+    let pg = PgDatabase::new(connection);
+    let maybe_feed = rss::fetch_feeds_channel(&xml_url)?;
+    let feed = maybe_feed.ok_or_else(|| ErrorKind::NotFound)?;
+    let source_title = feed.title.unwrap_or_else(|| xml_url.to_string());
+    let html_url = feed.website.unwrap_or_else(|| xml_url.to_string());
+    let rss_source = RssSource::new(&source_title, &xml_url, &html_url);
+    let source = Source::new_rss(rss_source)?;
+    if !source_existe(&pg, &xml_url)? {
         pg.insert(&source)?;
         Ok(source)
     } else {

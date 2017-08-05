@@ -2,7 +2,7 @@ use uuid::Uuid;
 use graphql::query::Query;
 use graphql::auth_mutation::AuthMutation;
 use models::user::{User, hash_password, verify_password};
-use sources::{Source, add_source_resolver};
+use sources::{Source, add_rss_source_resolver};
 use repositories::user_repository;
 use token;
 use errors::ErrorKind;
@@ -57,12 +57,10 @@ graphql_object!(Mutation: Query as "Mutation" |&self| {
             .map_err(|e| e.description().to_string())
     }
 
-    field add_source(
+    field add_rss_source(
         &executor,
-        title: String as "title",
         xml_url: String as "xml_url",
-        html_url: String as "html_url",
     ) -> Result<Source, String> {
-        add_source_resolver(executor, title, xml_url, html_url).map_err(|e| e.description().to_string())
+        add_rss_source_resolver(executor, &xml_url).map_err(|e| e.description().to_string())
     }
 });
