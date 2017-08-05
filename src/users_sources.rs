@@ -79,3 +79,15 @@ pub fn fallow_source_resolver<'a>(executor: &Executor<'a, Query>, uuid: &str, us
         Err(ErrorKind::NotFound.into())
     }
 }
+
+pub fn users_sources_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32, user: &User) -> Result<Vec<Source>> {
+    let connection = executor.context().connection.clone().get()?;
+    let pg = PgDatabase::new(connection);
+    let query = r#"
+        SELECT sources.* FROM sources
+        JOIN users_sources ON users_sources.source_uuid = sources.uuid
+        WHERE users_sources.user_uuid = $1
+        LIMIT $2::int OFFSET $3::int;
+    "#;
+    Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
+}

@@ -90,13 +90,14 @@ pub fn reaction_feed_resolver<'a>(executor: &Executor<'a, Query>, feed_uuid: &st
     }
 }
 
-pub fn users_feeds_resolver<'a>(executor: &Executor<'a, Query>, user: &User) -> Result<Vec<Feed>> {
+pub fn users_feeds_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32, user: &User) -> Result<Vec<Feed>> {
     let connection = executor.context().connection.clone().get()?;
     let pg = PgDatabase::new(connection);
     let query = r#"
         SELECT feeds.* FROM feeds
         JOIN users_sources ON users_sources.source_uuid = feeds.source_uuid
-        WHERE users_sources.user_uuid = $1;
+        WHERE users_sources.user_uuid = $1
+        LIMIT $2::int OFFSET $3::int;
     "#;
-    Ok(pg.find(query, &[&user.uuid])?)
+    Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
 }

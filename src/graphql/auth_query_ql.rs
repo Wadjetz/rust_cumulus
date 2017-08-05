@@ -6,6 +6,8 @@ use feeds::Feed;
 use users_feeds::users_feeds_resolver;
 use models::bookmark::Bookmark;
 use repositories::{bookmark_repository, file_repository};
+use sources::Source;
+use users_sources::users_sources_resolver;
 
 use std::error::Error;
 
@@ -60,6 +62,16 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset"
     ) -> Result<Vec<Feed>, String> {
-        users_feeds_resolver(executor, &self.user).map_err(|e| e.description().to_string())
+        users_feeds_resolver(executor, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
+            .map_err(|e| e.description().to_string())
+    }
+
+    field my_sources(
+        &executor,
+        limit: Option<i32> as "Limit",
+        offset: Option<i32> as "Offset"
+    ) -> Result<Vec<Source>, String> {
+        users_sources_resolver(executor, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
+            .map_err(|e| e.description().to_string())
     }
 });
