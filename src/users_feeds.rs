@@ -101,3 +101,20 @@ pub fn users_feeds_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offs
     "#;
     Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
 }
+
+pub fn unreaded_feeds<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32, user: &User) -> Result<Vec<Feed>> {
+    let connection = executor.context().connection.clone().get()?;
+    let pg = PgDatabase::new(connection);
+    let query = r#"
+        SELECT feeds.* FROM feeds
+        JOIN users_sources ON users_sources.source_uuid = feeds.source_uuid
+        WHERE 0 = (
+            SELECT COUNT(*)
+            FROM users_feeds
+            WHERE users_feeds.feed_uuid = feeds.uuid
+                AND users_feeds.user_uuid = $1
+        )
+        LIMIT $2::int OFFSET $3::int;
+    "#;
+    Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
+}

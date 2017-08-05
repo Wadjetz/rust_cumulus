@@ -3,7 +3,7 @@ use models::user::User;
 use models::file::File;
 use feeds;
 use feeds::Feed;
-use users_feeds::users_feeds_resolver;
+use users_feeds::{unreaded_feeds, users_feeds_resolver};
 use models::bookmark::Bookmark;
 use repositories::{bookmark_repository, file_repository};
 use sources::Source;
@@ -39,11 +39,7 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
                             .map_err(|e| e.description().to_string())
     }
 
-    field files(
-        &executor,
-        limit: Option<i32> as "Limit",
-        offset: Option<i32> as "Offset"
-    ) -> Result<Vec<File>, String> {
+    field files(&executor, limit: Option<i32> as "Limit", offset: Option<i32> as "Offset") -> Result<Vec<File>, String> {
         let connection = executor.context().connection.clone().get().map_err(|e| e.description().to_string())?;
         file_repository::find(&connection, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
                             .map_err(|e| e.description().to_string())
@@ -72,6 +68,15 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         offset: Option<i32> as "Offset"
     ) -> Result<Vec<Source>, String> {
         users_sources_resolver(executor, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
+            .map_err(|e| e.description().to_string())
+    }
+
+    field unreaded_feeds(
+        &executor,
+        limit: Option<i32> as "Limit",
+        offset: Option<i32> as "Offset"
+    ) -> Result<Vec<Feed>, String> {
+        unreaded_feeds(executor, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
             .map_err(|e| e.description().to_string())
     }
 });
