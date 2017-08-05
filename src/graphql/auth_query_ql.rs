@@ -3,6 +3,7 @@ use models::user::User;
 use models::file::File;
 use feeds;
 use feeds::Feed;
+use users_feeds::users_feeds_resolver;
 use models::bookmark::Bookmark;
 use repositories::{bookmark_repository, file_repository};
 
@@ -52,5 +53,13 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         offset: Option<i32> as "Offset"
     ) -> Result<Vec<Feed>, String> {
         feeds::find_resolver(executor, limit.unwrap_or(50), offset.unwrap_or(0)).map_err(|e| e.description().to_string())
+    }
+
+    field my_feeds(
+        &executor,
+        limit: Option<i32> as "Limit",
+        offset: Option<i32> as "Offset"
+    ) -> Result<Vec<Feed>, String> {
+        users_feeds_resolver(executor, &self.user).map_err(|e| e.description().to_string())
     }
 });

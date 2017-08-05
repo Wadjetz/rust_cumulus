@@ -11,7 +11,7 @@ use services::rss;
 
 use errors::*;
 use graphql::query::Query;
-use pg::{Insertable, Existable, PgDatabase};
+use pg::{Insertable, PgDatabase};
 
 #[derive(Debug, EnumString, ToString)]
 pub enum SourceType {
@@ -174,12 +174,6 @@ impl Insertable for Source {
     }
 }
 
-impl Existable for Source {
-    fn exist_query() -> String {
-        r#"SELECT COUNT(*) AS exist FROM sources WHERE sources."data" @> $1;"#.to_owned()
-    }
-}
-
 pub fn add_source_resolver<'a>(executor: &Executor<'a, Query>, title: String, xml_url: String, html_url: String) -> Result<Source> {
     let connection = executor.context().connection.clone().get()?;
     let pg = PgDatabase::new(connection);
@@ -194,8 +188,9 @@ pub fn add_source_resolver<'a>(executor: &Executor<'a, Query>, title: String, xm
 }
 
 fn source_existe(pg: &PgDatabase, xml_url: &str) -> Result<bool> {
+    let exist_query = r#"SELECT COUNT(*) AS exist FROM sources WHERE sources."data" @> $1;"#;
     let json_param = json!({ "xml_url": xml_url });
-    Ok(pg.exist(&Source::exist_query(), &[&json_param])?)
+    Ok(pg.exist(exist_query, &[&json_param])?)
 }
 
 pub fn add_rss_source_resolver<'a>(executor: &Executor<'a, Query>, xml_url: &str) -> Result<Source> { 

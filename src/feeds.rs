@@ -196,10 +196,10 @@ graphql_object!(Feed: Query as "Feed" |&self| {
         self.readable.clone().and_then(|r| serde_json::from_value::<ReadableData>(r).ok())
         
     }
-    /*
-    field twitter() -> &String as "twitter" {
-        &String::from("twitter")
-    }*/
+    
+    field twitter() -> Option<String> as "twitter" {
+        None
+    }
 
     field created() -> String as "created" {
         format!("{}", self.created)
@@ -207,6 +207,10 @@ graphql_object!(Feed: Query as "Feed" |&self| {
 
     field updated() -> String as "updated" {
         format!("{}", self.updated)
+    }
+
+    field source_uuid() -> String as "source_uuid" {
+        self.source_uuid.hyphenated().to_string()
     }
 });
 

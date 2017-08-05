@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 use r2d2::{ Pool, Config };
 use r2d2_postgres::{TlsMode, PostgresConnectionManager};
 use r2d2::PooledConnection;
@@ -20,10 +19,6 @@ pub fn create_db_pool(app_config: &AppConfig) -> Pool<PostgresConnectionManager>
 pub trait Insertable {
     fn insert_query(&self) -> String;
     fn insert_params(&self) -> Box<[&ToSql]>;
-}
-
-pub trait Existable {
-    fn exist_query() -> String;
 }
 
 pub struct PgDatabase {

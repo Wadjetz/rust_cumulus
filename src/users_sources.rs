@@ -7,7 +7,7 @@ use errors::*;
 use graphql::query::Query;
 use models::user::User;
 use sources::Source;
-use pg::{Insertable, Existable, PgDatabase};
+use pg::{Insertable, PgDatabase};
 
 #[derive(Debug)]
 pub struct UserSource {
@@ -49,21 +49,16 @@ impl Insertable for UserSource {
     }
 }
 
-impl Existable for UserSource {
-    fn exist_query() -> String {
-        r#"
-            SELECT COUNT(*) AS exist FROM users_sources WHERE user_uuid = $1::uuid AND source_uuid = $2::uuid;
-        "#.to_owned()
-    }
-}
-
 pub fn find_user_source_by_uuid(pg: &PgDatabase, uuid: Uuid) -> Result<Option<Source>> {
     let find_query = r#"SELECT * FROM sources WHERE uuid = $1::uuid;"#;
     Ok(pg.find_one::<Source>(find_query, &[&uuid])?)
 }
 
 pub fn user_source_exist(pg: &PgDatabase, uuid: &Uuid, user: &User) -> Result<bool> {
-    Ok(pg.exist(&UserSource::exist_query(), &[&user.uuid, &uuid])?)
+    let exist_query = r#"
+        SELECT COUNT(*) AS exist FROM users_sources WHERE user_uuid = $1::uuid AND source_uuid = $2::uuid;
+    "#;
+    Ok(pg.exist(exist_query, &[&user.uuid, &uuid])?)
 }
 
 pub fn fallow_source_resolver<'a>(executor: &Executor<'a, Query>, uuid: &str, user: &User) -> Result<Source> {

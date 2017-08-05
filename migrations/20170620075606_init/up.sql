@@ -54,6 +54,9 @@ CREATE TABLE feeds (
 
 CREATE TABLE users_feeds (
     uuid UUID PRIMARY KEY,
+    reaction TEXT NOT NULL,
     feed_uuid UUID NOT NULL REFERENCES feeds(uuid),
-    user_uuid UUID NOT NULL REFERENCES users(uuid)
+    user_uuid UUID NOT NULL REFERENCES users(uuid),
+    created TIMESTAMP,
+    updated TIMESTAMP
 );

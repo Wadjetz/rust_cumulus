@@ -5,6 +5,7 @@ use models::file::File;
 use resolvers::bookmarks_resolvers;
 use sources::Source;
 use users_sources;
+use users_feeds;
 
 use std::error::Error;
 use std::path::Path;
@@ -54,9 +55,19 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
 
     field fallow_source(
         &executor,
-        uuid: String as "uuid",
+        source_uuid: String as "source_uuid",
     ) -> Result<Source, String> {
-        users_sources::fallow_source_resolver(executor, &uuid, &self.user)
+        users_sources::fallow_source_resolver(executor, &source_uuid, &self.user)
+            .map_err(|e| e.to_string())
+    }
+
+    field feed_reaction(
+        &executor,
+        feed_uuid: String as "feed_uuid",
+        reaction: String as "uuid",
+    ) -> Result<String, String> {
+        users_feeds::reaction_feed_resolver(executor, &feed_uuid, &reaction, &self.user)
+            .map(|_| String::from("ok"))
             .map_err(|e| e.to_string())
     }
 });
