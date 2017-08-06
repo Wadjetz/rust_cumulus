@@ -3,6 +3,8 @@ use bcrypt::{DEFAULT_COST, hash, verify};
 use postgres::rows::Row;
 use postgres_shared::types::ToSql;
 use juniper::Executor;
+use chrono::NaiveDateTime;
+use chrono::prelude::*;
 
 use errors::*;
 use token;
@@ -17,10 +19,8 @@ pub struct User {
     pub login: String,
     pub email: String,
     pub password: String,
-    //pub created: String,
-    //pub updated: String,
-    //pub last_connection: String,
-    //pub active: bool,
+    pub created: NaiveDateTime,
+    pub updated: NaiveDateTime,
 }
 
 impl User {
@@ -31,6 +31,8 @@ impl User {
             login,
             email,
             password: hashed_password,
+            created: UTC::now().naive_utc(),
+            updated: UTC::now().naive_utc(),
         };
         Ok(user)
     }
@@ -58,6 +60,14 @@ graphql_object!(User: Query as "User" |&self| {
     field login() -> &String as "login" {
         &self.login
     }
+
+    field created() -> String as "created" {
+        format!("{}", self.created)
+    }
+
+    field updated() -> String as "updated" {
+        format!("{}", self.updated)
+    }
 });
 
 impl<'a> From<Row<'a>> for User {
@@ -67,6 +77,8 @@ impl<'a> From<Row<'a>> for User {
             login: row.get("login"),
             email: row.get("email"),
             password: row.get("password"),
+            created: row.get("created"),
+            updated: row.get("updated"),
         }
     }
 }

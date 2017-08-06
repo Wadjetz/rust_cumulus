@@ -2,7 +2,9 @@ CREATE TABLE users (
     uuid UUID PRIMARY KEY,
     login TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL
+    password TEXT NOT NULL,
+    created TIMESTAMP,
+    updated TIMESTAMP
 );
 
 CREATE TABLE bookmarks (
