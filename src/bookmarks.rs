@@ -2,8 +2,12 @@ use uuid::Uuid;
 use chrono::NaiveDateTime;
 use chrono::prelude::*;
 use postgres::rows::Row;
+use juniper::Executor;
 
+use errors::*;
 use graphql::query::Query;
+use users::User;
+use repositories::bookmark_repository;
 
 #[derive(Debug)]
 pub struct Bookmark {
@@ -80,4 +84,12 @@ impl<'a> From<Row<'a>> for Bookmark {
             user_uuid: row.get("user_uuid"),
         }
     }
+}
+
+pub fn add_bookmark_resolver<'a>(executor: &Executor<'a, Query>, bookmark: Bookmark, user: &User) -> Result<Bookmark> {
+    let connection = executor.context().connection.clone().get()?;
+    let maybe_bookmark = bookmark_repository::find_by_url_and_user(&connection, &bookmark.url, user)?;
+    maybe_bookmark.ok_or_else(|| ErrorKind::AlreadyExist)?;
+    bookmark_repository::insert(&connection, &bookmark)?;
+    Ok(bookmark)
 }

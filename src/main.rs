@@ -49,7 +49,6 @@ mod download;
 mod app_state;
 mod config;
 mod services;
-mod resolvers;
 mod sources;
 mod feeds;
 mod users;
