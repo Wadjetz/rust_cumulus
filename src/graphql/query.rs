@@ -21,6 +21,8 @@ impl Query {
 
 impl Context for Query {}
 
+const DEFAULT_LIMIT: i32 = 10;
+
 graphql_object!(Query: Query as "Query" |&self| {
     description: "The root query object of the schema"
 
@@ -40,6 +42,6 @@ graphql_object!(Query: Query as "Query" |&self| {
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset",
     ) -> Result<Vec<Source>, String> {
-        sources::find_resolver(executor, limit.unwrap_or(50), offset.unwrap_or(0)).map_err(|e| e.description().to_string())
+        sources::find_resolver(executor, limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0)).map_err(|e| e.description().to_string())
     }
 });

@@ -22,6 +22,8 @@ impl AuthQuery {
     }
 }
 
+const DEFAULT_LIMIT: i32 = 10;
+
 graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
     description: "AuthQuery"
 
@@ -35,13 +37,13 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         offset: Option<i32> as "Offset"
     ) -> Result<Vec<Bookmark>, String> {
         let connection = executor.context().connection.clone().get().map_err(|e| e.description().to_string())?;
-        bookmark_repository::find(&connection, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
+        bookmark_repository::find(&connection, limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
                             .map_err(|e| e.description().to_string())
     }
 
     field files(&executor, limit: Option<i32> as "Limit", offset: Option<i32> as "Offset") -> Result<Vec<File>, String> {
         let connection = executor.context().connection.clone().get().map_err(|e| e.description().to_string())?;
-        file_repository::find(&connection, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
+        file_repository::find(&connection, limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
                             .map_err(|e| e.description().to_string())
     }
 
@@ -50,7 +52,7 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset"
     ) -> Result<Vec<Feed>, String> {
-        feeds::find_resolver(executor, limit.unwrap_or(50), offset.unwrap_or(0)).map_err(|e| e.description().to_string())
+        feeds::find_resolver(executor, limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0)).map_err(|e| e.description().to_string())
     }
 
     field my_feeds(
@@ -58,7 +60,7 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset"
     ) -> Result<Vec<Feed>, String> {
-        users_feeds_resolver(executor, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
+        users_feeds_resolver(executor, limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
             .map_err(|e| e.description().to_string())
     }
 
@@ -67,7 +69,7 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset",
     ) -> Result<Vec<Source>, String> {
-        users_sources_resolver(executor, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
+        users_sources_resolver(executor, limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
             .map_err(|e| e.description().to_string())
     }
 
@@ -76,7 +78,7 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset",
     ) -> Result<Vec<Source>, String> {
-        unfollowed_sources_resolver(executor, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
+        unfollowed_sources_resolver(executor, limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
             .map_err(|e| e.description().to_string())
     }
 
@@ -85,7 +87,7 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset"
     ) -> Result<Vec<Feed>, String> {
-        unreaded_feeds(executor, limit.unwrap_or(50), offset.unwrap_or(0), &self.user)
+        unreaded_feeds(executor, limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
             .map_err(|e| e.description().to_string())
     }
 });

@@ -41,7 +41,7 @@ class MindStreamContainer extends React.Component<Props, {}> {
                             leaveActive: styles.transitionLeaveActive,
                         }}
                         transitionEnterTimeout={400}
-                        transitionLeaveTimeout={200}>
+                        transitionLeaveTimeout={0}>
                         <MindStream
                             key={feed.uuid}
                             feed={feed}
