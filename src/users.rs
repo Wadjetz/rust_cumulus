@@ -1,7 +1,12 @@
 use uuid::Uuid;
-use bcrypt::{DEFAULT_COST, hash, verify, BcryptError};
+use bcrypt::{DEFAULT_COST, hash, verify};
+use postgres::rows::Row;
+use postgres_shared::types::ToSql;
+use juniper::Executor;
 
+use errors::*;
 use graphql::query::Query;
+use pg::{Insertable, PgDatabase};
 
 #[derive(Debug)]
 pub struct User {
@@ -23,22 +28,22 @@ impl User {
     }
 
     #[allow(dead_code)]
-    pub fn new_secure(login: String, email: String, password: String) -> Result<User, BcryptError> {
-        hash_password(&password).map(|hashed_password| User {
+    pub fn new_secure(login: String, email: String, password: String) -> Result<User> {
+        Ok(hash_password(&password).map(|hashed_password| User {
             uuid: Uuid::new_v4(),
             login,
             email,
             password: hashed_password,
-        })
+        })?)
     }
 }
 
-pub fn hash_password(password: &str) -> Result<String, BcryptError> {
-    hash(password, DEFAULT_COST)
+pub fn hash_password(password: &str) -> Result<String> {
+    Ok(hash(password, DEFAULT_COST)?)
 }
 
-pub fn verify_password(password: &str, hashed_password: &str) -> Result<bool, BcryptError> {
-  verify(password, hashed_password)
+pub fn verify_password(password: &str, hashed_password: &str) -> Result<bool> {
+    Ok(verify(password, hashed_password)?)
 }
 
 graphql_object!(User: Query as "User" |&self| {
@@ -56,4 +61,28 @@ graphql_object!(User: Query as "User" |&self| {
         &self.login
     }
 });
+
+impl<'a> From<Row<'a>> for User {
+    fn from(row: Row) -> Self {
+        User {
+            uuid: row.get("uuid"),
+            login: row.get("login"),
+            email: row.get("email"),
+            password: row.get("password"),
+        }
+    }
+}
+
+impl Insertable for User {
+    fn insert_query(&self) -> String {
+        r#"
+            INSERT INTO users (uuid, login, email, password)
+            VALUES ($1, $2, $3, $4);
+        "#.to_owned()
+    }
+
+    fn insert_params<'a>(&'a self) -> Box<[&'a ToSql]> {
+        Box::new([&self.uuid, &self.login, &self.email, &self.password])
+    }
+}
 
