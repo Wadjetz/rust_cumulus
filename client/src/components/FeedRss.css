@@ -4,18 +4,13 @@
     justify-content: center;
 }
 
-.feed_readable {
+.feed_rss {
     max-width: 900px;
     padding: 30px;
 }
 
 .container img {
     width: 100%;
-}
-
-.container code, .container pre {
-    width: 100%;
-    overflow-x: scroll;
 }
 
 .title {

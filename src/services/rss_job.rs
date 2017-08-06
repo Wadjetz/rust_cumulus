@@ -31,6 +31,7 @@ fn process_rss(client: &Client, pool: &Pool<PostgresConnectionManager>) -> Resul
     for source in &sources {
         match source.options()? {
             SourceOption::Rss(rss_source) => {
+                println!("Fetch rss {:?}", &rss_source.xml_url);
                 let maybe_feeds_channel = fetch_feeds_channel(&rss_source.xml_url)?;
                 if let Some(feeds_channel) = maybe_feeds_channel {
                     for rss_feed in &feeds_channel.entries {
@@ -38,12 +39,14 @@ fn process_rss(client: &Client, pool: &Pool<PostgresConnectionManager>) -> Resul
                             if !is_feed_exist(&pg, &link.href)? {
                                 if let Ok(Some(readable)) = fetch_readable(client, &link.href) {
                                     let feed = Feed::new(&readable.url.clone(), Some(rss_feed.clone().into()), Some(readable), None, source.uuid);
-                                    insert_feed(&pg, &feed)?;
-                                    println!("readable inserted {:?}", feed.url);
+                                    if let Ok(_) = insert_feed(&pg, &feed) {
+                                        println!("readable inserted {:?}", feed.url);
+                                    }
                                 } else {
                                     let feed = Feed::new(&link.href, Some(rss_feed.clone().into()), None, None, source.uuid); // TODO remove clone, refactor
-                                    insert_feed(&pg, &feed)?;
-                                    println!("rss inserted {:?}", feed.url);
+                                    if let Ok(_) = insert_feed(&pg, &feed) {
+                                        println!("rss inserted {:?}", feed.url);
+                                    }
                                 }
                             }
                         }

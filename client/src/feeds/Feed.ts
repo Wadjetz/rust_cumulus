@@ -9,6 +9,7 @@ export interface Feed {
 }
 
 export interface Rss {
+    url: string
     title: string
     content?: string
     summary?: string
