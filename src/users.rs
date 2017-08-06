@@ -8,6 +8,7 @@ use errors::*;
 use token;
 use graphql::query::Query;
 use graphql::auth_query::AuthQuery;
+use graphql::auth_mutation::AuthMutation;
 use pg::{Insertable, PgDatabase};
 
 #[derive(Debug)]
@@ -23,12 +24,6 @@ pub struct User {
 }
 
 impl User {
-    pub fn new(uuid: Uuid, login: String, email: String, password: String) -> Self {
-        User {
-            uuid, login, email, password,
-        }
-    }
-
     pub fn new_secure(login: String, email: String, password: String) -> Result<User> {
         let hashed_password = hash_password(&password)?;
         let user = User {
@@ -117,12 +112,24 @@ pub fn login_resolver<'a>(executor: &Executor<'a, Query>, email: String, passwor
     }
 }
 
-pub fn auth_query_resolver<'a>(executor: &Executor<'a, Query>, token: String) -> Result<AuthQuery> {
+impl From<User> for AuthQuery {
+    fn from(user: User) -> Self {
+        AuthQuery::new(user)
+    }
+}
+
+impl From<User> for AuthMutation {
+    fn from(user: User) -> Self {
+        AuthMutation::new(user)
+    }
+}
+
+pub fn auth_resolver<'a, E>(executor: &Executor<'a, Query>, token: String) -> Result<E> where E: From<User> {
     let connection = executor.context().connection.clone().get()?;
     let pg = PgDatabase::new(connection);
     let auth_data = token::decode_auth(&token)?;
     if let Some(user) = find_user_by_email(&pg, &auth_data.email)? {
-        Ok(AuthQuery::new(user))
+        Ok(user.into())
     } else {
         Err(ErrorKind::WrongCredentials.into())
     }

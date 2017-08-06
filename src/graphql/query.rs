@@ -6,7 +6,7 @@ use graphql::auth_query::AuthQuery;
 use sources::Source;
 use std::error::Error;
 use sources::find_sources_resolver;
-use users::{auth_query_resolver, login_resolver};
+use users::{auth_resolver, login_resolver};
 
 pub struct Query {
     pub connection: Pool<PostgresConnectionManager>,
@@ -29,7 +29,7 @@ graphql_object!(Query: Query as "Query" |&self| {
         &executor,
         token: String as "Auth token"
     ) -> Result<AuthQuery, String> as "Auth" {
-        auth_query_resolver(executor, token).map_err(|e| e.description().to_string())
+        auth_resolver(executor, token).map_err(|e| e.description().to_string())
     }
 
     field login(
