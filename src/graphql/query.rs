@@ -2,10 +2,13 @@ use juniper::Context;
 use r2d2_postgres::PostgresConnectionManager;
 use r2d2::Pool;
 
-
+use users::{verify_password};
+use repositories::user_repository;
 use graphql::auth_query_ql::AuthQuery;
 use repositories::user_repository::{verify_user};
 use sources::Source;
+use std::error::Error;
+use errors::ErrorKind;
 use sources;
 use token;
 
@@ -34,6 +37,23 @@ graphql_object!(Query: Query as "Query" |&self| {
       token::decode_auth(&token)
             .and_then(|auth_data| verify_user(&connection, auth_data))
             .map(AuthQuery::new)
+            .map_err(|e| e.description().to_string())
+    }
+
+    field login(
+        &executor,
+        email: String as "Email",
+        password: String as "Password"
+    ) -> Result<String, String> as "Token" {
+        let connection = executor.context().connection.clone().get().map_err(|e| e.description().to_string())?;
+        user_repository::find_by_email(&connection, &email)
+            .and_then(|user| {
+                match verify_password(&password, &user.password) {
+                    Ok(true) => token::create_token(user.uuid, email),
+                    Ok(false) => Err(ErrorKind::WrongCredentials.into()),
+                    Err(e) => Err(ErrorKind::WrongCredentials.into()),
+                }
+            })
             .map_err(|e| e.description().to_string())
     }
 

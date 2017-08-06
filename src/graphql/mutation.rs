@@ -1,11 +1,9 @@
 use graphql::query::Query;
 use graphql::auth_mutation::AuthMutation;
-use users::{verify_password};
 use sources::{Source, add_rss_source_resolver};
 use repositories::user_repository;
 use token;
 use users;
-use errors::ErrorKind;
 use std::error::Error;
 
 #[derive(Debug)]
@@ -21,23 +19,6 @@ graphql_object!(Mutation: Query as "Mutation" |&self| {
         password: String as "Password"
     ) -> Result<String, String> as "Token" {
         users::signup_resolver(executor, login, email, password).map_err(|e| e.description().to_string())
-    }
-
-    field login(
-        &executor,
-        email: String as "Email",
-        password: String as "Password"
-    ) -> Result<String, String> as "Token" {
-        let connection = executor.context().connection.clone().get().map_err(|e| e.description().to_string())?;
-        user_repository::find_by_email(&connection, &email)
-            .and_then(|user| {
-                match verify_password(&password, &user.password) {
-                    Ok(true) => token::create_token(user.uuid, email),
-                    Ok(false) => Err(ErrorKind::WrongCredentials.into()),
-                    Err(e) => Err(ErrorKind::WrongCredentials.into()),
-                }
-            })
-            .map_err(|e| e.description().to_string())
     }
 
     field auth(
