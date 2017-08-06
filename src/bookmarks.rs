@@ -2,12 +2,13 @@ use uuid::Uuid;
 use chrono::NaiveDateTime;
 use chrono::prelude::*;
 use postgres::rows::Row;
+use postgres_shared::types::ToSql;
 use juniper::Executor;
 
 use errors::*;
 use graphql::query::Query;
 use users::User;
-use repositories::bookmark_repository;
+use pg::{Insertable, PgDatabase};
 
 #[derive(Debug)]
 pub struct Bookmark {
@@ -86,10 +87,42 @@ impl<'a> From<Row<'a>> for Bookmark {
     }
 }
 
+impl Insertable for Bookmark {
+    fn insert_query(&self) -> String {
+        r#"
+            INSERT INTO bookmarks (uuid, title, url, description, path, created, updated, user_uuid)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+        "#.to_owned()
+    }
+
+    fn insert_params<'a>(&'a self) -> Box<[&'a ToSql]> {
+        Box::new([&self.uuid, &self.title, &self.url, &self.description, &self.path, &self.created, &self.updated, &self.user_uuid])
+    }
+}
+
+fn is_bookmark_exist(pg: &PgDatabase, url: &str, user: &User) -> Result<bool> {
+    let query = "SELECT * FROM bookmarks WHERE url = $1 AND user_uuid = $2::uuid;";
+    Ok(pg.exist(query, &[&url, &user.uuid])?)
+}
+
 pub fn add_bookmark_resolver<'a>(executor: &Executor<'a, Query>, bookmark: Bookmark, user: &User) -> Result<Bookmark> {
     let connection = executor.context().connection.clone().get()?;
-    let maybe_bookmark = bookmark_repository::find_by_url_and_user(&connection, &bookmark.url, user)?;
-    maybe_bookmark.ok_or_else(|| ErrorKind::AlreadyExist)?;
-    bookmark_repository::insert(&connection, &bookmark)?;
-    Ok(bookmark)
+    let pg = PgDatabase::new(connection);
+    if !is_bookmark_exist(&pg, &bookmark.url, user)? {
+        pg.insert(&bookmark)?;
+        Ok(bookmark)
+    } else {
+        Err(ErrorKind::AlreadyExist.into())
+    }
+}
+
+fn find_bookmarks(pg: &PgDatabase, limit: i32, offset: i32, user: &User) -> Result<Vec<Bookmark>> {
+    let query = "SELECT * FROM bookmarks WHERE user_uuid = $1::uuid LIMIT $2::int OFFSET $3::int;";
+    Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
+}
+
+pub fn bookmarks_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32, user: &User) -> Result<Vec<Bookmark>> {
+    let connection = executor.context().connection.clone().get()?;
+    let pg = PgDatabase::new(connection);
+    Ok(find_bookmarks(&pg, limit, offset, user)?)
 }

@@ -31,14 +31,15 @@ impl PgDatabase {
     }
 
     pub fn insert<E>(&self, entity: &E) -> Result<u64> where E: Insertable {
-        self.connection.execute(&entity.insert_query(), &entity.insert_params())
-        .map_err(|e| {
-            println!("{:?}", e);
-            match e {
-                Error::Db(ref e) if e.code == SqlState::UniqueViolation => ErrorKind::AlreadyExist.into(),
-                e => e.into(),
-            }
-        })
+        match self.connection.execute(&entity.insert_query(), &entity.insert_params()) {
+            Ok(0) => Err(ErrorKind::NotInserted.into()),
+            Ok(i) => Ok(i),
+            Err(Error::Db(ref e)) if e.code == SqlState::UniqueViolation => Err(ErrorKind::AlreadyExist.into()),
+            Err(e) => {
+                println!("INSERT Error -> {:?}", e);
+                Err(e.into())
+            },
+        }
     }
 
     pub fn exist<'a>(&self, query: &str, params: &[&'a ToSql]) -> Result<bool> {
