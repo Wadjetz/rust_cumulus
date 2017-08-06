@@ -1,6 +1,8 @@
 use uuid::Uuid;
 use bcrypt::{DEFAULT_COST, hash, verify, BcryptError};
 
+use graphql::query::Query;
+
 #[derive(Debug)]
 pub struct User {
     pub uuid: Uuid,
@@ -38,3 +40,20 @@ pub fn hash_password(password: &str) -> Result<String, BcryptError> {
 pub fn verify_password(password: &str, hashed_password: &str) -> Result<bool, BcryptError> {
   verify(password, hashed_password)
 }
+
+graphql_object!(User: Query as "User" |&self| {
+    description: "User"
+
+    field uuid() -> String as "uuid" {
+        self.uuid.hyphenated().to_string()
+    }
+
+    field email() -> &String as "email" {
+        &self.email
+    }
+
+    field login() -> &String as "login" {
+        &self.login
+    }
+});
+
