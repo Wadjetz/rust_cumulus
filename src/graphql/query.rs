@@ -2,7 +2,7 @@ use juniper::Context;
 use r2d2_postgres::PostgresConnectionManager;
 use r2d2::Pool;
 
-use graphql::auth_query_ql::AuthQuery;
+use graphql::auth_query::AuthQuery;
 use sources::Source;
 use std::error::Error;
 use sources::find_sources_resolver;
