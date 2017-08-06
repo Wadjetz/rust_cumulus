@@ -6,7 +6,7 @@ use graphql::auth_query_ql::AuthQuery;
 use repositories::user_repository::{verify_user};
 use sources::Source;
 use std::error::Error;
-use sources;
+use sources::find_sources_resolver;
 use users::login_resolver;
 use token;
 
@@ -51,6 +51,6 @@ graphql_object!(Query: Query as "Query" |&self| {
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset",
     ) -> Result<Vec<Source>, String> {
-        sources::find_resolver(executor, limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0)).map_err(|e| e.description().to_string())
+        find_sources_resolver(executor, limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0)).map_err(|e| e.description().to_string())
     }
 });

@@ -210,7 +210,7 @@ pub fn add_rss_source_resolver<'a>(executor: &Executor<'a, Query>, xml_url: &str
     }
 }
 
-pub fn find_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32) -> Result<Vec<Source>> {
+pub fn find_sources_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32) -> Result<Vec<Source>> {
     let connection = executor.context().connection.clone().get()?;
     let pg = PgDatabase::new(connection);
     let find_query = r#"SELECT * FROM sources LIMIT $1::int OFFSET $2::int;"#;
