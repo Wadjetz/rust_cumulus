@@ -5,7 +5,7 @@ use uuid::Uuid;
 
 use errors::*;
 use graphql::query::Query;
-use models::user::User;
+use users::User;
 use sources::Source;
 use pg::{Insertable, PgDatabase};
 

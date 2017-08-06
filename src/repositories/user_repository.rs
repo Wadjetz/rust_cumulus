@@ -5,7 +5,7 @@ use postgres::rows::Rows;
 use postgres::error::Error;
 use postgres_shared::error::{SqlState};
 use token::AuthData;
-use models::user::User;
+use users::User;
 
 use errors::*;
 

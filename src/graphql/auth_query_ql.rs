@@ -1,5 +1,5 @@
 use graphql::query::Query;
-use models::user::User;
+use users::User;
 use models::file::File;
 use feeds;
 use feeds::Feed;

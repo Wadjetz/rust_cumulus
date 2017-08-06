@@ -6,7 +6,7 @@ use postgres::rows::Rows;
 use postgres::error::Error;
 use postgres_shared::error::{SqlState};
 
-use models::user::User;
+use users::User;
 use models::file::File;
 use errors::*;
 

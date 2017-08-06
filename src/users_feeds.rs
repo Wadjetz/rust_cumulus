@@ -8,7 +8,7 @@ use std::str::FromStr;
 
 use pg::{Insertable, PgDatabase};
 use graphql::query::Query;
-use models::user::User;
+use users::User;
 use feeds::Feed;
 use errors::*;
 

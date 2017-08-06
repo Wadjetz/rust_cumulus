@@ -1,5 +1,5 @@
 use graphql::query::Query;
-use models::user::User;
+use users::User;
 use models::bookmark::Bookmark;
 use models::file::File;
 use resolvers::bookmarks_resolvers;

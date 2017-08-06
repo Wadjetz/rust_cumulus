@@ -1,7 +1,7 @@
 use uuid::Uuid;
 use graphql::query::Query;
 use graphql::auth_mutation::AuthMutation;
-use models::user::{User, hash_password, verify_password};
+use users::{User, hash_password, verify_password};
 use sources::{Source, add_rss_source_resolver};
 use repositories::user_repository;
 use token;

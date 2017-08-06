@@ -52,6 +52,7 @@ mod services;
 mod resolvers;
 mod sources;
 mod feeds;
+mod users;
 mod users_sources;
 mod users_feeds;
 

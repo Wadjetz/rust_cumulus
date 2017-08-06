@@ -3,7 +3,7 @@ use juniper::Executor;
 
 use repositories::bookmark_repository;
 use models::bookmark::Bookmark;
-use models::user::User;
+use users::User;
 use errors::*;
 
 pub fn add_bookmark<'a>(executor: &Executor<'a, Query>, bookmark: Bookmark, user: &User) -> Result<Bookmark> {
