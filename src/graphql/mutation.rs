@@ -1,10 +1,10 @@
-use uuid::Uuid;
 use graphql::query::Query;
 use graphql::auth_mutation::AuthMutation;
-use users::{User, hash_password, verify_password};
+use users::{verify_password};
 use sources::{Source, add_rss_source_resolver};
 use repositories::user_repository;
 use token;
+use users;
 use errors::ErrorKind;
 use std::error::Error;
 
@@ -20,13 +20,7 @@ graphql_object!(Mutation: Query as "Mutation" |&self| {
         email: String as "Email",
         password: String as "Password"
     ) -> Result<String, String> as "Token" {
-        let connection = executor.context().connection.clone().get().map_err(|e| e.description().to_string())?;
-        let uuid = Uuid::new_v4();
-        let hashed_password = hash_password(&password).unwrap(); // TODO
-        let user = User::new(uuid, login, email.clone(), hashed_password);
-        user_repository::insert(&connection, &user).and_then(|_| {
-            token::create_token(uuid, email)
-        }).map_err(|e| e.description().to_string())
+        users::signup_resolver(executor, login, email, password).map_err(|e| e.description().to_string())
     }
 
     field login(

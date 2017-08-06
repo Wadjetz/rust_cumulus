@@ -5,6 +5,7 @@ use postgres_shared::types::ToSql;
 use juniper::Executor;
 
 use errors::*;
+use token;
 use graphql::query::Query;
 use pg::{Insertable, PgDatabase};
 
@@ -27,14 +28,15 @@ impl User {
         }
     }
 
-    #[allow(dead_code)]
     pub fn new_secure(login: String, email: String, password: String) -> Result<User> {
-        Ok(hash_password(&password).map(|hashed_password| User {
+        let hashed_password = hash_password(&password)?;
+        let user = User {
             uuid: Uuid::new_v4(),
             login,
             email,
             password: hashed_password,
-        })?)
+        };
+        Ok(user)
     }
 }
 
@@ -86,3 +88,11 @@ impl Insertable for User {
     }
 }
 
+pub fn signup_resolver<'a>(executor: &Executor<'a, Query>, login: String, email: String, password: String) -> Result<String> {
+    let connection = executor.context().connection.clone().get()?;
+    let pg = PgDatabase::new(connection);
+    let user = User::new_secure(login, email, password)?;
+    pg.insert(&user)?;
+    let token = token::create_token(user.uuid, user.email)?;
+    Ok(token)
+}

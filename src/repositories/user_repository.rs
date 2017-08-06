@@ -2,8 +2,6 @@ use r2d2_postgres::PostgresConnectionManager;
 use r2d2::PooledConnection;
 use postgres::rows::Row;
 use postgres::rows::Rows;
-use postgres::error::Error;
-use postgres_shared::error::{SqlState};
 use token::AuthData;
 use users::User;
 
@@ -17,27 +15,6 @@ impl User {
             row.get("email"),
             row.get("password"),
         )
-    }
-}
-
-fn insert_query(connection: &PooledConnection<PostgresConnectionManager>, user: &User) -> Result<u64> {
-    connection.execute(
-        "INSERT INTO users (uuid, login, email, password) VALUES ($1, $2, $3, $4)",
-        &[&user.uuid, &user.login, &user.email, &user.password]
-    ).map_err(|e| {
-        match e {
-            Error::Db(ref e) if e.code == SqlState::UniqueViolation => ErrorKind::AlreadyExist.into(),
-            e => e.into(),
-        }
-    })
-}
-
-pub fn insert(connection: &PooledConnection<PostgresConnectionManager>, user: &User) -> Result<u64> {
-    let inerted_rows = insert_query(connection, user)?;
-    if inerted_rows == 0 {
-        Err(ErrorKind::NotInserted.into())
-    } else {
-        Ok(inerted_rows)
     }
 }
 
