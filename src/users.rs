@@ -96,3 +96,22 @@ pub fn signup_resolver<'a>(executor: &Executor<'a, Query>, login: String, email:
     let token = token::create_token(user.uuid, user.email)?;
     Ok(token)
 }
+
+fn find_user_by_email(pg: &PgDatabase, email: &str) -> Result<Option<User>> {
+    let query = r#"SELECT * FROM users WHERE email = $1;"#;
+    Ok(pg.find_one::<User>(query, &[&email])?)
+}
+
+pub fn login_resolver<'a>(executor: &Executor<'a, Query>, email: String, password: String) -> Result<String> {
+    let connection = executor.context().connection.clone().get()?;
+    let pg = PgDatabase::new(connection);
+    if let Some(user) = find_user_by_email(&pg, &email)? {
+        if let Ok(true) = verify_password(&password, &user.password) {
+            Ok(token::create_token(user.uuid, email)?)
+        } else {
+            Err(ErrorKind::WrongCredentials.into())
+        }
+    } else {
+        Err(ErrorKind::WrongCredentials.into())
+    }
+}
