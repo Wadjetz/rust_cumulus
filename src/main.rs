@@ -39,11 +39,10 @@ extern crate juniper;
 
 mod errors;
 mod pg;
+mod pg_database;
 mod file_system;
-mod repositories;
 mod token;
 mod graphql;
-mod download;
 mod app_state;
 mod config;
 mod services;
@@ -56,6 +55,7 @@ mod bookmarks;
 mod files;
 
 use std::path::{Path, PathBuf};
+use std::fs::File as FsFile;
 use std::error::Error;
 
 use rocket::response::{NamedFile, content};
@@ -68,7 +68,7 @@ use graphql::mutation::Mutation;
 use app_state::AppState;
 use pg::create_db_pool;
 use services::rss_job;
-use files::upload_resolver;
+use files::{download_resolver, upload_resolver};
 use r2d2_postgres::PostgresConnectionManager;
 use r2d2::PooledConnection;
 use token::AuthData;
@@ -107,6 +107,14 @@ pub fn upload(auth_data: AuthData, app_state: State<AppState>, file_data: Data, 
         .map_err(|err| err.description().to_string())
 }
 
+#[get("/download/<file_uuid>")]
+pub fn download(_auth_data: AuthData, app_state: State<AppState>, file_uuid: String) -> Result<FsFile, String> {
+    let connection: PooledConnection<PostgresConnectionManager> = app_state.connection.clone().get()
+        .map_err(|e| e.description().to_string())?;
+    download_resolver(connection, &file_uuid)
+        .map_err(|e| e.description().to_string())
+}
+
 fn main() {
     let connection = create_db_pool(&config::CONFIG);
     let client = reqwest::Client::new().unwrap();
@@ -115,6 +123,6 @@ fn main() {
         .manage(Query::new(connection.clone()))
         .manage(AppState::new(connection.clone()))
         .manage(RootNode::new(Query::new(connection), Mutation))
-        .mount("/", routes![index, files, graphiql, post_graphql_handler, upload, download::download])
+        .mount("/", routes![index, files, graphiql, post_graphql_handler, upload, download])
         .launch();
 }

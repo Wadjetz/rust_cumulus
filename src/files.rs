@@ -3,14 +3,17 @@ use postgres::rows::Row;
 use postgres_shared::types::ToSql;
 use r2d2_postgres::PostgresConnectionManager;
 use r2d2::PooledConnection;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+use juniper::Executor;
 use std::os::unix::fs::MetadataExt;
 use rocket::Data;
+use std::fs::File as FsFile;
 
 use errors::*;
 use token::AuthData;
 use graphql::query::Query;
 use pg::{Insertable, PgDatabase};
+use users::User;
 use file_system;
 
 #[derive(Debug)]
@@ -127,7 +130,6 @@ impl Insertable for File {
     }
 }
 
-
 pub fn upload_resolver(connection: PooledConnection<PostgresConnectionManager>, file_data: Data, path: PathBuf, auth_data: AuthData) -> Result<String> {
     let maybe_file_name = path.file_name()
                   .and_then(|os_str| os_str.to_str())
@@ -145,4 +147,27 @@ pub fn upload_resolver(connection: PooledConnection<PostgresConnectionManager>, 
     let pg = PgDatabase::new(connection);
     pg.insert(&file)?;
     Ok(String::from("Ok"))
+}
+
+fn find_files_by_uuid(pg: &PgDatabase, file_uuid: Uuid) -> Result<Option<File>> {
+    let query = "SELECT * FROM files WHERE uuid = $1";
+    Ok(pg.find_one(query, &[&file_uuid])?)
+}
+
+pub fn download_resolver(connection: PooledConnection<PostgresConnectionManager>, file_uuid: &str) -> Result<FsFile> {
+    let pg = PgDatabase::new(connection);
+    let file_uuid = Uuid::parse_str(&file_uuid)?;
+    if let Some(file) = find_files_by_uuid(&pg, file_uuid)? {
+        let fs_file = FsFile::open(Path::new("upload/").join(Path::new(&file.location)))?;
+        Ok(fs_file)
+    } else {
+        Err(ErrorKind::NotFound.into())
+    }
+}
+
+pub fn files_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32, user: &User) -> Result<Vec<File>> {
+    let connection = executor.context().connection.clone().get()?;
+    let pg = PgDatabase::new(connection);
+    let query = "SELECT * FROM files WHERE user_uuid = $1::uuid LIMIT $2::int OFFSET $3::int;";
+    Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
 }

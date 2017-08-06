@@ -1,37 +1,94 @@
-use postgres::rows::Row;
-use postgres::error::Error;
-use postgres_shared::error::{SqlState};
-use r2d2_postgres::PostgresConnectionManager;
-use r2d2::PooledConnection;
+use files::FileType;
+use sources::SourceType;
+use postgres_shared::types::FromSql;
 use postgres_shared::types::ToSql;
+use postgres::types::Type;
+use postgres_protocol::types;
+use postgres_shared::types::IsNull;
+use std::error::Error;
+use std::fmt;
+use std::str::FromStr;
 
-use errors::*;
-
-pub trait InsertParams {
-    fn insert_params(&self) -> Box<[&ToSql]>;
+#[derive(Debug)]
+struct WrongEnumType {
+    description: String
 }
 
-pub trait InsertQuery {
-    fn insert_query(&self) -> String;
-}
-
-pub struct PgDatabase {
-    connection: PooledConnection<PostgresConnectionManager>,
-}
-
-impl PgDatabase {
-    pub fn new(connection: PooledConnection<PostgresConnectionManager>) -> Self {
-        PgDatabase { connection }
-    }
-
-    pub fn insert<E>(&self, entity: E) -> Result<u64> where E: InsertQuery + InsertParams {
-        self.connection.execute(&entity.insert_query(), &entity.insert_params())
-        .map_err(|e| {
-            println!("{:?}", e);
-            match e {
-                Error::Db(ref e) if e.code == SqlState::UniqueViolation => ErrorKind::AlreadyExist.into(),
-                e => e.into(),
-            }
-        })
+impl WrongEnumType {
+    pub fn new(description: String) -> Self {
+        WrongEnumType { description }
     }
 }
+
+impl fmt::Display for WrongEnumType {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        fmt.write_str(self.description())
+    }
+}
+
+impl Error for WrongEnumType {
+    fn description(&self) -> &str {
+        &self.description
+    }
+}
+
+impl FromSql for FileType {
+    fn from_sql(_: &Type, raw: &[u8]) -> Result<FileType, Box<Error + Sync + Send>> {
+        let value = types::text_from_sql(raw).map(|b| b.to_owned())?;
+        let file_type = FileType::from_str(&value).map_err(|err| {
+            Box::new(WrongEnumType::new(err.description().to_string()))
+        })?;
+        Ok(file_type)
+    }
+
+    fn accepts(ty: &Type) -> bool {
+        match *ty {
+            Type::Varchar | Type::Text | Type::Bpchar | Type::Name | Type::Unknown => true,
+            Type::Other(ref u) if u.name() == "citext" => true,
+            _ => false,
+        }
+    }
+}
+
+impl ToSql for FileType {
+    fn to_sql(&self, ty: &Type, w: &mut Vec<u8>) -> Result<IsNull, Box<Error + Sync + Send>> {
+        <&str as ToSql>::to_sql(&&*self.to_string(), ty, w)
+    }
+
+    fn accepts(ty: &Type) -> bool {
+        <&str as ToSql>::accepts(ty)
+    }
+
+    to_sql_checked!();
+}
+
+impl FromSql for SourceType {
+    fn from_sql(_: &Type, raw: &[u8]) -> Result<SourceType, Box<Error + Sync + Send>> {
+        let value = types::text_from_sql(raw).map(|b| b.to_owned())?;
+        let file_type = SourceType::from_str(&value).map_err(|err| {
+            Box::new(WrongEnumType::new(err.description().to_string()))
+        })?;
+        Ok(file_type)
+    }
+
+    fn accepts(ty: &Type) -> bool {
+        match *ty {
+            Type::Varchar | Type::Text | Type::Bpchar | Type::Name | Type::Unknown => true,
+            Type::Other(ref u) if u.name() == "citext" => true,
+            _ => false,
+        }
+    }
+}
+
+impl ToSql for SourceType {
+    fn to_sql(&self, ty: &Type, w: &mut Vec<u8>) -> Result<IsNull, Box<Error + Sync + Send>> {
+        <&str as ToSql>::to_sql(&&*self.to_string(), ty, w)
+    }
+
+    fn accepts(ty: &Type) -> bool {
+        <&str as ToSql>::accepts(ty)
+    }
+
+    to_sql_checked!();
+}
+

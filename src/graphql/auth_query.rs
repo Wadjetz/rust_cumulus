@@ -1,11 +1,10 @@
 use graphql::query::Query;
 use users::User;
-use files::File;
+use files::{File, files_resolver};
 use feeds;
 use feeds::Feed;
 use users_feeds::{unreaded_feeds, users_feeds_resolver};
 use bookmarks::{bookmarks_resolver, Bookmark};
-use repositories::file_repository;
 use sources::Source;
 use users_sources::{unfollowed_sources_resolver, users_sources_resolver};
 
@@ -41,9 +40,8 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
     }
 
     field files(&executor, limit: Option<i32> as "Limit", offset: Option<i32> as "Offset") -> Result<Vec<File>, String> {
-        let connection = executor.context().connection.clone().get().map_err(|e| e.description().to_string())?;
-        file_repository::find(&connection, limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
-                            .map_err(|e| e.description().to_string())
+        files_resolver(executor, limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
+            .map_err(|e| e.description().to_string())
     }
 
     field feeds(
