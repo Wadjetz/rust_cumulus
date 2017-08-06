@@ -8,11 +8,11 @@ use uuid::Uuid;
 use r2d2_postgres::PostgresConnectionManager;
 use r2d2::PooledConnection;
 
-use models;
 use repositories::file_repository;
 use app_state::AppState;
 use token::AuthData;
 use file_system;
+use files::{File, FileType};
 
 #[post("/upload/<path..>", data = "<file_data>")]
 pub fn upload(auth_data: AuthData, app_state: State<AppState>, file_data: Data, path: PathBuf) -> Result<String, String> {
@@ -23,12 +23,12 @@ pub fn upload(auth_data: AuthData, app_state: State<AppState>, file_data: Data, 
                   .map(|s| s.to_string());
     file_system::save_file(file_data, path.clone()).and_then(|(hash, metadata)| {
         let file_name = maybe_file_name.unwrap_or_else(|| hash.clone());
-        let f = models::file::File::new(
+        let f = File::new(
             Uuid::new_v4(),
             Some(hash),
             &file_name,
             path.to_str().unwrap_or("/"),
-            models::file::FileType::File,
+            FileType::File,
             Some(metadata.size() as i64),
             auth_data.uuid,
         );

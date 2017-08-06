@@ -1,6 +1,6 @@
 pub mod file_repository;
 
-use models::file::FileType;
+use files::FileType;
 use sources::SourceType;
 
 use postgres_shared::types::FromSql;

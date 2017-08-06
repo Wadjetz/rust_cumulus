@@ -1,28 +1,13 @@
 use uuid::Uuid;
 use r2d2_postgres::PostgresConnectionManager;
 use r2d2::PooledConnection;
-use postgres::rows::Row;
 use postgres::rows::Rows;
 use postgres::error::Error;
 use postgres_shared::error::{SqlState};
 
 use users::User;
-use models::file::File;
+use files::File;
 use errors::*;
-
-impl File {
-    pub fn from(row: &Row) -> Self {
-        File {
-            uuid: row.get("uuid"),
-            hash: row.get("hash"),
-            name: row.get("name"),
-            location: row.get("location"),
-            file_type: row.get("file_type"),
-            size: row.get("size"),
-            user_uuid: row.get("user_uuid"),
-        }
-    }
-}
 
 fn insert_query(connection: &PooledConnection<PostgresConnectionManager>, file: &File) -> Result<u64> {
     connection.execute(
@@ -64,7 +49,7 @@ fn find_query(connection: &PooledConnection<PostgresConnectionManager>, limit: i
 
 pub fn find(connection: &PooledConnection<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<File>> {
     let rows = find_query(connection, limit, offset, user)?;
-    let files = rows.iter().map(|row| File::from(&row)).collect();
+    let files = rows.iter().map(|row| row.into()).collect();
     Ok(files)
 }
 
@@ -78,7 +63,7 @@ fn find_by_uuid_query(connection: &PooledConnection<PostgresConnectionManager>, 
 
 pub fn find_by_uuid(connection: &PooledConnection<PostgresConnectionManager>, uuid: &Uuid) -> Result<File> {
     let rows = find_by_uuid_query(connection, uuid)?;
-    let mut files: Vec<File> = rows.iter().map(|row| File::from(&row)).collect();
+    let mut files: Vec<File> = rows.iter().map(|row| row.into()).collect();
     match files.pop() {
         Some(file) => Ok(file),
         _ => Err(ErrorKind::NotFound.into())

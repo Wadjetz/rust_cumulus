@@ -1,6 +1,6 @@
 use graphql::query::Query;
 use users::User;
-use models::file::File;
+use files::File;
 use feeds;
 use feeds::Feed;
 use users_feeds::{unreaded_feeds, users_feeds_resolver};

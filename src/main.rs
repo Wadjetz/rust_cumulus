@@ -40,7 +40,6 @@ extern crate juniper;
 mod errors;
 mod pg;
 mod file_system;
-mod models;
 mod repositories;
 mod token;
 mod graphql;
@@ -55,6 +54,7 @@ mod users;
 mod users_sources;
 mod users_feeds;
 mod bookmarks;
+mod files;
 
 use std::path::{Path, PathBuf};
 

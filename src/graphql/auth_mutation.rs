@@ -1,7 +1,7 @@
 use graphql::query::Query;
 use users::User;
 use bookmarks::{Bookmark, add_bookmark_resolver};
-use models::file::File;
+use files::File;
 use sources::Source;
 use users_sources;
 use users_feeds;
