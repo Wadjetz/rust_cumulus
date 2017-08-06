@@ -1,10 +1,17 @@
 use uuid::Uuid;
 use postgres::rows::Row;
 use postgres_shared::types::ToSql;
+use r2d2_postgres::PostgresConnectionManager;
+use r2d2::PooledConnection;
+use std::path::PathBuf;
+use std::os::unix::fs::MetadataExt;
+use rocket::Data;
 
 use errors::*;
+use token::AuthData;
 use graphql::query::Query;
 use pg::{Insertable, PgDatabase};
+use file_system;
 
 #[derive(Debug)]
 pub struct File {
@@ -24,9 +31,9 @@ pub enum FileType {
 }
 
 impl File {
-    pub fn new(uuid: Uuid, hash: Option<String>, name: &str, location: &str, file_type: FileType, size: Option<i64>, user_uuid: Uuid) -> Self {
+    pub fn new(hash: Option<String>, name: &str, location: &str, file_type: FileType, size: Option<i64>, user_uuid: Uuid) -> Self {
         File {
-            uuid,
+            uuid: Uuid::new_v4(),
             hash,
             name: name.to_string(),
             location: location.to_string(),
@@ -118,4 +125,24 @@ impl Insertable for File {
     fn insert_params<'a>(&'a self) -> Box<[&'a ToSql]> {
         Box::new([&self.uuid, &self.hash, &self.name, &self.location, &self.file_type, &self.size, &self.user_uuid])
     }
+}
+
+
+pub fn upload_resolver(connection: PooledConnection<PostgresConnectionManager>, file_data: Data, path: PathBuf, auth_data: AuthData) -> Result<String> {
+    let maybe_file_name = path.file_name()
+                  .and_then(|os_str| os_str.to_str())
+                  .map(|s| s.to_string());
+    let (hash, metadata) = file_system::save_file(file_data, path.clone())?;
+    let file_name = maybe_file_name.unwrap_or_else(|| hash.clone());
+    let file = File::new(
+        Some(hash),
+        &file_name,
+        path.to_str().unwrap_or("/"),
+        FileType::File,
+        Some(metadata.size() as i64),
+        auth_data.uuid,
+    );
+    let pg = PgDatabase::new(connection);
+    pg.insert(&file)?;
+    Ok(String::from("Ok"))
 }
