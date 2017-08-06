@@ -1,28 +1,12 @@
 use r2d2_postgres::PostgresConnectionManager;
 use r2d2::PooledConnection;
-use postgres::rows::Row;
 use postgres::rows::Rows;
 use postgres::error::Error;
 use postgres_shared::error::{SqlState};
 use users::User;
-use models::bookmark::Bookmark;
+use bookmarks::Bookmark;
 
 use errors::*;
-
-impl Bookmark {
-    pub fn from(row: &Row) -> Self {
-        Bookmark::new(
-            row.get("uuid"),
-            row.get("url"),
-            row.get("title"),
-            row.get("description"),
-            row.get("path"),
-            row.get("created"),
-            row.get("updated"),
-            row.get("user_uuid"),
-        )
-    }
-}
 
 fn insert_query(connection: &PooledConnection<PostgresConnectionManager>, bookmark: &Bookmark) -> Result<u64> {
     connection.execute(
@@ -56,7 +40,7 @@ fn find_query(connection: &PooledConnection<PostgresConnectionManager>, limit: i
 
 pub fn find(connection: &PooledConnection<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Bookmark>> {
     let rows = find_query(connection, limit, offset, user)?;
-    let bookmarks = rows.iter().map(|row| Bookmark::from(&row)).collect();
+    let bookmarks = rows.iter().map(|row| row.into()).collect();
     Ok(bookmarks)
 }
 
@@ -71,7 +55,7 @@ fn find_by_url_and_user_query(connection: &PooledConnection<PostgresConnectionMa
 
 pub fn find_by_url_and_user(connection: &PooledConnection<PostgresConnectionManager>, url: &str, user: &User) -> Result<Option<Bookmark>> {
     let rows = find_by_url_and_user_query(connection, url, user)?;
-    let mut users: Vec<Bookmark> = rows.iter().map(|row| Bookmark::from(&row)).collect();
+    let mut users: Vec<Bookmark> = rows.iter().map(|row| row.into()).collect();
     let user = users.pop();
     Ok(user)
 }

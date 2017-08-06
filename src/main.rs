@@ -55,6 +55,7 @@ mod feeds;
 mod users;
 mod users_sources;
 mod users_feeds;
+mod bookmarks;
 
 use std::path::{Path, PathBuf};
 

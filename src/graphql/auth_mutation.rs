@@ -1,6 +1,6 @@
 use graphql::query::Query;
 use users::User;
-use models::bookmark::Bookmark;
+use bookmarks::Bookmark;
 use models::file::File;
 use resolvers::bookmarks_resolvers;
 use sources::Source;
@@ -48,7 +48,7 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
        path: String as "Path",
        description: Option<String> as "Description",
     ) -> Result<Bookmark, String> as "Bookmark" {
-        let bookmark = Bookmark::from_request(url, title, description, path, self.user.uuid);
+        let bookmark = Bookmark::new(url, title, description, path, self.user.uuid);
         bookmarks_resolvers::add_bookmark(executor, bookmark, &self.user)
             .map_err(|e| e.description().to_string())
     }

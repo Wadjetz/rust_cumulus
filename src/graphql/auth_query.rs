@@ -4,7 +4,7 @@ use models::file::File;
 use feeds;
 use feeds::Feed;
 use users_feeds::{unreaded_feeds, users_feeds_resolver};
-use models::bookmark::Bookmark;
+use bookmarks::Bookmark;
 use repositories::{bookmark_repository, file_repository};
 use sources::Source;
 use users_sources::{unfollowed_sources_resolver, users_sources_resolver};

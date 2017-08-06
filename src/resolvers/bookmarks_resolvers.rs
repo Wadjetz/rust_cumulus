@@ -2,7 +2,7 @@ use graphql::query::Query;
 use juniper::Executor;
 
 use repositories::bookmark_repository;
-use models::bookmark::Bookmark;
+use bookmarks::Bookmark;
 use users::User;
 use errors::*;
 

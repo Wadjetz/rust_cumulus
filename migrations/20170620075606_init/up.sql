@@ -10,7 +10,7 @@ CREATE TABLE users (
 CREATE TABLE bookmarks (
     uuid UUID PRIMARY KEY,
     url TEXT NOT NULL,
-    title TEXT,
+    title TEXT NOT NULL,
     description TEXT,
     path TEXT,
     created TIMESTAMP,
