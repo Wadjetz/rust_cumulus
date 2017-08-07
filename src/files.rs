@@ -27,7 +27,8 @@ pub struct File {
     pub user_uuid: Uuid,
 }
 
-#[derive(Debug, EnumString, ToString)]
+#[derive(Debug, ToSql, FromSql)]
+#[postgres(name = "filetype")]
 pub enum FileType {
     File,
     Directory,

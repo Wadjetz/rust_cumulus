@@ -13,7 +13,8 @@ use errors::*;
 use graphql::query::Query;
 use pg::{Insertable, PgDatabase};
 
-#[derive(Debug, EnumString, ToString)]
+#[derive(Debug, ToSql, FromSql)]
+#[postgres(name = "sourcetype")]
 pub enum SourceType {
     Rss,
     Twitter,
