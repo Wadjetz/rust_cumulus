@@ -71,6 +71,11 @@ fn path_learning_test() {
     assert_eq!(path3.file_name().and_then(|n| n.to_str()), Some("toto"));
 }
 
+graphql_enum!(FileType {
+    FileType::File => "File",
+    FileType::Directory => "Directory",
+});
+
 graphql_object!(File: Query as "File" |&self| {
     description: "A file"
 
@@ -90,8 +95,8 @@ graphql_object!(File: Query as "File" |&self| {
         &self.location
     }
 
-    field file_type() -> String as "file_type" {
-        self.file_type.to_string()
+    field file_type() -> &FileType as "file_type" {
+        &self.file_type
     }
 
     field size() -> Option<String> as "size" {

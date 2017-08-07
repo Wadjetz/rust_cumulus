@@ -101,6 +101,11 @@ impl Source {
     }
 }
 
+graphql_enum!(SourceType {
+    SourceType::Rss => "Rss",
+    SourceType::Twitter => "Twitter",
+});
+
 graphql_object!(Source: Query as "Source" |&self| {
     description: "Source"
 
@@ -108,8 +113,8 @@ graphql_object!(Source: Query as "Source" |&self| {
         self.uuid.hyphenated().to_string()
     }
 
-    field source_type() -> String as "source_type" {
-        self.source_type.to_string()
+    field source_type() -> &SourceType as "source_type" {
+        &self.source_type
     }
 
     field rss_source() -> Option<RssSource> as "rss_source" {

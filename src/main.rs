@@ -1,3 +1,4 @@
+#![allow(unused_doc_comment)]
 #![recursion_limit = "1024"]
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
