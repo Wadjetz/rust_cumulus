@@ -86,13 +86,13 @@ impl<'a> From<Row<'a>> for User {
 impl Insertable for User {
     fn insert_query(&self) -> String {
         r#"
-            INSERT INTO users (uuid, login, email, password)
-            VALUES ($1, $2, $3, $4);
+            INSERT INTO users (uuid, login, email, password, created, updated)
+            VALUES ($1, $2, $3, $4, $5, $6);
         "#.to_owned()
     }
 
     fn insert_params<'a>(&'a self) -> Box<[&'a ToSql]> {
-        Box::new([&self.uuid, &self.login, &self.email, &self.password])
+        Box::new([&self.uuid, &self.login, &self.email, &self.password, &self.created, &self.updated])
     }
 }
 
