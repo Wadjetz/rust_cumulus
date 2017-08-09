@@ -1,0 +1,28 @@
+version: '2'
+services:
+
+  api:
+    image: wadjetz/cumulus:0.0.16
+    environment:
+      DATABASE_URL: "postgres://cumulus:A8g47GTg6lm@pg/cumulus"
+      SECRET_KEY: "secret"
+      MERCURY_API_KEY: "UgrDh6TuEP5o0FkS74rIA9JCWLhK1hw7PBe2pvjO"
+      ROCKET_ENV: "production"
+    depends_on:
+      - pg
+    ports:
+     - "8000:80"
+    working_dir: /opt/cumulus
+    command: /opt/cumulus/rust_cumulus
+
+  pg:
+    image: postgres:9.5.1
+    environment:
+      POSTGRES_USER: 'cumulus'
+      POSTGRES_PASSWORD: 'A8g47GTg6lm'
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data:
+    driver: local
