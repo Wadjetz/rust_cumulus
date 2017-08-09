@@ -42,6 +42,8 @@ extern crate juniper;
 
 mod errors;
 mod pg;
+mod migration;
+mod migrations;
 mod file_system;
 mod token;
 mod graphql;
@@ -93,12 +95,14 @@ fn post_graphql_handler(
 
 #[get("/")]
 fn index() -> Option<NamedFile> {
-    NamedFile::open(Path::new("static/index.html")).ok()
+    let path = Path::new("./static/index.html");
+    NamedFile::open(path).ok()
 }
 
 #[get("/assets/<file..>")]
 fn files(file: PathBuf) -> Option<NamedFile> {
-    NamedFile::open(Path::new("static/").join(file)).ok()
+    let path = Path::new("./static/").join(file);
+    NamedFile::open(path).ok()
 }
 
 #[post("/upload/<path..>", data = "<file_data>")]
@@ -119,7 +123,12 @@ pub fn download(_auth_data: AuthData, app_state: State<AppState>, file_uuid: Str
 
 fn main() {
     let connection = create_db_pool(&config::CONFIG);
+    println!("Run migrations");
+    if let Err(error) = migrations::run(connection.clone().get().unwrap()) {
+        println!("Run migrations error {:?}", error);
+    }
     let client = reqwest::Client::new().unwrap();
+    println!("Run rss_job");
     rss_job::run(client, connection.clone());
     rocket::ignite()
         .manage(Query::new(connection.clone()))
