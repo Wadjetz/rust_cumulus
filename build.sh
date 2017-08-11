@@ -2,8 +2,6 @@
 
 cargo clean
 
-docker pull wadjetz/rust-build
+cross build --release --target x86_64-unknown-linux-musl
 
-docker run -it -v `pwd`:/opt/project wadjetz/rust-build:latest /root/.cargo/bin/cargo build --release
-
-docker build --no-cache -t wadjetz/cumulus:0.0.16 .
+docker build --no-cache -t wadjetz/cumulus:0.0.20 .
