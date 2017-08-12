@@ -7,9 +7,10 @@ use chrono::NaiveDateTime;
 use chrono::prelude::*;
 use serde_json::Value;
 use serde_json;
-use services::rss;
+use url::Url;
 
 use errors::*;
+use services::rss;
 use graphql::query::Query;
 use pg::{Insertable, PgDatabase};
 
@@ -199,7 +200,8 @@ fn source_existe(pg: &PgDatabase, xml_url: &str) -> Result<bool> {
     Ok(pg.exist(exist_query, &[&json_param])?)
 }
 
-pub fn add_rss_source_resolver<'a>(executor: &Executor<'a, Query>, xml_url: &str) -> Result<Source> { 
+pub fn add_rss_source_resolver<'a>(executor: &Executor<'a, Query>, xml_url: &str) -> Result<Source> {
+    Url::parse(&xml_url)?;
     let connection = executor.context().connection.clone().get()?;
     let pg = PgDatabase::new(connection);
     let maybe_feed = rss::fetch_feeds_channel(&xml_url)?;

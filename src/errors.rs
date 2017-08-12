@@ -16,5 +16,6 @@ error_chain! {
         Json(::serde_json::Error);
         Strum(::strum::ParseError);
         Bcrypt(::bcrypt::BcryptError);
+        Url(::url::ParseError);
     }
 }
