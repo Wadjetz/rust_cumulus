@@ -9,7 +9,7 @@ import * as MindStreamActions from "./MindStreamActions"
 import MindStream from "./components/MindStream"
 
 interface Props extends State {
-    onReaction: (token: string, feed: Feed, reaction: Reaction) => () => void
+    onReaction: (feed: Feed, reaction: Reaction) => () => void
     loadUnreadedFeeds: () => void
 }
 
@@ -20,13 +20,13 @@ class MindStreamContainer extends React.Component<Props, {}> {
         }
     }
     render() {
-        const { mindStream, login, onReaction } = this.props
+        const { mindStream, onReaction } = this.props
         console.log("MindStreamContainer.render", this.props)
         if (mindStream.feeds.length > 0) {
             const feed = mindStream.feeds[0]
             return (
                 <div>
-                    <button onClick={onReaction(login.token, feed, "Readed")}>Read</button>
+                    <button onClick={onReaction(feed, "Readed")}>Read</button>
                     <ReactCSSTransitionGroup
                         transitionName={{
                             enter: styles.transitionEnter,
@@ -56,8 +56,8 @@ const mapDispatchToProps = (dispatch: Dispatch<State>, state: any) => {
         loadUnreadedFeeds: () => {
             dispatch(MindStreamActions.loadUnreadedFeeds())
         },
-        onReaction: (token: string, feed: Feed, reaction: Reaction) => () => {
-            dispatch(MindStreamActions.readFeed())
+        onReaction: (feed: Feed, reaction: Reaction) => () => {
+            dispatch(MindStreamActions.readFeed(feed, reaction))
         }
     }
 }

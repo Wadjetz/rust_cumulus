@@ -1,4 +1,4 @@
-import { Feed } from "../feeds/Feed"
+import { Feed, Reaction } from "../feeds/Feed"
 
 export const LOAD_UNREADED_FEEDS = "LOAD_UNREADED_FEEDS"
 export const loadUnreadedFeeds = () => ({ type: LOAD_UNREADED_FEEDS })
@@ -11,7 +11,7 @@ export const loadUnreadedFeedsError = (error: any) => ({ type: LOAD_UNREADED_FEE
 
 
 export const READ_FEED = "READ_FEED"
-export const readFeed = () => ({ type: READ_FEED })
+export const readFeed = (feed: Feed, reaction: Reaction) => ({ type: READ_FEED, feed, reaction })
 
 export const READ_FEED_SUCCESS = "READ_FEED_SUCCESS"
 export const readFeedSuccess = (feed: Feed) => ({ type: READ_FEED_SUCCESS, feed })
