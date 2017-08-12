@@ -133,7 +133,17 @@ fn main() {
     rocket::ignite()
         .manage(Query::new(connection.clone()))
         .manage(AppState::new(connection.clone()))
-        .manage(RootNode::new(Query::new(connection), Mutation))
-        .mount("/", routes![index, files, graphiql, post_graphql_handler, upload, download])
+        .manage(Schema::new(
+            Query::new(connection),
+            Mutation,
+        ))
+        .mount("/", routes![
+            index,
+            files,
+            graphiql,
+            post_graphql_handler,
+            upload,
+            download,
+        ])
         .launch();
 }
