@@ -27,7 +27,6 @@ class MindStreamContainer extends React.Component<Props, {}> {
 
     render() {
         const { mindStream, onReaction } = this.props
-        console.log("MindStreamContainer.render", this.props)
         if (mindStream.feeds.length > 0) {
             const feed = mindStream.feeds[0]
             return (

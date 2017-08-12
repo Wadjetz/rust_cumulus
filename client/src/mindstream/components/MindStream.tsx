@@ -9,8 +9,6 @@ interface Props {
 
 export default class MindStream extends React.Component<Props, {}> {
     render() {
-        const { feed } = this.props
-        console.log("MindStream.render", feed)
         return (
             <div>
                 {this.renderContent()}
