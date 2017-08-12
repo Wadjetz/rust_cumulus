@@ -103,6 +103,29 @@ export function fallowSource(token: string, source: Source): Promise<void> {
     .then(success)
 }
 
+export function addSource(xmlUrl: string): Promise<Source> {
+    const options = fetchOptions(`
+        mutation {
+            addRssSource(xmlUrl: "${xmlUrl}") {
+                uuid
+                sourceType
+                rssSource {
+                    title
+                    xmlUrl
+                    htmlUrl
+                }
+                error
+                created
+                updated
+            }
+        }
+    `)
+    return fetch(`${BASE_URI}/graphql`, options)
+    .then(response => response.json())
+    .then(success)
+    .then(result => result.addRssSource)
+}
+
 export function readFeed(token: string, feed: Feed, reaction: Reaction): Promise<void> {
     const options = fetchOptions(`
         mutation {

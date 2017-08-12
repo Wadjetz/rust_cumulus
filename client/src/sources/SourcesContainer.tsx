@@ -10,9 +10,12 @@ import * as SourcesActions from "./SourcesActions"
 import { Source } from "./Source"
 
 import SourcesList from "./components/SourcesList"
+import AddSourceForm from "./components/AddSourceForm"
 
 interface Props extends State {
     onLoad: (token: string) => void
+    addSourceOnChange: (field: "newSourceUrl") => (value: any) => void
+    addSourceOnSubmit: (sourceUrl: string) => void,
     fallowSource: (token: string) => (source: Source) => void
 }
 
@@ -23,28 +26,62 @@ class FeedsContainer extends React.Component<Props, {}> {
         }
     }
     render() {
-        const { fallowSource, sources } = this.props
+        const { fallowSource, sources, addSourceOnChange, addSourceOnSubmit } = this.props
         console.log("SourceContainer.render", this.props)
-        return <SourcesList sources={sources.sources} fallowSource={fallowSource(this.props.login.token)} />
+        return (
+            <div>
+                <AddSourceForm
+                    newSourceUrl={sources.newSourceUrl}
+                    loading={false}
+                    onChange={addSourceOnChange}
+                    onSubmit={addSourceOnSubmit}
+                />
+                {this.renderSourceList()}
+            </div>
+        )
+    }
+
+    renderSourceList = () => {
+        const { fallowSource, sources, addSourceOnChange } = this.props
+        if (sources.sources.length > 0) {
+            return (
+                <SourcesList
+                    sources={sources.sources}
+                    fallowSource={fallowSource(this.props.login.token)}
+                />
+            )
+        } else {
+            return <div>Empty</div>
+        }
     }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<State>, state: any) => {
     return {
+        addSourceOnChange: (field: string, value: string) => {
+            dispatch(SourcesActions.addSourceOnChange(field, value))
+        },
+        addSourceOnSubmit: (sourceUrl: string) => {
+            dispatch(SourcesActions.addSourceOnLoad())
+            Api.addSource(sourceUrl).then(source => {
+                console.log("addSource", sourceUrl, source)
+                dispatch(SourcesActions.addSourceOnLoadSuccess(source))
+            }).catch(error => {
+                console.log("addSource error", error)
+                dispatch(SourcesActions.addSourceOnLoadError(error))
+            })
+        },
         onLoad: (token: string) => {
             dispatch(SourcesActions.sourcesOnLoad())
             Api.loadUnfollowedSources(token).then(sources => {
-                console.log("loadUnfollowedSources", sources)
                 dispatch(SourcesActions.sourcesOnLoadSuccess(sources))
             }).catch(error => {
                 dispatch(SourcesActions.sourcesOnLoadError(error))
             })
         },
         fallowSource: (token: string) => (source: Source) => {
-            console.log("fallowSource", source)
             dispatch(SourcesActions.fallowSourcesOnLoad())
             Api.fallowSource(token, source).then(() => {
-                console.log("fallowSource")
                 dispatch(SourcesActions.fallowSourcesOnLoadSuccess(source))
             }).catch(error => {
                 dispatch(SourcesActions.fallowSourcesOnLoadError(error))

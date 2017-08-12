@@ -37,6 +37,7 @@ extern crate feed_rs;
 extern crate hyper;
 extern crate reqwest;
 extern crate rocket;
+extern crate url;
 #[macro_use]
 extern crate juniper;
 
