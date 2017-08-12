@@ -1,4 +1,3 @@
-import { Action } from "redux"
 import { FEEDS_ON_LOAD, FEEDS_ON_LOAD_ERROR, FEEDS_ON_LOAD_SUCCESS } from "./FeedsActions"
 
 import { Feed } from "./Feed"

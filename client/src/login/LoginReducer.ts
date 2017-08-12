@@ -1,4 +1,3 @@
-import { Action } from "redux"
 import { LOGIN_ON_CHANGE, LOGIN_ON_SUBMIT, LOGIN_ON_SUBMIT_SUCCESS, LOGIN_ON_SUBMIT_ERROR } from "./LoginActions"
 
 export interface LoginState {

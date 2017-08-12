@@ -1,39 +1,20 @@
 import { Feed } from "../feeds/Feed"
 
-export const MIND_STREAM_ON_LOAD = "MIND_STREAM_ON_LOAD"
-export const MIND_STREAM_ON_LOAD_SUCCESS = "MIND_STREAM_ON_LOAD_SUCCESS"
-export const MIND_STREAM_ON_LOAD_ERROR = "MIND_STREAM_ON_LOAD_ERROR"
+export const LOAD_UNREADED_FEEDS = "LOAD_UNREADED_FEEDS"
+export const loadUnreadedFeeds = () => ({ type: LOAD_UNREADED_FEEDS })
 
-export function mindStreamOnLoad() {
-    return { type: MIND_STREAM_ON_LOAD }
-}
+export const LOAD_UNREADED_FEEDS_SUCCESS = "LOAD_UNREADED_FEEDS_SUCCESS"
+export const loadUnreadedFeedsSuccess = (feeds: Feed[]) => ({ type: LOAD_UNREADED_FEEDS_SUCCESS, feeds })
 
-export function mindStreamOnLoadSuccess(feeds: Feed[]) {
-    return {
-        type: MIND_STREAM_ON_LOAD_SUCCESS,
-        feeds
-    }
-}
+export const LOAD_UNREADED_FEEDS_ERROR = "LOAD_UNREADED_FEEDS_ERROR"
+export const loadUnreadedFeedsError = (error: any) => ({ type: LOAD_UNREADED_FEEDS_ERROR, error })
 
-export function mindStreamOnLoadError(error: any) {
-    return {
-        type: MIND_STREAM_ON_LOAD_ERROR,
-        error
-    }
-}
 
-export const READ_FEED_ON_LOAD = "READ_FEED_ON_LOAD"
-export const READ_FEED_ON_LOAD_SUCCESS = "READ_FEED_ON_LOAD_SUCCESS"
-export const READ_FEED_ON_LOAD_ERROR = "READ_FEED_ON_LOAD_ERROR"
+export const READ_FEED = "READ_FEED"
+export const readFeed = () => ({ type: READ_FEED })
 
-export function readFeedOnLoad() {
-    return { type: READ_FEED_ON_LOAD }
-}
+export const READ_FEED_SUCCESS = "READ_FEED_SUCCESS"
+export const readFeedSuccess = (feed: Feed) => ({ type: READ_FEED_SUCCESS, feed })
 
-export function readFeedOnLoadSuccess(feed: Feed) {
-    return { type: READ_FEED_ON_LOAD_SUCCESS, feed }
-}
-
-export function readFeedOnLoadError(error: any) {
-    return { type: READ_FEED_ON_LOAD_ERROR, error }
-}
+export const READ_FEED_ERROR = "READ_FEED_ERROR"
+export const readFeedError = (error: any) => ({ type: READ_FEED_ERROR, error })

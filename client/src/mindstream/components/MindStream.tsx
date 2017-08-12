@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Feed, Reaction } from "../../feeds/Feed"
+import { Feed } from "../../feeds/Feed"
 import FeedReadable from "../../components/FeedReadable"
 import FeedRss from "../../components/FeedRss"
 

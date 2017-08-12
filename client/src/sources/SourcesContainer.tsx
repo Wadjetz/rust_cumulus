@@ -1,14 +1,9 @@
 import * as React from "react"
 import { connect, Dispatch } from "react-redux"
-import { Action } from "redux"
 
-import * as Api from "../Api"
 import { State } from "../Store"
-
-import { SourcesState } from "./SourcesReducer"
 import * as SourcesActions from "./SourcesActions"
 import { Source } from "./Source"
-
 import SourcesList from "./components/SourcesList"
 import AddSourceForm from "./components/AddSourceForm"
 
@@ -26,7 +21,7 @@ class FeedsContainer extends React.Component<Props, {}> {
         }
     }
     render() {
-        const { fallowSource, sources, addSourceOnChange, addSourceOnSubmit } = this.props
+        const { sources, addSourceOnChange, addSourceOnSubmit } = this.props
         console.log("SourceContainer.render", this.props)
         return (
             <div>
@@ -42,7 +37,7 @@ class FeedsContainer extends React.Component<Props, {}> {
     }
 
     renderSourceList = () => {
-        const { fallowSource, sources, addSourceOnChange } = this.props
+        const { fallowSource, sources } = this.props
         if (sources.sources.length > 0) {
             return (
                 <SourcesList
@@ -74,4 +69,3 @@ const mapDispatchToProps = (dispatch: Dispatch<State>, state: any) => {
 }
 
 export default connect((state: State) => state, mapDispatchToProps)(FeedsContainer)
-

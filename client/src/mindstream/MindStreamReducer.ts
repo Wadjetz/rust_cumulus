@@ -1,8 +1,7 @@
-import { Action } from "redux"
 import { Feed } from "../feeds/Feed"
 import {
-    MIND_STREAM_ON_LOAD, MIND_STREAM_ON_LOAD_ERROR, MIND_STREAM_ON_LOAD_SUCCESS,
-    READ_FEED_ON_LOAD, READ_FEED_ON_LOAD_ERROR, READ_FEED_ON_LOAD_SUCCESS,
+    LOAD_UNREADED_FEEDS, LOAD_UNREADED_FEEDS_ERROR, LOAD_UNREADED_FEEDS_SUCCESS,
+    READ_FEED, READ_FEED_ERROR, READ_FEED_SUCCESS,
 } from "./MindStreamActions"
 
 export interface MindStreamState {
@@ -19,38 +18,16 @@ const initState: MindStreamState = {
 
 const MindStreamReducer = (state: MindStreamState = initState, action: any) => {
     switch (action.type) {
-        case MIND_STREAM_ON_LOAD: return {
-            ...state,
-            loading: true
-        }
+        case LOAD_UNREADED_FEEDS: return { ...state, loading: true }
+        case LOAD_UNREADED_FEEDS_SUCCESS: return { ...state, feeds: action.feeds, loading: false }
+        case LOAD_UNREADED_FEEDS_ERROR: return { ...state, loading: false, error: action.error }
 
-        case MIND_STREAM_ON_LOAD_SUCCESS: return {
-            ...state,
-            feeds: action.feeds,
-            loading: false
-        }
-
-        case MIND_STREAM_ON_LOAD_ERROR: return {
-            ...state,
-            loading: false,
-            error: action.error
-        }
-
-        case READ_FEED_ON_LOAD: return {
-            ...state,
-            loading: true
-        }
-
-        case READ_FEED_ON_LOAD_SUCCESS: return {
+        case READ_FEED: return { ...state, loading: true }
+        case READ_FEED_ERROR: return { ...state, loading: false, error: action.error }
+        case READ_FEED_SUCCESS: return {
             ...state,
             loading: false,
             feeds: state.feeds.filter(feed => feed.uuid !== action.feed.uuid)
-        }
-
-        case READ_FEED_ON_LOAD_ERROR: return {
-            ...state,
-            loading: false,
-            error: action.error
         }
 
         default: return state

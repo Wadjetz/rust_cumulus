@@ -1,4 +1,3 @@
-import { Action } from "redux"
 import { Source } from "./Source"
 import {
     LOAD_UNFOLLOWED_SOURCES, LOAD_UNFOLLOWED_SOURCES_ERROR, LOAD_UNFOLLOWED_SOURCES_SUCCESS,

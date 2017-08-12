@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom"
 import { Route } from "react-router"
 import { Provider } from "react-redux"
 import { createStore, compose, combineReducers, applyMiddleware } from "redux"
-import { ConnectedRouter, routerReducer, routerMiddleware, push } from "react-router-redux"
+import { ConnectedRouter, routerReducer, routerMiddleware } from "react-router-redux"
 import { createEpicMiddleware } from "redux-observable"
 import { history } from "./router"
 

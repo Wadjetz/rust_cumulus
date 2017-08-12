@@ -1,6 +1,5 @@
 import * as React from "react"
 import { connect, Dispatch } from "react-redux"
-import { Action } from "redux"
 import * as Api from "../Api"
 import { LoginState } from "./LoginReducer"
 import * as LoginActions from "./LoginActions"

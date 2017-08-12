@@ -1,10 +1,9 @@
-import { Action } from "redux"
 import {
     ADD_SOURCE, addSourceSuccess, addSourceError,
     LOAD_UNFOLLOWED_SOURCES, loadUnfollowedSourcesSuccess, loadUnfollowedSourcesError,
     FALLOW_SOURCE, fallowSourcesSuccess, fallowSourcesError
 } from "./SourcesActions"
-import { ActionsObservable, Epic } from "redux-observable"
+import { Epic } from "redux-observable"
 import { State } from "../Store"
 import * as Api from "../Api"
 

@@ -1,13 +1,9 @@
 import * as React from "react"
 import { connect, Dispatch } from "react-redux"
-import { Action } from "redux"
 
 import * as Api from "../Api"
 import { State } from "../Store"
-
-import { FeedsState } from "./FeedsReducer"
 import * as FeedsActions from "./FeedsActions"
-
 import FeedsList from "./components/FeedsList"
 
 interface Props extends State {

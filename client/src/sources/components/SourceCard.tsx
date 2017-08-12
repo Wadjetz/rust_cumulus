@@ -1,6 +1,5 @@
 import * as React from "react"
 import { Source } from "../../sources/Source"
-import FeedReadable from "../../components/FeedReadable"
 
 interface Props {
     source: Source

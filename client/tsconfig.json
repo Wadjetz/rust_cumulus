@@ -3,7 +3,9 @@
         "sourceMap": true,
         "noImplicitAny": true,
         "target": "es5",
-        "jsx": "react"
+        "jsx": "react",
+        "strict": false,
+        "noUnusedLocals": true
     },
     "include": [
         "./src/**/*"

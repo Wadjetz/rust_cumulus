@@ -134,7 +134,7 @@ export function addSource(xmlUrl: string): Promise<Source> {
     .then(result => result.addRssSource)
 }
 
-export function readFeed(token: string, feed: Feed, reaction: Reaction): Promise<void> {
+export function readFeed(token: string, feed: Feed, reaction: Reaction): Promise<Feed> {
     const options = fetchOptions(`
         mutation {
             auth(token: "${token}") {
@@ -145,6 +145,7 @@ export function readFeed(token: string, feed: Feed, reaction: Reaction): Promise
     return fetch(`${BASE_URI}/graphql`, options)
     .then(response => response.json())
     .then(success)
+    .then(() => feed)
 }
 
 export function success(result: any) {

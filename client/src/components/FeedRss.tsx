@@ -1,6 +1,6 @@
 import * as React from "react"
 import * as styles from "./FeedRss.css"
-import { Feed, Rss } from "../feeds/Feed"
+import { Rss } from "../feeds/Feed"
 
 interface Props {
     rss: Rss
