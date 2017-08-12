@@ -18,7 +18,13 @@ class MindStreamContainer extends React.Component<Props, {}> {
         if (this.props.feeds.feeds.length === 0) {
             this.props.loadUnreadedFeeds()
         }
+        document.addEventListener("keydown", this.onKeyPressHandler, false)
     }
+
+    componentWillUnMount() {
+        document.removeEventListener("keydown", this.onKeyPressHandler, false)
+    }
+
     render() {
         const { mindStream, onReaction } = this.props
         console.log("MindStreamContainer.render", this.props)
@@ -47,6 +53,13 @@ class MindStreamContainer extends React.Component<Props, {}> {
             return <div>Loading</div>
         } else {
             return <div>No more feeds</div>
+        }
+    }
+
+    onKeyPressHandler = (event: any) => {
+        if (event.code === "ArrowRight" || event.code === "KeyD") {
+            const { mindStream: { feeds }, onReaction } = this.props
+            onReaction(feeds[0], "Readed")()
         }
     }
 }
