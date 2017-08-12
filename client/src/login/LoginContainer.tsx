@@ -1,6 +1,5 @@
 import * as React from "react"
 import { connect, Dispatch } from "react-redux"
-import * as Api from "../Api"
 import { LoginState } from "./LoginReducer"
 import * as LoginActions from "./LoginActions"
 import { State } from "../Store"
@@ -34,13 +33,7 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) => {
             dispatch(LoginActions.loginOnChange(field, value))
         },
         onSubmit: (email: string, password: string) => {
-            // TODO validate data
-            dispatch(LoginActions.loginOnSubmit())
-            Api.login(email, password).then(response => {
-                dispatch(LoginActions.loginOnSubmitSuccess(response.login))
-            }).catch(error => {
-                dispatch(LoginActions.loginOnSubmitError(error))
-            })
+            dispatch(LoginActions.loginOnSubmit(email, password))
         }
     }
 }

@@ -16,20 +16,10 @@ const initState: LoginState = {
 
 const LoginReducer = (state: LoginState = initState, action: any) => {
     switch (action.type) {
-        case LOGIN_ON_CHANGE: {
-            const field = action.field
-            const value = action.value
-            return { ...state, [field]: value }
-        }
-        case LOGIN_ON_SUBMIT: {
-            return { ...state, loading: true, error: undefined }
-        }
-        case LOGIN_ON_SUBMIT_SUCCESS: {
-            return { ...state, token: action.token, loading: false }
-        }
-        case LOGIN_ON_SUBMIT_ERROR: {
-            return { ...state, error: action.error, loading: false }
-        }
+        case LOGIN_ON_CHANGE: return { ...state, [action.field]: action.value }
+        case LOGIN_ON_SUBMIT: return { ...state, loading: true, error: undefined }
+        case LOGIN_ON_SUBMIT_SUCCESS: return { ...state, token: action.token, loading: false }
+        case LOGIN_ON_SUBMIT_ERROR: return { ...state, error: action.error, loading: false }
         default: return state
     }
 }

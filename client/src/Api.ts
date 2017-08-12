@@ -4,10 +4,6 @@ import * as router from "./router"
 
 const BASE_URI = "http://localhost:8000"
 
-interface LoginResponse {
-    login: string
-}
-
 function fetchOptions(query: string) {
     return {
         method: "POST",
@@ -20,13 +16,14 @@ function fetchOptions(query: string) {
     }
 }
 
-export function login(email: string, password: string): Promise<LoginResponse> {
+export function login(email: string, password: string): Promise<string> {
     const options = fetchOptions(`mutation {
         login(email: "${email}", password: "${password}")
     }`)
     return fetch(`${BASE_URI}/graphql`, options)
     .then(response => response.json())
     .then(success)
+    .then(result => result.login)
 }
 
 

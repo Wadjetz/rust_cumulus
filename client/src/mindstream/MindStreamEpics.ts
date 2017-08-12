@@ -19,6 +19,7 @@ export const loadUnreadedFeedsEpic: Epic<any, State> = (action$, state) => actio
 export const reloadUnreadedFeedsEpic: Epic<Action, State> = (action$, state) => action$
     .filter(action => action.type === READ_FEED_SUCCESS && state.getState().mindStream.feeds.length < 4)
     .mergeMap(action =>
+        // TODO add and use limit and offset of loadUnreadedFeeds to simplify this
         Api.loadUnreadedFeeds(state.getState().login.token)
             .then(newFeeds =>
                 loadUnreadedFeedsSuccess(
