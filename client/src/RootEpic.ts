@@ -1,6 +1,6 @@
 import { combineEpics } from "redux-observable"
 import { addSourceEpic, loadUnfollowedSourcesEpic, fallowSourceEpic } from "./sources/SourcesEpics"
-import { loadUnreadedFeedsEpic, readFeedEpic, reloadUnreadedFeeds } from "./mindstream/MindStreamEpics"
+import { loadUnreadedFeedsEpic, readFeedEpic, reloadUnreadedFeedsEpic } from "./mindstream/MindStreamEpics"
 
 const RootEpic = combineEpics(
     addSourceEpic,
@@ -8,7 +8,7 @@ const RootEpic = combineEpics(
     fallowSourceEpic,
 
     loadUnreadedFeedsEpic,
-    reloadUnreadedFeeds,
+    reloadUnreadedFeedsEpic,
     readFeedEpic,
 )
 

@@ -16,7 +16,7 @@ export const loadUnreadedFeedsEpic: Epic<any, State> = (action$, state) => actio
             .catch(loadUnreadedFeedsError)
     )
 
-export const reloadUnreadedFeeds: Epic<Action, State> = (action$, state) => action$
+export const reloadUnreadedFeedsEpic: Epic<Action, State> = (action$, state) => action$
     .filter(action => action.type === READ_FEED_SUCCESS && state.getState().mindStream.feeds.length < 4)
     .mergeMap(action =>
         Api.loadUnreadedFeeds(state.getState().login.token)
