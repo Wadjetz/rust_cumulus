@@ -1,9 +1,9 @@
 import { Action } from "redux"
 import { Source } from "./Source"
 import {
-    SOURCES_ON_LOAD, SOURCES_ON_LOAD_ERROR, SOURCES_ON_LOAD_SUCCESS,
-    FALLOW_SOURCE_ON_LOAD, FALLOW_SOURCE_ON_LOAD_ERROR, FALLOW_SOURCE_ON_LOAD_SUCCESS,
-    ADD_SOURCE_ON_CHANGE, ADD_SOURCE_ON_LOAD, ADD_SOURCE_ON_LOAD_ERROR, ADD_SOURCE_ON_LOAD_SUCCESS
+    LOAD_UNFOLLOWED_SOURCES, LOAD_UNFOLLOWED_SOURCES_ERROR, LOAD_UNFOLLOWED_SOURCES_SUCCESS,
+    FALLOW_SOURCE, FALLOW_SOURCE_ERROR, FALLOW_SOURCE_SUCCESS,
+    ADD_SOURCE_ON_CHANGE, ADD_SOURCE, ADD_SOURCE_ERROR, ADD_SOURCE_SUCCESS
 } from "./SourcesActions"
 
 export interface SourcesState {
@@ -24,53 +24,25 @@ const initState: SourcesState = {
 
 const SourcesReducer = (state: SourcesState = initState, action: any) => {
     switch (action.type) {
-        case ADD_SOURCE_ON_CHANGE: {
-            const field = action.field
-            const value = action.value
-            return { ...state, [field]: value }
-        }
+        case ADD_SOURCE_ON_CHANGE: return { ...state, [action.field]: action.value }
 
-        case ADD_SOURCE_ON_LOAD: return { ...state, addSourceLoading: true }
-        case ADD_SOURCE_ON_LOAD_SUCCESS: return {
-            ...state,
-            addSourceLoading: false,
-            sources: [...state.sources, action.source]
-        }
-        case ADD_SOURCE_ON_LOAD_ERROR: return { ...state, addSourceLoading: false, error: action.error }
+        case ADD_SOURCE: return { ...state, addSourceLoading: true }
+        case ADD_SOURCE_SUCCESS: return { ...state, addSourceLoading: false, sources: [...state.sources, action.source] }
+        case ADD_SOURCE_ERROR: return { ...state, addSourceLoading: false, error: action.error }
 
-        case SOURCES_ON_LOAD: return {
-            ...state,
-            loading: true
-        }
+        case LOAD_UNFOLLOWED_SOURCES: return { ...state, loading: true }
+        case LOAD_UNFOLLOWED_SOURCES_SUCCESS: return { ...state, sources: action.sources, loading: false }
+        case LOAD_UNFOLLOWED_SOURCES_ERROR: return { ...state, loading: false, error: action.error }
 
-        case SOURCES_ON_LOAD_SUCCESS: return {
-            ...state,
-            sources: action.sources,
-            loading: false
-        }
-
-        case SOURCES_ON_LOAD_ERROR: return {
-            ...state,
-            loading: false,
-            error: action.error
-        }
-
-        case FALLOW_SOURCE_ON_LOAD: return {
-            ...state,
-            loading: true
-        }
-
-        case FALLOW_SOURCE_ON_LOAD_SUCCESS: return {
+        case FALLOW_SOURCE: return { ...state, loading: true}
+        case FALLOW_SOURCE_ERROR: return { ...state, loading: false, error: action.error }
+        case FALLOW_SOURCE_SUCCESS: return {
             ...state,
             sources: state.sources.filter(source => source.uuid !== action.source.uuid),
             loading: false
         }
 
-        case FALLOW_SOURCE_ON_LOAD_ERROR: return {
-            ...state,
-            loading: false,
-            error: action.error
-        }
+
         default: return state
     }
 }

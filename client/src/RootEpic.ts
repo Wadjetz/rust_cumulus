@@ -1,9 +1,10 @@
 import { combineEpics } from "redux-observable"
-import { addSourceEpic, loadUnfollowedSourcesEpic } from "./sources/SourcesEpics"
+import { addSourceEpic, loadUnfollowedSourcesEpic, fallowSourceEpic } from "./sources/SourcesEpics"
 
 const RootEpic = combineEpics(
     addSourceEpic,
     loadUnfollowedSourcesEpic,
+    fallowSourceEpic,
 )
 
 export default RootEpic

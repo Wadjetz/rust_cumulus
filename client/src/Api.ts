@@ -88,12 +88,19 @@ function log<T>(t: T): T {
     return t
 }
 
-export function fallowSource(token: string, source: Source): Promise<void> {
+export function fallowSource(token: string, source: Source): Promise<Source> {
     const options = fetchOptions(`
         mutation {
             auth(token: "${token}") {
                 fallowSource(sourceUuid: "${source.uuid}") {
                     uuid
+                    sourceType
+                    rssSource {
+                        title
+                        xmlUrl
+                        htmlUrl
+                    }
+                    error
                 }
             }
         }
@@ -101,6 +108,7 @@ export function fallowSource(token: string, source: Source): Promise<void> {
     return fetch(`${BASE_URI}/graphql`, options)
     .then(response => response.json())
     .then(success)
+    .then(result => result.auth.fallowSource)
 }
 
 export function addSource(xmlUrl: string): Promise<Source> {

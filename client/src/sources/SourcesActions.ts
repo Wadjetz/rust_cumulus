@@ -1,67 +1,32 @@
 import { Source } from "./Source"
 
-export const SOURCES_ON_LOAD = "SOURCES_ON_LOAD"
-export function sourcesOnLoad() {
-    return { type: SOURCES_ON_LOAD }
-}
+export const LOAD_UNFOLLOWED_SOURCES = "LOAD_UNFOLLOWED_SOURCES"
+export const loadUnfollowedSources = () => ({ type: LOAD_UNFOLLOWED_SOURCES })
 
-export const SOURCES_ON_LOAD_SUCCESS = "SOURCES_ON_LOAD_SUCCESS"
-export function sourcesOnLoadSuccess(sources: Source[]) {
-    return {
-        type: SOURCES_ON_LOAD_SUCCESS,
-        sources
-    }
-}
+export const LOAD_UNFOLLOWED_SOURCES_SUCCESS = "LOAD_UNFOLLOWED_SOURCES_SUCCESS"
+export const loadUnfollowedSourcesSuccess = (sources: Source[]) => ({ type: LOAD_UNFOLLOWED_SOURCES_SUCCESS, sources })
 
-export const SOURCES_ON_LOAD_ERROR = "SOURCES_ON_LOAD_ERROR"
-export function sourcesOnLoadError(error: any) {
-    return {
-        type: SOURCES_ON_LOAD_ERROR,
-        error
-    }
-}
+export const LOAD_UNFOLLOWED_SOURCES_ERROR = "LOAD_UNFOLLOWED_SOURCES_ERROR"
+export const loadUnfollowedSourcesError = (error: any) => ({ type: LOAD_UNFOLLOWED_SOURCES_ERROR, error })
 
-export const FALLOW_SOURCE_ON_LOAD = "FALLOW_SOURCE_ON_LOAD"
-export function fallowSourcesOnLoad() {
-    return { type: FALLOW_SOURCE_ON_LOAD }
-}
 
-export const FALLOW_SOURCE_ON_LOAD_SUCCESS = "FALLOW_SOURCE_ON_LOAD_SUCCESS"
-export function fallowSourcesOnLoadSuccess(source: Source) {
-    return { type: FALLOW_SOURCE_ON_LOAD_SUCCESS, source }
-}
+export const FALLOW_SOURCE = "FALLOW_SOURCE"
+export const fallowSources = (source: Source) => ({ type: FALLOW_SOURCE, source })
 
-export const FALLOW_SOURCE_ON_LOAD_ERROR = "FALLOW_SOURCE_ON_LOAD_ERROR"
-export function fallowSourcesOnLoadError(error: any) {
-    return {
-        type: FALLOW_SOURCE_ON_LOAD_ERROR,
-        error
-    }
-}
+export const FALLOW_SOURCE_SUCCESS = "FALLOW_SOURCE_SUCCESS"
+export const fallowSourcesSuccess = (source: Source) => ({ type: FALLOW_SOURCE_SUCCESS, source })
+
+export const FALLOW_SOURCE_ERROR = "FALLOW_SOURCE_ERROR"
+export const fallowSourcesError = (error: any) => ({ type: FALLOW_SOURCE_ERROR, error })
 
 export const ADD_SOURCE_ON_CHANGE = "ADD_SOURCE_ON_CHANGE"
-export function addSourceOnChange(field: string, value: string) {
-    return {
-        type: ADD_SOURCE_ON_CHANGE,
-        field,
-        value
-    }
-}
+export const addSourceOnChange = (field: string, value: string) => ({ type: ADD_SOURCE_ON_CHANGE, field, value })
 
-export const ADD_SOURCE_ON_LOAD = "ADD_SOURCE_ON_LOAD"
-export function addSourceOnLoad(sourceUrl: string) {
-    return { type: ADD_SOURCE_ON_LOAD, sourceUrl }
-}
+export const ADD_SOURCE = "ADD_SOURCE"
+export const addSource = (sourceUrl: string) => ({ type: ADD_SOURCE, sourceUrl })
 
-export const ADD_SOURCE_ON_LOAD_SUCCESS = "ADD_SOURCE_ON_LOAD_SUCCESS"
-export function addSourceOnLoadSuccess(source: Source) {
-    return { type: ADD_SOURCE_ON_LOAD_SUCCESS, source }
-}
+export const ADD_SOURCE_SUCCESS = "ADD_SOURCE_SUCCESS"
+export const addSourceSuccess = (source: Source) => ({ type: ADD_SOURCE_SUCCESS, source })
 
-export const ADD_SOURCE_ON_LOAD_ERROR = "ADD_SOURCE_ON_LOAD_ERROR"
-export function addSourceOnLoadError(error: any) {
-    return {
-        type: ADD_SOURCE_ON_LOAD_ERROR,
-        error
-    }
-}
+export const ADD_SOURCE_ERROR = "ADD_SOURCE_ERROR"
+export const addSourceError = (error: any) => ({ type: ADD_SOURCE_ERROR, error })

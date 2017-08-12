@@ -16,7 +16,7 @@ interface Props extends State {
     onLoad: () => void
     addSourceOnChange: (field: "newSourceUrl") => (value: any) => void
     addSourceOnSubmit: (sourceUrl: string) => void,
-    fallowSource: (token: string) => (source: Source) => void
+    fallowSource: (source: Source) => void
 }
 
 class FeedsContainer extends React.Component<Props, {}> {
@@ -47,7 +47,7 @@ class FeedsContainer extends React.Component<Props, {}> {
             return (
                 <SourcesList
                     sources={sources.sources}
-                    fallowSource={fallowSource(this.props.login.token)}
+                    fallowSource={fallowSource}
                 />
             )
         } else {
@@ -62,18 +62,13 @@ const mapDispatchToProps = (dispatch: Dispatch<State>, state: any) => {
             dispatch(SourcesActions.addSourceOnChange(field, value))
         },
         addSourceOnSubmit: (sourceUrl: string) => {
-            dispatch(SourcesActions.addSourceOnLoad(sourceUrl))
+            dispatch(SourcesActions.addSource(sourceUrl))
         },
         onLoad: () => {
-            dispatch(SourcesActions.sourcesOnLoad())
+            dispatch(SourcesActions.loadUnfollowedSources())
         },
-        fallowSource: (token: string) => (source: Source) => {
-            dispatch(SourcesActions.fallowSourcesOnLoad())
-            Api.fallowSource(token, source).then(() => {
-                dispatch(SourcesActions.fallowSourcesOnLoadSuccess(source))
-            }).catch(error => {
-                dispatch(SourcesActions.fallowSourcesOnLoadError(error))
-            })
+        fallowSource: (source: Source) => {
+            dispatch(SourcesActions.fallowSources(source))
         }
     }
 }
