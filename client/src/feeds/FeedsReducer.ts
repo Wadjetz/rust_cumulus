@@ -1,4 +1,4 @@
-import { FEEDS_ON_LOAD, FEEDS_ON_LOAD_ERROR, FEEDS_ON_LOAD_SUCCESS } from "./FeedsActions"
+import { LOAD_FEEDS, LOAD_FEEDS_ERROR, LOAD_FEEDS_SUCCESS } from "./FeedsActions"
 
 import { Feed } from "./Feed"
 
@@ -16,22 +16,9 @@ const initState: FeedsState = {
 
 const FeedsReducer = (state: FeedsState = initState, action: any) => {
     switch (action.type) {
-        case FEEDS_ON_LOAD: return {
-            ...state,
-            loading: true
-        }
-
-        case FEEDS_ON_LOAD_SUCCESS: return {
-            ...state,
-            feeds: action.feeds,
-            loading: false
-        }
-
-        case FEEDS_ON_LOAD_ERROR: return {
-            ...state,
-            loading: false,
-            error: action.error
-        }
+        case LOAD_FEEDS: return { ...state, loading: true }
+        case LOAD_FEEDS_SUCCESS: return { ...state, feeds: action.feeds, loading: false }
+        case LOAD_FEEDS_ERROR: return { ...state, loading: false, error: action.error }
 
         default: return state
     }

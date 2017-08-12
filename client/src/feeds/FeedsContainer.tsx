@@ -1,19 +1,18 @@
 import * as React from "react"
 import { connect, Dispatch } from "react-redux"
 
-import * as Api from "../Api"
 import { State } from "../Store"
 import * as FeedsActions from "./FeedsActions"
 import FeedsList from "./components/FeedsList"
 
 interface Props extends State {
-    onLoad: (token: string) => void
+    onLoad: () => void
 }
 
 class FeedsContainer extends React.Component<Props, {}> {
     componentWillMount() {
         if (this.props.feeds.feeds.length === 0) {
-            this.props.onLoad(this.props.login.token)
+            this.props.onLoad()
         }
     }
     render() {
@@ -30,16 +29,10 @@ const mapStateToProps = (state: State) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<State>, state: any) => {
     return {
-        onLoad: (token: string) => {
-            dispatch(FeedsActions.feedsOnLoad())
-            Api.loadUnreadedFeeds(token).then(feeds => {
-                dispatch(FeedsActions.feedsOnLoadSuccess(feeds))
-            }).catch(error => {
-                dispatch(FeedsActions.feedsOnLoadError(error))
-            })
+        onLoad: () => {
+            dispatch(FeedsActions.loadfeeds())
         }
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(FeedsContainer)
-
