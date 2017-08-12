@@ -8,6 +8,7 @@ import { createEpicMiddleware } from "redux-observable"
 import { history } from "./router"
 
 import "rxjs/add/operator/mergeMap"
+import "rxjs/add/operator/filter"
 
 import LoginReducer from "./login/LoginReducer"
 import FeedsReducer from "./feeds/FeedsReducer"
