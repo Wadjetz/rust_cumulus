@@ -49,8 +49,8 @@ export function addSourceOnChange(field: string, value: string) {
 }
 
 export const ADD_SOURCE_ON_LOAD = "ADD_SOURCE_ON_LOAD"
-export function addSourceOnLoad() {
-    return { type: ADD_SOURCE_ON_LOAD }
+export function addSourceOnLoad(sourceUrl: string) {
+    return { type: ADD_SOURCE_ON_LOAD, sourceUrl }
 }
 
 export const ADD_SOURCE_ON_LOAD_SUCCESS = "ADD_SOURCE_ON_LOAD_SUCCESS"

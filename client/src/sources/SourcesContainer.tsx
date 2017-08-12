@@ -13,7 +13,7 @@ import SourcesList from "./components/SourcesList"
 import AddSourceForm from "./components/AddSourceForm"
 
 interface Props extends State {
-    onLoad: (token: string) => void
+    onLoad: () => void
     addSourceOnChange: (field: "newSourceUrl") => (value: any) => void
     addSourceOnSubmit: (sourceUrl: string) => void,
     fallowSource: (token: string) => (source: Source) => void
@@ -22,7 +22,7 @@ interface Props extends State {
 class FeedsContainer extends React.Component<Props, {}> {
     componentWillMount() {
         if (this.props.sources.sources.length === 0) {
-            this.props.onLoad(this.props.login.token)
+            this.props.onLoad()
         }
     }
     render() {
@@ -62,22 +62,10 @@ const mapDispatchToProps = (dispatch: Dispatch<State>, state: any) => {
             dispatch(SourcesActions.addSourceOnChange(field, value))
         },
         addSourceOnSubmit: (sourceUrl: string) => {
-            dispatch(SourcesActions.addSourceOnLoad())
-            Api.addSource(sourceUrl).then(source => {
-                console.log("addSource", sourceUrl, source)
-                dispatch(SourcesActions.addSourceOnLoadSuccess(source))
-            }).catch(error => {
-                console.log("addSource error", error)
-                dispatch(SourcesActions.addSourceOnLoadError(error))
-            })
+            dispatch(SourcesActions.addSourceOnLoad(sourceUrl))
         },
-        onLoad: (token: string) => {
+        onLoad: () => {
             dispatch(SourcesActions.sourcesOnLoad())
-            Api.loadUnfollowedSources(token).then(sources => {
-                dispatch(SourcesActions.sourcesOnLoadSuccess(sources))
-            }).catch(error => {
-                dispatch(SourcesActions.sourcesOnLoadError(error))
-            })
         },
         fallowSource: (token: string) => (source: Source) => {
             dispatch(SourcesActions.fallowSourcesOnLoad())

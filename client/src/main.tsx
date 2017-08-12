@@ -1,10 +1,13 @@
 import * as React from "react"
 import * as ReactDOM from "react-dom"
+import { Route } from "react-router"
 import { Provider } from "react-redux"
 import { createStore, compose, combineReducers, applyMiddleware } from "redux"
 import { ConnectedRouter, routerReducer, routerMiddleware, push } from "react-router-redux"
-import { Route } from "react-router"
+import { createEpicMiddleware } from "redux-observable"
 import { history } from "./router"
+
+import "rxjs/add/operator/mergeMap"
 
 import LoginReducer from "./login/LoginReducer"
 import FeedsReducer from "./feeds/FeedsReducer"
@@ -15,6 +18,10 @@ import MindStreamReducer from "./mindstream/MindStreamReducer"
 import SourcesContainer from "./sources/SourcesContainer"
 import SourcesReducer from "./sources/SourcesReducer"
 import Header from "./components/Header"
+
+import RootEpic from "./RootEpic"
+
+const epicMiddleware = createEpicMiddleware(RootEpic)
 
 const middleware = routerMiddleware(history)
 
@@ -30,6 +37,7 @@ export let store = createStore(
     reducers,
     compose(
         applyMiddleware(middleware),
+        applyMiddleware(epicMiddleware),
         (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__()
     )
 )
