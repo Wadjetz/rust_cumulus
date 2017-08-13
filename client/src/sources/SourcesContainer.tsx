@@ -22,7 +22,6 @@ class FeedsContainer extends React.Component<Props, {}> {
     }
     render() {
         const { sources, addSourceOnChange, addSourceOnSubmit } = this.props
-        console.log("SourceContainer.render", this.props)
         return (
             <div>
                 <AddSourceForm

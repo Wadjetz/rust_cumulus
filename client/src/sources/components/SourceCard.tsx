@@ -9,7 +9,6 @@ interface Props {
 export default class SourcesCard extends React.Component<Props, {}> {
     render() {
         const { source, fallowSource } = this.props
-        console.log("SourcesCard.render", source)
         return (
             <div>
                 <h4>{source.rssSource.title}</h4>

@@ -16,7 +16,6 @@ class FeedsContainer extends React.Component<Props, {}> {
         }
     }
     render() {
-        console.log("FeedsContainer.render", this.props.feeds.feeds)
         return <FeedsList feeds={this.props.feeds.feeds} />
     }
 }

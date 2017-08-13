@@ -10,7 +10,6 @@ interface Props {
 export default class SourcesList extends React.Component<Props, {}> {
     render() {
         const { sources, fallowSource } = this.props
-        console.log("SourcesList.render", sources)
         return (
             <div>
                 {sources.map(source => <SourcesCard key={source.uuid} source={source} fallowSource={fallowSource}/>)}

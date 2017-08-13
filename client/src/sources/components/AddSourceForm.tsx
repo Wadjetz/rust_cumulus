@@ -10,7 +10,6 @@ interface Props {
 export default class AddSourceForm extends React.Component<Props, {}> {
     render() {
         const { newSourceUrl } = this.props
-        console.log("AddSourceForm.render", newSourceUrl)
         return (
             <div>
                 <label>Add source</label>

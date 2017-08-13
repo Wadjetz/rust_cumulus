@@ -4,6 +4,14 @@ import * as router from "./router"
 
 const BASE_URI = document.location.origin
 
+function query(query: string): Promise<any> {
+    console.log("query", BASE_URI)
+    return fetch(`${BASE_URI}/graphql`, fetchOptions(query))
+        .then(response => response.json())
+        .then(success)
+        .then(log)
+}
+
 function fetchOptions(query: string) {
     return {
         method: "POST",
@@ -17,18 +25,14 @@ function fetchOptions(query: string) {
 }
 
 export function login(email: string, password: string): Promise<string> {
-    const options = fetchOptions(`mutation {
+    return query(`mutation {
         login(email: "${email}", password: "${password}")
-    }`)
-    return fetch(`${BASE_URI}/graphql`, options)
-    .then(response => response.json())
-    .then(success)
-    .then(result => result.login)
+    }`).then(result => result.login)
 }
 
 
 export function loadUnfollowedSources(token: string): Promise<Source[]> {
-    const options = fetchOptions(`
+    return query(`
         query {
             auth(token: "${token}") {
                 unfollowedSources {
@@ -44,15 +48,11 @@ export function loadUnfollowedSources(token: string): Promise<Source[]> {
             }
         }
     `)
-    return fetch(`${BASE_URI}/graphql`, options)
-    .then(response => response.json())
-    .then(success)
-    .then(log)
     .then(result => result.auth.unfollowedSources)
 }
 
 export function loadUnreadedFeeds(token: string): Promise<Feed[]> {
-    const options = fetchOptions(`
+    return query(`
         query {
             auth(token: "${token}") {
                 unreadedFeeds {
@@ -74,9 +74,6 @@ export function loadUnreadedFeeds(token: string): Promise<Feed[]> {
             }
         }
     `)
-    return fetch(`${BASE_URI}/graphql`, options)
-    .then(response => response.json())
-    .then(success)
     .then(result => result.auth.unreadedFeeds)
 }
 
@@ -86,7 +83,7 @@ function log<T>(t: T): T {
 }
 
 export function fallowSource(token: string, source: Source): Promise<Source> {
-    const options = fetchOptions(`
+    return query(`
         mutation {
             auth(token: "${token}") {
                 fallowSource(sourceUuid: "${source.uuid}") {
@@ -102,14 +99,11 @@ export function fallowSource(token: string, source: Source): Promise<Source> {
             }
         }
     `)
-    return fetch(`${BASE_URI}/graphql`, options)
-    .then(response => response.json())
-    .then(success)
     .then(result => result.auth.fallowSource)
 }
 
 export function addSource(xmlUrl: string): Promise<Source> {
-    const options = fetchOptions(`
+    return query(`
         mutation {
             addRssSource(xmlUrl: "${xmlUrl}") {
                 uuid
@@ -125,23 +119,17 @@ export function addSource(xmlUrl: string): Promise<Source> {
             }
         }
     `)
-    return fetch(`${BASE_URI}/graphql`, options)
-    .then(response => response.json())
-    .then(success)
     .then(result => result.addRssSource)
 }
 
 export function readFeed(token: string, feed: Feed, reaction: Reaction): Promise<Feed> {
-    const options = fetchOptions(`
+    return query(`
         mutation {
             auth(token: "${token}") {
                 feedReaction(feedUuid: "${feed.uuid}", reaction: "${reaction}")
             }
         }
     `)
-    return fetch(`${BASE_URI}/graphql`, options)
-    .then(response => response.json())
-    .then(success)
     .then(() => feed)
 }
 
