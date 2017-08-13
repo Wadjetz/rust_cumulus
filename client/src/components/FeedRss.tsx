@@ -13,6 +13,7 @@ export default class FeedRss extends React.Component<Props, {}> {
             <div className={styles.container}>
                 <div className={styles.feed_rss}>
                     <a className={styles.title} target="_blanc" href={url}>{title}</a>
+                    <div>{url}</div>
                     {<div dangerouslySetInnerHTML={{ __html: content || summary }} />}
                 </div>
             </div>

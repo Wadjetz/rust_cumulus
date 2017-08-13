@@ -2,7 +2,7 @@ import { Feed, Reaction } from "./feeds/Feed"
 import { Source } from "./sources/Source"
 import * as router from "./router"
 
-const BASE_URI = "http://localhost:8000"
+const BASE_URI = document.location.origin
 
 function fetchOptions(query: string) {
     return {
