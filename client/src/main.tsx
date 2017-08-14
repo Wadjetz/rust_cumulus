@@ -5,6 +5,7 @@ import { Provider } from "react-redux"
 import { createStore, compose, combineReducers, applyMiddleware } from "redux"
 import { ConnectedRouter, routerReducer, routerMiddleware } from "react-router-redux"
 import { createEpicMiddleware } from "redux-observable"
+import { persistStore, autoRehydrate } from "redux-persist"
 import { history } from "./router"
 
 import "rxjs/add/operator/mergeMap"
@@ -39,9 +40,12 @@ export let store = createStore(
     compose(
         applyMiddleware(middleware),
         applyMiddleware(epicMiddleware),
+        autoRehydrate(),
         (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__()
     )
 )
+
+persistStore(store)
 
 ReactDOM.render(
     <Provider store={store}>
