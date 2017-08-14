@@ -40,7 +40,8 @@ class MindStreamContainer extends React.Component<Props, {}> {
                             leaveActive: styles.transitionLeaveActive,
                         }}
                         transitionEnterTimeout={400}
-                        transitionLeaveTimeout={0}>
+                        transitionLeaveTimeout={0}
+                        key={feed.uuid}>
                         <MindStream
                             key={feed.uuid}
                             feed={feed}
@@ -56,8 +57,8 @@ class MindStreamContainer extends React.Component<Props, {}> {
     }
 
     onKeyPressHandler = (event: any) => {
-        if (event.code === "ArrowRight" || event.code === "KeyD") {
-            const { mindStream: { feeds }, onReaction } = this.props
+        const { mindStream: { feeds }, onReaction } = this.props
+        if (feeds.length > 0 && event.code === "ArrowRight" || event.code === "KeyD") {
             onReaction(feeds[0], "Readed")()
         }
     }
