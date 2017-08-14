@@ -3,6 +3,21 @@ import { Source } from "./sources/Source"
 import * as router from "./router"
 
 const BASE_URI = document.location.origin
+const AUTH_TOKEN_STORAGE_KEY = "AUTH_TOKEN_STORAGE_KEY"
+
+function withToken(): Promise<string> {
+    return new Promise((resolve: any, reject: any) => {
+        const token = localStorage.getItem(AUTH_TOKEN_STORAGE_KEY) || sessionStorage.getItem(AUTH_TOKEN_STORAGE_KEY)
+        if (!token) {
+            router.replace("/login")
+            reject({
+                errors: [{ message: "Unauthorized" }]
+            })
+        } else {
+            resolve(token)
+        }
+    })
+}
 
 function query(query: string): Promise<any> {
     console.log("query", BASE_URI)
@@ -24,14 +39,16 @@ function fetchOptions(query: string) {
     }
 }
 
-export function login(email: string, password: string): Promise<string> {
+export function login(email: string, password: string): Promise<void> {
     return query(`query {
         login(email: "${email}", password: "${password}")
-    }`).then(result => result.login)
+    }`).then(result => {
+        localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, result.login)
+    })
 }
 
-export function loadUnfollowedSources(token: string): Promise<Source[]> {
-    return query(`
+export function loadUnfollowedSources(): Promise<Source[]> {
+    return withToken().then(token => query(`
         query {
             auth(token: "${token}") {
                 unfollowedSources {
@@ -46,12 +63,12 @@ export function loadUnfollowedSources(token: string): Promise<Source[]> {
                 }
             }
         }
-    `)
+    `))
     .then(result => result.auth.unfollowedSources)
 }
 
-export function loadUnreadedFeeds(token: string): Promise<Feed[]> {
-    return query(`
+export function loadUnreadedFeeds(): Promise<Feed[]> {
+    return withToken().then(token => query(`
         query {
             auth(token: "${token}") {
                 unreadedFeeds {
@@ -72,7 +89,7 @@ export function loadUnreadedFeeds(token: string): Promise<Feed[]> {
                 }
             }
         }
-    `)
+    `))
     .then(result => result.auth.unreadedFeeds)
 }
 
@@ -81,8 +98,8 @@ function log<T>(t: T): T {
     return t
 }
 
-export function fallowSource(token: string, source: Source): Promise<Source> {
-    return query(`
+export function fallowSource(source: Source): Promise<Source> {
+    return withToken().then(token => query(`
         mutation {
             auth(token: "${token}") {
                 fallowSource(sourceUuid: "${source.uuid}") {
@@ -97,7 +114,7 @@ export function fallowSource(token: string, source: Source): Promise<Source> {
                 }
             }
         }
-    `)
+    `))
     .then(result => result.auth.fallowSource)
 }
 
@@ -121,22 +138,19 @@ export function addSource(xmlUrl: string): Promise<Source> {
     .then(result => result.addRssSource)
 }
 
-export function readFeed(token: string, feed: Feed, reaction: Reaction): Promise<Feed> {
-    return query(`
+export function readFeed(feed: Feed, reaction: Reaction): Promise<Feed> {
+    return withToken().then(token => query(`
         mutation {
             auth(token: "${token}") {
                 feedReaction(feedUuid: "${feed.uuid}", reaction: "${reaction}")
             }
         }
-    `)
+    `))
     .then(() => feed)
 }
 
 export function success(result: any) {
     if (result.errors) {
-        if (result.errors.find((e: any) => e.message === "invalid token")) {
-            router.replace("/login")
-        }
         throw { errors: result.errors }
     } else {
         return result.data

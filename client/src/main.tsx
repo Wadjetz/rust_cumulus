@@ -20,7 +20,6 @@ import MindStreamContainer from "./mindstream/MindStreamContainer"
 import MindStreamReducer from "./mindstream/MindStreamReducer"
 import SourcesContainer from "./sources/SourcesContainer"
 import SourcesReducer from "./sources/SourcesReducer"
-import AuthReducer from "./AuthReducer"
 import Header from "./components/Header"
 
 import RootEpic from "./RootEpic"
@@ -30,7 +29,6 @@ const epicMiddleware = createEpicMiddleware(RootEpic)
 const middleware = routerMiddleware(history)
 
 const reducers = combineReducers({
-    auth: AuthReducer,
     login: LoginReducer,
     feeds: FeedsReducer,
     mindStream: MindStreamReducer,

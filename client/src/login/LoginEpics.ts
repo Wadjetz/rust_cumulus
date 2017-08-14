@@ -1,4 +1,5 @@
 import { Epic } from "redux-observable"
+import { Action } from "redux"
 import * as router from "../router"
 import {
     LOGIN_ON_SUBMIT, LOGIN_ON_SUBMIT_SUCCESS, loginOnSubmitSuccess, loginOnSubmitError
@@ -13,8 +14,15 @@ export const loginEpic: Epic<any, State> = (action$, state) => action$.ofType(LO
             .catch(loginOnSubmitError)
     )
 
-export const loginSuccessEpic: Epic<any, State> = (action$) => action$.ofType(LOGIN_ON_SUBMIT_SUCCESS)
+export const loginSuccessEpic: Epic<Action, State> = (action$) => action$.ofType(LOGIN_ON_SUBMIT_SUCCESS)
     .map(() => {
         router.replace("/")
         return { type: "LOGIN_SUCCESS_REDIRECT" }
     })
+
+export const loginErrorEpic: Epic<any, State> = (action$, state) =>
+    action$.filter(action => !!action.error && action.error.errors.find((e: any) => e.message === "invalid token"))
+        .map(action => {
+            router.replace("/login")
+            return { type: "LOGIN_ERROR_REDIRECT" }
+        })
