@@ -14,7 +14,7 @@ export const loginEpic: Epic<any, State> = (action$, state) => action$.ofType(LO
     )
 
 export const loginSuccessEpic: Epic<any, State> = (action$) => action$.ofType(LOGIN_ON_SUBMIT_SUCCESS)
-    .filter(() => {
+    .map(() => {
         router.replace("/")
-        return false
+        return { type: "LOGIN_SUCCESS_REDIRECT" }
     })
