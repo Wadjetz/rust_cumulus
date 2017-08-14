@@ -11,9 +11,7 @@ interface Props extends State {
 
 class FeedsContainer extends React.Component<Props, {}> {
     componentWillMount() {
-        if (this.props.feeds.feeds.length === 0) {
-            this.props.onLoad()
-        }
+        this.props.onLoad()
     }
     render() {
         return <FeedsList feeds={this.props.feeds.feeds} />

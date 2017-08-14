@@ -1,4 +1,5 @@
 import * as React from "react"
+import Input from "../components/Input"
 
 interface Props {
     email: string
@@ -13,19 +14,19 @@ export default class LoginForm extends React.Component<Props, {}> {
         const { email, password, loading } = this.props
         return (
             <div>
-                <div>
-                    <label>Email</label>
-                </div>
-                <div>
-                    <input type="email" value={email} onChange={this.onChangeHandler("email")} />
-                </div>
+                <Input
+                    label="Email"
+                    value={email}
+                    onChange={this.onChangeHandler("email")}
+                    type="email"
+                />
 
-                <div>
-                    <label>Password</label>
-                </div>
-                <div>
-                    <input type="password" value={password} onChange={this.onChangeHandler("password")} />
-                </div>
+                <Input
+                    label="Password"
+                    value={password}
+                    onChange={this.onChangeHandler("password")}
+                    type="password"
+                />
                 <div>
                     <button onClick={this.onSubmitHandler}>Login</button>
                     <div>{loading ? "loading" : ""}</div>
@@ -34,9 +35,9 @@ export default class LoginForm extends React.Component<Props, {}> {
         )
     }
 
-    onChangeHandler = (field: string) => (value: React.FormEvent<HTMLInputElement>) => {
+    onChangeHandler = (field: string) => (value: string) => {
         const { onChange } = this.props
-        onChange(field, (value.target as any).value)
+        onChange(field, value)
     }
 
     onSubmitHandler = () => {

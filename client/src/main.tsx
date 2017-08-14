@@ -10,6 +10,7 @@ import { history } from "./router"
 
 import "rxjs/add/operator/mergeMap"
 import "rxjs/add/operator/filter"
+import "rxjs"
 
 import LoginReducer from "./login/LoginReducer"
 import FeedsReducer from "./feeds/FeedsReducer"
@@ -19,6 +20,7 @@ import MindStreamContainer from "./mindstream/MindStreamContainer"
 import MindStreamReducer from "./mindstream/MindStreamReducer"
 import SourcesContainer from "./sources/SourcesContainer"
 import SourcesReducer from "./sources/SourcesReducer"
+import AuthReducer from "./AuthReducer"
 import Header from "./components/Header"
 
 import RootEpic from "./RootEpic"
@@ -28,6 +30,7 @@ const epicMiddleware = createEpicMiddleware(RootEpic)
 const middleware = routerMiddleware(history)
 
 const reducers = combineReducers({
+    auth: AuthReducer,
     login: LoginReducer,
     feeds: FeedsReducer,
     mindStream: MindStreamReducer,
@@ -45,7 +48,7 @@ export let store = createStore(
     )
 )
 
-persistStore(store)
+persistStore(store, { blacklist: ["login"] })
 
 ReactDOM.render(
     <Provider store={store}>

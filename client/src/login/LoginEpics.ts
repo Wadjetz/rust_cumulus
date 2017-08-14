@@ -1,7 +1,7 @@
 import { Epic } from "redux-observable"
-
+import * as router from "../router"
 import {
-    LOGIN_ON_SUBMIT, loginOnSubmitSuccess, loginOnSubmitError
+    LOGIN_ON_SUBMIT, LOGIN_ON_SUBMIT_SUCCESS, loginOnSubmitSuccess, loginOnSubmitError
 } from "./LoginActions"
 import { State } from "../Store"
 import * as Api from "../Api"
@@ -12,3 +12,9 @@ export const loginEpic: Epic<any, State> = (action$, state) => action$.ofType(LO
             .then(loginOnSubmitSuccess)
             .catch(loginOnSubmitError)
     )
+
+export const loginSuccessEpic: Epic<any, State> = (action$) => action$.ofType(LOGIN_ON_SUBMIT_SUCCESS)
+    .filter(() => {
+        router.replace("/")
+        return false
+    })

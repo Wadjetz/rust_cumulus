@@ -135,7 +135,7 @@ export function readFeed(token: string, feed: Feed, reaction: Reaction): Promise
 export function success(result: any) {
     if (result.errors) {
         if (result.errors.find((e: any) => e.message === "invalid token")) {
-            router.push("/login")
+            router.replace("/login")
         }
         throw { errors: result.errors }
     } else {
