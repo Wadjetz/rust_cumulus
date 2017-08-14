@@ -16,14 +16,14 @@ export const addSourceEpic: Epic<any, State> = (action$) => action$.ofType(ADD_S
 
 export const loadUnfollowedSourcesEpic: Epic<any, State> = (action$, state) => action$.ofType(LOAD_UNFOLLOWED_SOURCES)
     .mergeMap(action =>
-        Api.loadUnfollowedSources(state.getState().login.token)
+        Api.loadUnfollowedSources(state.getState().auth.token)
             .then(loadUnfollowedSourcesSuccess)
             .catch(loadUnfollowedSourcesError)
     )
 
 export const fallowSourceEpic: Epic<any, State> = (action$, state) => action$.ofType(FALLOW_SOURCE)
     .mergeMap(action =>
-        Api.fallowSource(state.getState().login.token, action.source)
+        Api.fallowSource(state.getState().auth.token, action.source)
             .then(fallowSourcesSuccess)
             .catch(fallowSourcesError)
     )

@@ -8,7 +8,7 @@ import * as Api from "../Api"
 
 export const loadfeedsEpic: Epic<any, State> = (action$, state) => action$.ofType(LOAD_FEEDS)
     .mergeMap(action =>
-        Api.loadUnreadedFeeds(state.getState().login.token)
+        Api.loadUnreadedFeeds(state.getState().auth.token)
             .then(loadfeedsSuccess)
             .catch(loadfeedsError)
     )
