@@ -21,12 +21,6 @@ const LoginContainer = (props: Props) => {
     />
 }
 
-const mapStateToProps = (state: State) => {
-    return {
-        ...state
-    }
-}
-
 const mapDispatchToProps = (dispatch: Dispatch<State>) => {
     return {
         onChange: (field: string, value: string) => {
@@ -38,4 +32,5 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) => {
     }
 }
 
+const mapStateToProps = (state: State) => state
 export default connect(mapStateToProps, mapDispatchToProps)(LoginContainer)
