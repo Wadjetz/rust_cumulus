@@ -25,11 +25,10 @@ function fetchOptions(query: string) {
 }
 
 export function login(email: string, password: string): Promise<string> {
-    return query(`mutation {
+    return query(`query {
         login(email: "${email}", password: "${password}")
     }`).then(result => result.login)
 }
-
 
 export function loadUnfollowedSources(token: string): Promise<Source[]> {
     return query(`
