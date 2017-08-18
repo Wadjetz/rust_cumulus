@@ -3,9 +3,10 @@ use uuid::Uuid;
 use rocket::request::{self, Request, FromRequest};
 use rocket::outcome::Outcome;
 use rocket::http::Status;
+use rocket::State;
 
 use errors::*;
-use config;
+use config::Config;
 
 #[derive(Debug)]
 pub struct AuthData {
@@ -55,23 +56,24 @@ pub fn decode_auth(token: &str, secret_key: &str) -> Result<AuthData> {
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for AuthData {
-    type Error = String;
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, String> {
+    type Error = ();
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, ()> {
+        let config = request.guard::<State<Config>>()?;
         match request.headers().get("Authorization").next() {
             Some(token) => {
-                match decode_auth(token, config::CONFIG.secret_key.as_ref()) {
+                match decode_auth(token, config.secret_key.as_ref()) {
                     Ok(auth) => {
                         Outcome::Success(auth)
                     },
                     Err(error) => {
                         println!("decode = {:?}", error);
-                        Outcome::Failure((Status::Unauthorized, "Wrong token".to_string()))
+                        Outcome::Failure((Status::Unauthorized, ()))
                     }
                 }
             },
             None => {
                 println!("No Authorization token");
-                Outcome::Failure((Status::Unauthorized, "No Authorization token".to_string()))
+                Outcome::Failure((Status::Unauthorized, ()))
             }
         }
     }
