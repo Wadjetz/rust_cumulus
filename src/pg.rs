@@ -5,11 +5,17 @@ use postgres::rows::Row;
 use postgres::error::Error;
 use postgres_shared::error::{SqlState};
 use postgres_shared::types::ToSql;
+use rocket::http::Status;
+use rocket::request::{self, FromRequest};
+use rocket::{Request, State, Outcome};
+use std::ops::Deref;
 
-use config::Config as AppConfig;
+use config;
 use errors::*;
 
-pub fn create_db_pool(app_config: &AppConfig) -> Pool<PostgresConnectionManager> {
+pub struct DbConn(pub PooledConnection<PostgresConnectionManager>);
+
+pub fn create_db_pool(app_config: &config::Config) -> Pool<PostgresConnectionManager> {
     let database_url = app_config.database_url.clone();
     let config = Config::default();
     let manager = PostgresConnectionManager::new(database_url, TlsMode::None).expect("Create PostgresConnectionManager error");
@@ -28,6 +34,11 @@ pub struct PgDatabase {
 impl PgDatabase {
     pub fn new(connection: PooledConnection<PostgresConnectionManager>) -> Self {
         PgDatabase { connection }
+    }
+
+    pub fn from_pool(pool: Pool<PostgresConnectionManager>) -> Result<PgDatabase> {
+        let connection = pool.get()?;
+        Ok(PgDatabase::new(connection))
     }
 
     pub fn insert<E>(&self, entity: &E) -> Result<u64> where E: Insertable {
@@ -59,5 +70,31 @@ impl PgDatabase {
         let rows = self.connection.query(query, params)?;
         let mut items: Vec<E> = rows.iter().map(|row| row.into()).collect();
         Ok(items.pop())
+    }
+}
+
+impl<'a, 'r> FromRequest<'a, 'r> for DbConn {
+    type Error = ();
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<DbConn, ()> {
+        let pool = request.guard::<State<Pool<PostgresConnectionManager>>>()?;
+        match pool.get() {
+            Ok(conn) => Outcome::Success(DbConn(conn)),
+            Err(_) => Outcome::Failure((Status::ServiceUnavailable, ()))
+        }
+    }
+}
+
+
+impl Deref for DbConn {
+    type Target = PooledConnection<PostgresConnectionManager>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl From<DbConn> for PgDatabase {
+    fn from(conn: DbConn) -> PgDatabase {
+        PgDatabase::new(conn.0)
     }
 }

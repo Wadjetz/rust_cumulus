@@ -1,7 +1,8 @@
 #![allow(dead_code)]
 use postgres::rows::Row;
 use postgres_shared::types::ToSql;
-use juniper::Executor;
+use r2d2::Pool;
+use r2d2_postgres::PostgresConnectionManager;
 use uuid::Uuid;
 use chrono::NaiveDateTime;
 use chrono::prelude::*;
@@ -181,9 +182,8 @@ impl Insertable for Source {
     }
 }
 
-pub fn add_source_resolver<'a>(executor: &Executor<'a, Query>, title: String, xml_url: String, html_url: String) -> Result<Source> {
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+pub fn add_source_resolver<'a>(pool: Pool<PostgresConnectionManager>, title: String, xml_url: String, html_url: String) -> Result<Source> {
+    let pg = PgDatabase::from_pool(pool)?;
     let rss_source = RssSource::new(&title, &xml_url, &html_url);
     let source = Source::new_rss(rss_source)?;
     if !source_existe(&pg, &xml_url)? {
@@ -200,10 +200,9 @@ fn source_existe(pg: &PgDatabase, xml_url: &str) -> Result<bool> {
     Ok(pg.exist(exist_query, &[&json_param])?)
 }
 
-pub fn add_rss_source_resolver<'a>(executor: &Executor<'a, Query>, xml_url: &str) -> Result<Source> {
+pub fn add_rss_source_resolver<'a>(pool: Pool<PostgresConnectionManager>, xml_url: &str) -> Result<Source> {
     Url::parse(&xml_url)?;
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+    let pg = PgDatabase::from_pool(pool)?;
     let maybe_feed = rss::fetch_feeds_channel(&xml_url)?;
     let feed = maybe_feed.ok_or_else(|| ErrorKind::NotFound)?;
     let source_title = feed.title.unwrap_or_else(|| xml_url.to_string());
@@ -218,9 +217,8 @@ pub fn add_rss_source_resolver<'a>(executor: &Executor<'a, Query>, xml_url: &str
     }
 }
 
-pub fn find_sources_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32) -> Result<Vec<Source>> {
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+pub fn find_sources_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32) -> Result<Vec<Source>> {
+    let pg = PgDatabase::from_pool(pool)?;
     let find_query = r#"SELECT * FROM sources LIMIT $1::int OFFSET $2::int;"#;
     let sources = pg.find(find_query, &[&limit, &offset])?;
     Ok(sources)

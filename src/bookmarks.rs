@@ -3,7 +3,8 @@ use chrono::NaiveDateTime;
 use chrono::prelude::*;
 use postgres::rows::Row;
 use postgres_shared::types::ToSql;
-use juniper::Executor;
+use r2d2::Pool;
+use r2d2_postgres::PostgresConnectionManager;
 
 use errors::*;
 use graphql::query::Query;
@@ -105,9 +106,8 @@ fn is_bookmark_exist(pg: &PgDatabase, url: &str, user: &User) -> Result<bool> {
     Ok(pg.exist(query, &[&url, &user.uuid])?)
 }
 
-pub fn add_bookmark_resolver<'a>(executor: &Executor<'a, Query>, bookmark: Bookmark, user: &User) -> Result<Bookmark> {
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+pub fn add_bookmark_resolver<'a>(pool: Pool<PostgresConnectionManager>, bookmark: Bookmark, user: &User) -> Result<Bookmark> {
+    let pg = PgDatabase::from_pool(pool)?;
     if !is_bookmark_exist(&pg, &bookmark.url, user)? {
         pg.insert(&bookmark)?;
         Ok(bookmark)
@@ -121,8 +121,7 @@ fn find_bookmarks(pg: &PgDatabase, limit: i32, offset: i32, user: &User) -> Resu
     Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
 }
 
-pub fn bookmarks_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32, user: &User) -> Result<Vec<Bookmark>> {
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+pub fn bookmarks_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Bookmark>> {
+    let pg = PgDatabase::from_pool(pool)?;
     Ok(find_bookmarks(&pg, limit, offset, user)?)
 }

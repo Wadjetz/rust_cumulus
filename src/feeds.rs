@@ -3,13 +3,15 @@ use chrono::NaiveDateTime;
 use chrono::prelude::*;
 use postgres::rows::Row;
 use postgres_shared::types::ToSql;
-use juniper::Executor;
+use r2d2::Pool;
+use r2d2_postgres::PostgresConnectionManager;
 use serde_json;
 use serde_json::Value;
 use feed_rs::entry::Entry;
 
 use errors::*;
 use graphql::query::Query;
+use sources::Source;
 use services::mercury::ReadableData;
 use pg::{Insertable, PgDatabase};
 
@@ -260,14 +262,13 @@ pub fn find_feed(pg: &PgDatabase, limit: i32, offset: i32) -> Result<Vec<Feed>> 
     pg.find(find_query, &[&limit, &offset])
 }
 
-pub fn is_feed_exist(pg: &PgDatabase, url: &str) -> Result<bool> {
-    let exist_query = "SELECT COUNT(*) AS exist FROM feeds WHERE url = $1;";
-    Ok(pg.exist(exist_query, &[&url.to_owned()])?)
+pub fn is_feed_exist(pg: &PgDatabase, url: &str, source: &Source) -> Result<bool> {
+    let exist_query = "SELECT COUNT(*) AS exist FROM feeds WHERE url = $1 AND source_uuid = $2;";
+    Ok(pg.exist(exist_query, &[&url.to_owned(), &source.uuid])?)
 }
 
-pub fn find_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32) -> Result<Vec<Feed>> {
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+pub fn find_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32) -> Result<Vec<Feed>> {
+    let pg = PgDatabase::from_pool(pool)?;
     let feeds = find_feed(&pg, limit, offset)?;
     Ok(feeds)
 }

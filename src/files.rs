@@ -1,13 +1,12 @@
+use std::path::{Path, PathBuf};
+use std::os::unix::fs::MetadataExt;
+use std::fs::File as FsFile;
 use uuid::Uuid;
 use postgres::rows::Row;
 use postgres_shared::types::ToSql;
+use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
-use r2d2::PooledConnection;
-use std::path::{Path, PathBuf};
-use juniper::Executor;
-use std::os::unix::fs::MetadataExt;
 use rocket::Data;
-use std::fs::File as FsFile;
 
 use errors::*;
 use token::AuthData;
@@ -136,7 +135,7 @@ impl Insertable for File {
     }
 }
 
-pub fn upload_resolver(connection: PooledConnection<PostgresConnectionManager>, file_data: Data, path: PathBuf, auth_data: AuthData) -> Result<String> {
+pub fn upload_resolver(pg: PgDatabase, file_data: Data, path: PathBuf, auth_data: AuthData) -> Result<String> {
     let maybe_file_name = path.file_name()
                   .and_then(|os_str| os_str.to_str())
                   .map(|s| s.to_string());
@@ -150,7 +149,6 @@ pub fn upload_resolver(connection: PooledConnection<PostgresConnectionManager>, 
         Some(metadata.size() as i64),
         auth_data.uuid,
     );
-    let pg = PgDatabase::new(connection);
     pg.insert(&file)?;
     Ok(String::from("Ok"))
 }
@@ -160,8 +158,7 @@ fn find_files_by_uuid(pg: &PgDatabase, file_uuid: Uuid) -> Result<Option<File>> 
     Ok(pg.find_one(query, &[&file_uuid])?)
 }
 
-pub fn download_resolver(connection: PooledConnection<PostgresConnectionManager>, file_uuid: &str) -> Result<FsFile> {
-    let pg = PgDatabase::new(connection);
+pub fn download_resolver(pg: PgDatabase, file_uuid: &str) -> Result<FsFile> {
     let file_uuid = Uuid::parse_str(&file_uuid)?;
     if let Some(file) = find_files_by_uuid(&pg, file_uuid)? {
         let fs_file = FsFile::open(Path::new("upload/").join(Path::new(&file.location)))?;
@@ -171,9 +168,8 @@ pub fn download_resolver(connection: PooledConnection<PostgresConnectionManager>
     }
 }
 
-pub fn files_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32, user: &User) -> Result<Vec<File>> {
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+pub fn files_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<File>> {
+    let pg = PgDatabase::from_pool(pool)?;
     let query = "SELECT * FROM files WHERE user_uuid = $1::uuid LIMIT $2::int OFFSET $3::int;";
     Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
 }

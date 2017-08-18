@@ -1,10 +1,10 @@
+use uuid::Uuid;
 use postgres::rows::Row;
 use postgres_shared::types::ToSql;
-use juniper::Executor;
-use uuid::Uuid;
+use r2d2::Pool;
+use r2d2_postgres::PostgresConnectionManager;
 
 use errors::*;
-use graphql::query::Query;
 use users::User;
 use sources::Source;
 use pg::{Insertable, PgDatabase};
@@ -61,9 +61,8 @@ pub fn user_source_exist(pg: &PgDatabase, uuid: &Uuid, user: &User) -> Result<bo
     Ok(pg.exist(exist_query, &[&user.uuid, &uuid])?)
 }
 
-pub fn fallow_source_resolver<'a>(executor: &Executor<'a, Query>, uuid: &str, user: &User) -> Result<Source> {
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+pub fn fallow_source_resolver<'a>(pool: Pool<PostgresConnectionManager>, uuid: &str, user: &User) -> Result<Source> {
+    let pg = PgDatabase::from_pool(pool)?;
     let uuid = Uuid::parse_str(uuid)?;
     let maybe_source = find_user_source_by_uuid(&pg, uuid)?;
     if let Some(source) = maybe_source {
@@ -80,9 +79,8 @@ pub fn fallow_source_resolver<'a>(executor: &Executor<'a, Query>, uuid: &str, us
     }
 }
 
-pub fn users_sources_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32, user: &User) -> Result<Vec<Source>> {
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+pub fn users_sources_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Source>> {
+    let pg = PgDatabase::from_pool(pool)?;
     let query = r#"
         SELECT sources.* FROM sources
         JOIN users_sources ON users_sources.source_uuid = sources.uuid
@@ -92,9 +90,8 @@ pub fn users_sources_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, of
     Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
 }
 
-pub fn unfollowed_sources_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32, user: &User) -> Result<Vec<Source>> {
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+pub fn unfollowed_sources_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Source>> {
+    let pg = PgDatabase::from_pool(pool)?;
     let query = r#"
         SELECT sources.* FROM sources
         WHERE 0 = (

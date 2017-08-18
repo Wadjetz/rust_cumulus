@@ -29,7 +29,7 @@ graphql_object!(Query: Query as "Query" |&self| {
         &executor,
         token: String as "Auth token"
     ) -> Result<AuthQuery, String> as "Auth" {
-        auth_resolver(executor, token).map_err(|e| e.description().to_string())
+        auth_resolver(executor.context().connection.clone(), token).map_err(|e| e.description().to_string())
     }
 
     field login(
@@ -37,7 +37,8 @@ graphql_object!(Query: Query as "Query" |&self| {
         email: String as "Email",
         password: String as "Password"
     ) -> Result<String, String> as "Token" {
-        login_resolver(executor, email, password).map_err(|e| e.description().to_string())
+        login_resolver(executor.context().connection.clone(), email, password)
+            .map_err(|e| e.description().to_string())
     }
 
     field sources(
@@ -45,6 +46,7 @@ graphql_object!(Query: Query as "Query" |&self| {
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset",
     ) -> Result<Vec<Source>, String> {
-        find_sources_resolver(executor, limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0)).map_err(|e| e.description().to_string())
+        find_sources_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0))
+            .map_err(|e| e.description().to_string())
     }
 });

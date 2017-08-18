@@ -1,13 +1,13 @@
+use std::str::FromStr;
 use uuid::Uuid;
-use postgres::rows::Row;
-use postgres_shared::types::ToSql;
-use juniper::Executor;
 use chrono::NaiveDateTime;
 use chrono::prelude::*;
-use std::str::FromStr;
+use postgres::rows::Row;
+use postgres_shared::types::ToSql;
+use r2d2::Pool;
+use r2d2_postgres::PostgresConnectionManager;
 
 use pg::{Insertable, PgDatabase};
-use graphql::query::Query;
 use users::User;
 use feeds::Feed;
 use errors::*;
@@ -77,9 +77,8 @@ fn is_user_feed_exist(pg: &PgDatabase, user_feed: &UserFeed) -> Result<bool> {
     Ok(pg.exist(exist_query, &[&user_feed.user_uuid, &user_feed.feed_uuid])?)
 }
 
-pub fn reaction_feed_resolver<'a>(executor: &Executor<'a, Query>, feed_uuid: &str, reaction: &str, user: &User) -> Result<u64> {
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+pub fn reaction_feed_resolver<'a>(pool: Pool<PostgresConnectionManager>, feed_uuid: &str, reaction: &str, user: &User) -> Result<u64> {
+    let pg = PgDatabase::from_pool(pool)?;
     let feed_uuid = Uuid::parse_str(feed_uuid)?;
     let reaction = Reaction::from_str(reaction)?;
     let user_feed = UserFeed::new(user.uuid.clone(), feed_uuid, reaction);
@@ -90,9 +89,8 @@ pub fn reaction_feed_resolver<'a>(executor: &Executor<'a, Query>, feed_uuid: &st
     }
 }
 
-pub fn users_feeds_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32, user: &User) -> Result<Vec<Feed>> {
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+pub fn users_feeds_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Feed>> {
+    let pg = PgDatabase::from_pool(pool)?;
     let query = r#"
         SELECT feeds.* FROM feeds
         JOIN users_sources ON users_sources.source_uuid = feeds.source_uuid
@@ -102,9 +100,8 @@ pub fn users_feeds_resolver<'a>(executor: &Executor<'a, Query>, limit: i32, offs
     Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
 }
 
-pub fn unreaded_feeds<'a>(executor: &Executor<'a, Query>, limit: i32, offset: i32, user: &User) -> Result<Vec<Feed>> {
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+pub fn unreaded_feeds<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Feed>> {
+    let pg = PgDatabase::from_pool(pool)?;
     let query = r#"
         SELECT feeds.* FROM feeds
         JOIN users_sources ON users_sources.source_uuid = feeds.source_uuid

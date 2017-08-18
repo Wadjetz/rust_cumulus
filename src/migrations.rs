@@ -37,7 +37,7 @@ pub fn run(connection: PooledConnection<PostgresConnectionManager>) -> Result<()
 
             CREATE TABLE feeds (
                 uuid UUID PRIMARY KEY,
-                url TEXT UNIQUE NOT NULL,
+                url TEXT NOT NULL,
                 rss JSONB,
                 readable JSONB,
                 twitter JSONB,

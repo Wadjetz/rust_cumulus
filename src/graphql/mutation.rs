@@ -16,20 +16,23 @@ graphql_object!(Mutation: Query as "Mutation" |&self| {
         email: String as "Email",
         password: String as "Password"
     ) -> Result<String, String> as "Token" {
-        signup_resolver(executor, login, email, password).map_err(|e| e.description().to_string())
+        signup_resolver(executor.context().connection.clone(), login, email, password)
+            .map_err(|e| e.description().to_string())
     }
 
     field auth(
         &executor,
         token: String as "Auth token"
     ) -> Result<AuthMutation, String> as "Auth" {
-        auth_resolver(executor, token).map_err(|e| e.description().to_string())
+        auth_resolver(executor.context().connection.clone(), token)
+            .map_err(|e| e.description().to_string())
     }
 
     field add_rss_source(
         &executor,
         xml_url: String as "xml_url",
     ) -> Result<Source, String> {
-        add_rss_source_resolver(executor, &xml_url).map_err(|e| e.description().to_string())
+        add_rss_source_resolver(executor.context().connection.clone(), &xml_url)
+            .map_err(|e| e.description().to_string())
     }
 });

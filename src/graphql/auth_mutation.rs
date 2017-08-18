@@ -48,7 +48,7 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
        description: Option<String> as "Description",
     ) -> Result<Bookmark, String> as "Bookmark" {
         let bookmark = Bookmark::new(url, title, description, path, self.user.uuid);
-        add_bookmark_resolver(executor, bookmark, &self.user)
+        add_bookmark_resolver(executor.context().connection.clone(), bookmark, &self.user)
             .map_err(|e| e.description().to_string())
     }
 
@@ -56,7 +56,7 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
         &executor,
         source_uuid: String as "source_uuid",
     ) -> Result<Source, String> {
-        users_sources::fallow_source_resolver(executor, &source_uuid, &self.user)
+        users_sources::fallow_source_resolver(executor.context().connection.clone(), &source_uuid, &self.user)
             .map_err(|e| e.to_string())
     }
 
@@ -65,7 +65,7 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
         feed_uuid: String as "feed_uuid",
         reaction: String as "uuid",
     ) -> Result<String, String> {
-        users_feeds::reaction_feed_resolver(executor, &feed_uuid, &reaction, &self.user)
+        users_feeds::reaction_feed_resolver(executor.context().connection.clone(), &feed_uuid, &reaction, &self.user)
             .map(|_| String::from("ok"))
             .map_err(|e| e.to_string())
     }

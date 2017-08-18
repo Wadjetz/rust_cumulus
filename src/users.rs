@@ -1,10 +1,11 @@
 use uuid::Uuid;
 use bcrypt::{DEFAULT_COST, hash, verify};
-use postgres::rows::Row;
-use postgres_shared::types::ToSql;
-use juniper::Executor;
 use chrono::NaiveDateTime;
 use chrono::prelude::*;
+use postgres::rows::Row;
+use postgres_shared::types::ToSql;
+use r2d2::Pool;
+use r2d2_postgres::PostgresConnectionManager;
 
 use errors::*;
 use token;
@@ -96,9 +97,8 @@ impl Insertable for User {
     }
 }
 
-pub fn signup_resolver<'a>(executor: &Executor<'a, Query>, login: String, email: String, password: String) -> Result<String> {
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+pub fn signup_resolver<'a>(pool: Pool<PostgresConnectionManager>, login: String, email: String, password: String) -> Result<String> {
+    let pg = PgDatabase::from_pool(pool)?;
     let user = User::new_secure(login, email, password)?;
     pg.insert(&user)?;
     let token = token::create_token(user.uuid, user.email)?;
@@ -110,9 +110,8 @@ fn find_user_by_email(pg: &PgDatabase, email: &str) -> Result<Option<User>> {
     Ok(pg.find_one::<User>(query, &[&email])?)
 }
 
-pub fn login_resolver<'a>(executor: &Executor<'a, Query>, email: String, password: String) -> Result<String> {
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+pub fn login_resolver<'a>(pool: Pool<PostgresConnectionManager>, email: String, password: String) -> Result<String> {
+    let pg = PgDatabase::from_pool(pool)?;
     if let Some(user) = find_user_by_email(&pg, &email)? {
         if let Ok(true) = verify_password(&password, &user.password) {
             Ok(token::create_token(user.uuid, email)?)
@@ -136,9 +135,8 @@ impl From<User> for AuthMutation {
     }
 }
 
-pub fn auth_resolver<'a, E>(executor: &Executor<'a, Query>, token: String) -> Result<E> where E: From<User> {
-    let connection = executor.context().connection.clone().get()?;
-    let pg = PgDatabase::new(connection);
+pub fn auth_resolver<'a, E>(pool: Pool<PostgresConnectionManager>, token: String) -> Result<E> where E: From<User> {
+    let pg = PgDatabase::from_pool(pool)?;
     let auth_data = token::decode_auth(&token)?;
     if let Some(user) = find_user_by_email(&pg, &auth_data.email)? {
         Ok(user.into())
