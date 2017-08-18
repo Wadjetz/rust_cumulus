@@ -61,7 +61,7 @@ pub fn user_source_exist(pg: &PgDatabase, uuid: &Uuid, user: &User) -> Result<bo
     Ok(pg.exist(exist_query, &[&user.uuid, &uuid])?)
 }
 
-pub fn fallow_source_resolver<'a>(pool: Pool<PostgresConnectionManager>, uuid: &str, user: &User) -> Result<Source> {
+pub fn fallow_source_resolver(pool: Pool<PostgresConnectionManager>, uuid: &str, user: &User) -> Result<Source> {
     let pg = PgDatabase::from_pool(pool)?;
     let uuid = Uuid::parse_str(uuid)?;
     let maybe_source = find_user_source_by_uuid(&pg, uuid)?;
@@ -79,7 +79,7 @@ pub fn fallow_source_resolver<'a>(pool: Pool<PostgresConnectionManager>, uuid: &
     }
 }
 
-pub fn users_sources_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Source>> {
+pub fn users_sources_resolver(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Source>> {
     let pg = PgDatabase::from_pool(pool)?;
     let query = r#"
         SELECT sources.* FROM sources
@@ -90,7 +90,7 @@ pub fn users_sources_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: 
     Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
 }
 
-pub fn unfollowed_sources_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Source>> {
+pub fn unfollowed_sources_resolver(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Source>> {
     let pg = PgDatabase::from_pool(pool)?;
     let query = r#"
         SELECT sources.* FROM sources

@@ -33,7 +33,7 @@ export const reloadUnreadedFeedsEpic: Epic<Action, State> = (action$, state) => 
 
 export const readFeedEpic: Epic<any, State> = (action$, state) => action$.ofType(READ_FEED)
     .mergeMap(action =>
-        Api.readFeed(action.feed, action.reaction)
+        Api.feedReaction(action.feed, action.reaction)
             .then(readFeedSuccess)
             .catch(readFeedError)
     )

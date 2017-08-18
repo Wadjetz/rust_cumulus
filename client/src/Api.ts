@@ -93,6 +93,32 @@ export function loadUnreadedFeeds(): Promise<Feed[]> {
     .then(result => result.auth.unreadedFeeds)
 }
 
+export function feedsByReaction(reaction: Reaction): Promise<Feed[]> {
+    return withToken().then(token => query(`
+        query {
+            auth(token: "${token}") {
+                feedsByReaction(reaction: "${reaction}") {
+                    uuid
+                    url
+                    readable {
+                        url
+                        title
+                        content
+                        excerpt
+                        leadImageUrl
+                    }
+                    rss {
+                        title
+                        content
+                        summary
+                    }
+                }
+            }
+        }
+    `))
+    .then(result => result.auth.feedsByReaction)
+}
+
 function log<T>(t: T): T {
     console.log("fetch log", t)
     return t
@@ -138,7 +164,7 @@ export function addSource(xmlUrl: string): Promise<Source> {
     .then(result => result.addRssSource)
 }
 
-export function readFeed(feed: Feed, reaction: Reaction): Promise<Feed> {
+export function feedReaction(feed: Feed, reaction: Reaction): Promise<Feed> {
     return withToken().then(token => query(`
         mutation {
             auth(token: "${token}") {

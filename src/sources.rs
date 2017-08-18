@@ -182,7 +182,7 @@ impl Insertable for Source {
     }
 }
 
-pub fn add_source_resolver<'a>(pool: Pool<PostgresConnectionManager>, title: String, xml_url: String, html_url: String) -> Result<Source> {
+pub fn add_source_resolver(pool: Pool<PostgresConnectionManager>, title: String, xml_url: String, html_url: String) -> Result<Source> {
     let pg = PgDatabase::from_pool(pool)?;
     let rss_source = RssSource::new(&title, &xml_url, &html_url);
     let source = Source::new_rss(rss_source)?;
@@ -200,7 +200,7 @@ fn source_existe(pg: &PgDatabase, xml_url: &str) -> Result<bool> {
     Ok(pg.exist(exist_query, &[&json_param])?)
 }
 
-pub fn add_rss_source_resolver<'a>(pool: Pool<PostgresConnectionManager>, xml_url: &str) -> Result<Source> {
+pub fn add_rss_source_resolver(pool: Pool<PostgresConnectionManager>, xml_url: &str) -> Result<Source> {
     Url::parse(&xml_url)?;
     let pg = PgDatabase::from_pool(pool)?;
     let maybe_feed = rss::fetch_feeds_channel(&xml_url)?;
@@ -217,7 +217,7 @@ pub fn add_rss_source_resolver<'a>(pool: Pool<PostgresConnectionManager>, xml_ur
     }
 }
 
-pub fn find_sources_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32) -> Result<Vec<Source>> {
+pub fn find_sources_resolver(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32) -> Result<Vec<Source>> {
     let pg = PgDatabase::from_pool(pool)?;
     let find_query = r#"SELECT * FROM sources LIMIT $1::int OFFSET $2::int;"#;
     let sources = pg.find(find_query, &[&limit, &offset])?;

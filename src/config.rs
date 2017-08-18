@@ -1,6 +1,6 @@
 use std::env;
-use dotenv::dotenv;
 
+#[derive(Debug)]
 pub struct Config {
     pub secret_key: String,
     pub database_url: String,
@@ -21,7 +21,6 @@ impl Config {
 
 lazy_static! {
     pub static ref CONFIG: Config = {
-        dotenv().ok();
         Config::from_env()
     };
 }

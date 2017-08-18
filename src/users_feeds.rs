@@ -15,14 +15,15 @@ use errors::*;
 #[derive(Debug)]
 struct UserFeed {
     pub uuid: Uuid,
-    pub reaction: String,
+    pub reaction: Reaction,
     pub feed_uuid: Uuid,
     pub user_uuid: Uuid,
     pub created: NaiveDateTime,
     pub updated: NaiveDateTime,
 }
 
-#[derive(Debug, EnumString, ToString)]
+#[derive(Debug, EnumString, ToString, ToSql, FromSql)]
+#[postgres(name = "reaction")]
 pub enum Reaction {
     Readed,
     ReadLater,
@@ -36,7 +37,7 @@ impl UserFeed {
     pub fn new(user_uuid: Uuid, feed_uuid: Uuid, reaction: Reaction) -> Self {
         UserFeed {
             uuid: Uuid::new_v4(),
-            reaction: reaction.to_string(),
+            reaction: reaction,
             user_uuid,
             feed_uuid,
             created: UTC::now().naive_utc(),
@@ -77,7 +78,7 @@ fn is_user_feed_exist(pg: &PgDatabase, user_feed: &UserFeed) -> Result<bool> {
     Ok(pg.exist(exist_query, &[&user_feed.user_uuid, &user_feed.feed_uuid])?)
 }
 
-pub fn reaction_feed_resolver<'a>(pool: Pool<PostgresConnectionManager>, feed_uuid: &str, reaction: &str, user: &User) -> Result<u64> {
+pub fn reaction_feed_resolver(pool: Pool<PostgresConnectionManager>, feed_uuid: &str, reaction: &str, user: &User) -> Result<u64> {
     let pg = PgDatabase::from_pool(pool)?;
     let feed_uuid = Uuid::parse_str(feed_uuid)?;
     let reaction = Reaction::from_str(reaction)?;
@@ -89,7 +90,7 @@ pub fn reaction_feed_resolver<'a>(pool: Pool<PostgresConnectionManager>, feed_uu
     }
 }
 
-pub fn users_feeds_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Feed>> {
+pub fn users_feeds_resolver(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Feed>> {
     let pg = PgDatabase::from_pool(pool)?;
     let query = r#"
         SELECT feeds.* FROM feeds
@@ -100,7 +101,7 @@ pub fn users_feeds_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: i3
     Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
 }
 
-pub fn unreaded_feeds<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Feed>> {
+pub fn unreaded_feeds(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Feed>> {
     let pg = PgDatabase::from_pool(pool)?;
     let query = r#"
         SELECT feeds.* FROM feeds
@@ -114,4 +115,22 @@ pub fn unreaded_feeds<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, off
         LIMIT $2::int OFFSET $3::int;
     "#;
     Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
+}
+
+pub fn feeds_by_reaction_resolver(pool: Pool<PostgresConnectionManager>, reaction: &str, limit: i32, offset: i32, user: &User) -> Result<Vec<Feed>> {
+    let reaction = Reaction::from_str(reaction)?;
+    let pg = PgDatabase::from_pool(pool)?;
+    let query = r#"
+        SELECT feeds.* FROM feeds
+        JOIN users_sources ON users_sources.source_uuid = feeds.source_uuid
+        WHERE 0 < (
+            SELECT COUNT(*)
+            FROM users_feeds
+            WHERE users_feeds.feed_uuid = feeds.uuid
+                AND users_feeds.user_uuid = $1
+                AND users_feeds.reaction = $4
+        )
+        LIMIT $2::int OFFSET $3::int;
+    "#;
+    Ok(pg.find(query, &[&user.uuid, &limit, &offset, &reaction])?)
 }

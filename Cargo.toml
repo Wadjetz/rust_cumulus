@@ -7,8 +7,8 @@ authors = ["Wadjetz <egor.neon@gmail.com>"]
 #lto = true # Binary size optiomisation, but longuer compile time
 
 [dependencies]
-rocket = "0.3.0"
-rocket_codegen = "0.3.0"
+rocket = "0.3.2"
+rocket_codegen = "0.3.2"
 juniper = { git = "https://github.com/stankec/juniper", features = ["rocket-handlers"] }
 
 r2d2 = "0.7.3"

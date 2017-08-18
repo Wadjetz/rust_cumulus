@@ -98,7 +98,7 @@ impl Insertable for User {
     }
 }
 
-pub fn signup_resolver<'a>(pool: Pool<PostgresConnectionManager>, login: String, email: String, password: String) -> Result<String> {
+pub fn signup_resolver(pool: Pool<PostgresConnectionManager>, login: String, email: String, password: String) -> Result<String> {
     let pg = PgDatabase::from_pool(pool)?;
     let user = User::new_secure(login, email, password)?;
     pg.insert(&user)?;
@@ -111,7 +111,7 @@ fn find_user_by_email(pg: &PgDatabase, email: &str) -> Result<Option<User>> {
     Ok(pg.find_one::<User>(query, &[&email])?)
 }
 
-pub fn login_resolver<'a>(pool: Pool<PostgresConnectionManager>, email: String, password: String) -> Result<String> {
+pub fn login_resolver(pool: Pool<PostgresConnectionManager>, email: String, password: String) -> Result<String> {
     let pg = PgDatabase::from_pool(pool)?;
     if let Some(user) = find_user_by_email(&pg, &email)? {
         if let Ok(true) = verify_password(&password, &user.password) {
@@ -136,7 +136,7 @@ impl From<User> for AuthMutation {
     }
 }
 
-pub fn auth_resolver<'a, E>(pool: Pool<PostgresConnectionManager>, token: String) -> Result<E> where E: From<User> {
+pub fn auth_resolver<E>(pool: Pool<PostgresConnectionManager>, token: String) -> Result<E> where E: From<User> {
     let pg = PgDatabase::from_pool(pool)?;
     let auth_data = token::decode_auth(&token, config::CONFIG.secret_key.as_ref())?;
     if let Some(user) = find_user_by_email(&pg, &auth_data.email)? {

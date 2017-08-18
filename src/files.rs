@@ -168,7 +168,7 @@ pub fn download_resolver(pg: PgDatabase, file_uuid: &str) -> Result<FsFile> {
     }
 }
 
-pub fn files_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<File>> {
+pub fn files_resolver(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<File>> {
     let pg = PgDatabase::from_pool(pool)?;
     let query = "SELECT * FROM files WHERE user_uuid = $1::uuid LIMIT $2::int OFFSET $3::int;";
     Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)

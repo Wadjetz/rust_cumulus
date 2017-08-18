@@ -267,7 +267,7 @@ pub fn is_feed_exist(pg: &PgDatabase, url: &str, source: &Source) -> Result<bool
     Ok(pg.exist(exist_query, &[&url.to_owned(), &source.uuid])?)
 }
 
-pub fn find_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32) -> Result<Vec<Feed>> {
+pub fn find_resolver(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32) -> Result<Vec<Feed>> {
     let pg = PgDatabase::from_pool(pool)?;
     let feeds = find_feed(&pg, limit, offset)?;
     Ok(feeds)

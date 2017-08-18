@@ -106,7 +106,7 @@ fn is_bookmark_exist(pg: &PgDatabase, url: &str, user: &User) -> Result<bool> {
     Ok(pg.exist(query, &[&url, &user.uuid])?)
 }
 
-pub fn add_bookmark_resolver<'a>(pool: Pool<PostgresConnectionManager>, bookmark: Bookmark, user: &User) -> Result<Bookmark> {
+pub fn add_bookmark_resolver(pool: Pool<PostgresConnectionManager>, bookmark: Bookmark, user: &User) -> Result<Bookmark> {
     let pg = PgDatabase::from_pool(pool)?;
     if !is_bookmark_exist(&pg, &bookmark.url, user)? {
         pg.insert(&bookmark)?;
@@ -121,7 +121,7 @@ fn find_bookmarks(pg: &PgDatabase, limit: i32, offset: i32, user: &User) -> Resu
     Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
 }
 
-pub fn bookmarks_resolver<'a>(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Bookmark>> {
+pub fn bookmarks_resolver(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Bookmark>> {
     let pg = PgDatabase::from_pool(pool)?;
     Ok(find_bookmarks(&pg, limit, offset, user)?)
 }

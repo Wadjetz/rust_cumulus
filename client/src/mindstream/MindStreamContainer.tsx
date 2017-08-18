@@ -32,6 +32,7 @@ class MindStreamContainer extends React.Component<Props, {}> {
             return (
                 <div>
                     <button onClick={onReaction(feed, "Readed")}>Read</button>
+                    <button onClick={onReaction(feed, "Liked")}>Liked</button>
                     <ReactCSSTransitionGroup
                         transitionName={{
                             enter: styles.transitionEnter,

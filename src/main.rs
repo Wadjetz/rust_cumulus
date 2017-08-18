@@ -62,6 +62,7 @@ use std::path::{Path, PathBuf};
 use std::fs::File as FsFile;
 use std::error::Error;
 
+use dotenv::dotenv;
 use rocket::response::{NamedFile, content};
 use rocket::{Data, State};
 use juniper::RootNode;
@@ -115,6 +116,7 @@ pub fn download(_auth_data: AuthData, conn: DbConn, file_uuid: String) -> Result
 }
 
 fn main() {
+    dotenv().ok();
     let conf = config::Config::from_env();
     let connection = create_db_pool(&conf);
     println!("Run migrations");

@@ -46,9 +46,18 @@ pub fn run(connection: PooledConnection<PostgresConnectionManager>) -> Result<()
                 source_uuid UUID NOT NULL REFERENCES sources(uuid)
             );
 
+            CREATE TYPE Reaction AS ENUM (
+                'Readed',
+                'ReadLater',
+                'Viewed',
+                'Liked',
+                'Disliked',
+                'Archived'
+            );
+
             CREATE TABLE users_feeds (
                 uuid UUID PRIMARY KEY,
-                reaction TEXT NOT NULL,
+                reaction Reaction NOT NULL,
                 feed_uuid UUID NOT NULL REFERENCES feeds(uuid),
                 user_uuid UUID NOT NULL REFERENCES users(uuid),
                 created TIMESTAMP,

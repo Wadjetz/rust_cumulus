@@ -63,7 +63,7 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
     field feed_reaction(
         &executor,
         feed_uuid: String as "feed_uuid",
-        reaction: String as "uuid",
+        reaction: String as "reaction",
     ) -> Result<String, String> {
         users_feeds::reaction_feed_resolver(executor.context().connection.clone(), &feed_uuid, &reaction, &self.user)
             .map(|_| String::from("ok"))
