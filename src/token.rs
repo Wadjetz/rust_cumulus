@@ -41,14 +41,14 @@ impl Claime {
     }
 }
 
-pub fn create_token(uuid: Uuid, email: String) -> Result<String> {
+pub fn create_token(uuid: Uuid, email: String, secret_key: &str) -> Result<String> {
     let claims = Claime::new(uuid.hyphenated().to_string(), email.clone());
-    let token = encode(&Header::default(), &claims, config::CONFIG.secret_key.as_ref())?;
+    let token = encode(&Header::default(), &claims, secret_key.as_bytes())?;
     Ok(token)
 }
 
-pub fn decode_auth(token: &str) -> Result<AuthData> {
-    let claims = decode::<Claime>(token, config::CONFIG.secret_key.as_ref(), &Validation::default())?;
+pub fn decode_auth(token: &str, secret_key: &str) -> Result<AuthData> {
+    let claims = decode::<Claime>(token, secret_key.as_bytes(), &Validation::default())?;
     let claims = claims.claims;
     let auth = claims.to_auth()?;
     Ok(auth)
@@ -59,7 +59,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for AuthData {
     fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, String> {
         match request.headers().get("Authorization").next() {
             Some(token) => {
-                match decode_auth(token) {
+                match decode_auth(token, config::CONFIG.secret_key.as_ref()) {
                     Ok(auth) => {
                         Outcome::Success(auth)
                     },

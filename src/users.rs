@@ -7,6 +7,7 @@ use postgres_shared::types::ToSql;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 
+use config;
 use errors::*;
 use token;
 use graphql::query::Query;
@@ -101,7 +102,7 @@ pub fn signup_resolver<'a>(pool: Pool<PostgresConnectionManager>, login: String,
     let pg = PgDatabase::from_pool(pool)?;
     let user = User::new_secure(login, email, password)?;
     pg.insert(&user)?;
-    let token = token::create_token(user.uuid, user.email)?;
+    let token = token::create_token(user.uuid, user.email, config::CONFIG.secret_key.as_ref())?;
     Ok(token)
 }
 
@@ -114,7 +115,7 @@ pub fn login_resolver<'a>(pool: Pool<PostgresConnectionManager>, email: String, 
     let pg = PgDatabase::from_pool(pool)?;
     if let Some(user) = find_user_by_email(&pg, &email)? {
         if let Ok(true) = verify_password(&password, &user.password) {
-            Ok(token::create_token(user.uuid, email)?)
+            Ok(token::create_token(user.uuid, email, config::CONFIG.secret_key.as_ref())?)
         } else {
             Err(ErrorKind::WrongCredentials.into())
         }
@@ -137,7 +138,7 @@ impl From<User> for AuthMutation {
 
 pub fn auth_resolver<'a, E>(pool: Pool<PostgresConnectionManager>, token: String) -> Result<E> where E: From<User> {
     let pg = PgDatabase::from_pool(pool)?;
-    let auth_data = token::decode_auth(&token)?;
+    let auth_data = token::decode_auth(&token, config::CONFIG.secret_key.as_ref())?;
     if let Some(user) = find_user_by_email(&pg, &auth_data.email)? {
         Ok(user.into())
     } else {
