@@ -21,7 +21,7 @@ export const loginSuccessEpic: Epic<Action, State> = (action$) => action$.ofType
     })
 
 export const loginErrorEpic: Epic<any, State> = (action$, state) =>
-    action$.filter(action => !!action.error && action.error.errors.find((e: any) => e.message === "invalid token"))
+    action$.filter(action => !!action.errors && action.error.errors.find((e: any) => e.message === "invalid token"))
         .map(action => {
             router.replace("/login")
             return { type: "LOGIN_ERROR_REDIRECT" }
