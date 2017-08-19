@@ -12,6 +12,7 @@
     text-decoration: none;
     padding: 10px 20px;
     align-self: center;
+    cursor: pointer;
 }
 
 .item:hover {

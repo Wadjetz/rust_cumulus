@@ -206,3 +206,8 @@ export function success(result: any) {
         return result.data
     }
 }
+
+export function logout() {
+    localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY)
+    router.replace("/login")
+}

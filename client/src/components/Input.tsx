@@ -1,5 +1,5 @@
 import * as React from "react"
-import * as styles from "./input.css"
+import * as styles from "./Input.css"
 
 interface Props {
     label: string
