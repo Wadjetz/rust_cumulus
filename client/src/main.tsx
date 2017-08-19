@@ -8,9 +8,9 @@ import { createEpicMiddleware } from "redux-observable"
 import { persistStore, autoRehydrate } from "redux-persist"
 import { history } from "./router"
 
+import "rxjs/add/operator/map"
 import "rxjs/add/operator/mergeMap"
 import "rxjs/add/operator/filter"
-import "rxjs"
 
 import LoginReducer from "./login/LoginReducer"
 import FeedsReducer from "./feeds/FeedsReducer"
