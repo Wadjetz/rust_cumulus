@@ -4,7 +4,7 @@ import SourcesCard from "../components/SourceCard"
 
 interface Props {
     sources: Source[]
-    fallowSource: (source: Source) => void
+    fallowSource?: (source: Source) => void
 }
 
 export default class SourcesList extends React.Component<Props, {}> {

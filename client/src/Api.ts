@@ -67,6 +67,26 @@ export function loadUnfollowedSources(): Promise<Source[]> {
     .then(result => result.auth.unfollowedSources)
 }
 
+export function loadMySources(): Promise<Source[]> {
+    return withToken().then(token => query(`
+        query {
+            auth(token: "${token}") {
+                mySources {
+                    uuid
+                    sourceType
+                    rssSource {
+                        title
+                        xmlUrl
+                        htmlUrl
+                    }
+                    error
+                }
+            }
+        }
+    `))
+    .then(result => result.auth.mySources)
+}
+
 export function loadUnreadedFeeds(): Promise<Feed[]> {
     return withToken().then(token => query(`
         query {

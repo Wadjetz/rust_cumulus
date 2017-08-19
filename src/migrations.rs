@@ -101,6 +101,7 @@ pub fn run(connection: PooledConnection<PostgresConnectionManager>) -> Result<()
 
             DROP TYPE "filetype";
             DROP TYPE "sourcetype";
+            DROP TYPE "reaction";
         "#), 
     ];
 

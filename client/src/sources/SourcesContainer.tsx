@@ -8,7 +8,8 @@ import SourcesList from "./components/SourcesList"
 import AddSourceForm from "./components/AddSourceForm"
 
 interface Props extends State {
-    onLoad: () => void
+    onLoadUnfollowedSources: () => void
+    onLoadMySources: () => void
     addSourceOnChange: (field: "newSourceUrl") => (value: any) => void
     addSourceOnSubmit: (sourceUrl: string) => void,
     fallowSource: (source: Source) => void
@@ -16,9 +17,8 @@ interface Props extends State {
 
 class FeedsContainer extends React.Component<Props, {}> {
     componentWillMount() {
-        if (this.props.sources.sources.length === 0) {
-            this.props.onLoad()
-        }
+        this.props.onLoadUnfollowedSources()
+        this.props.onLoadMySources()
     }
     render() {
         const { sources, addSourceOnChange, addSourceOnSubmit } = this.props
@@ -30,12 +30,15 @@ class FeedsContainer extends React.Component<Props, {}> {
                     onChange={addSourceOnChange}
                     onSubmit={addSourceOnSubmit}
                 />
-                {this.renderSourceList()}
+                <h3>Sources</h3>
+                {this.renderSourcesList()}
+                <h3>My Sources</h3>
+                {this.renderMySourcesList()}
             </div>
         )
     }
 
-    renderSourceList = () => {
+    renderSourcesList = () => {
         const { fallowSource, sources } = this.props
         if (sources.sources.length > 0) {
             return (
@@ -48,6 +51,19 @@ class FeedsContainer extends React.Component<Props, {}> {
             return <div>Empty</div>
         }
     }
+
+    renderMySourcesList = () => {
+        const { sources } = this.props
+        if (sources.mySources.length > 0) {
+            return (
+                <SourcesList
+                    sources={sources.mySources}
+                />
+            )
+        } else {
+            return <div>My Sources Empty</div>
+        }
+    }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<State>, state: any) => {
@@ -58,8 +74,11 @@ const mapDispatchToProps = (dispatch: Dispatch<State>, state: any) => {
         addSourceOnSubmit: (sourceUrl: string) => {
             dispatch(SourcesActions.addSource(sourceUrl))
         },
-        onLoad: () => {
+        onLoadUnfollowedSources: () => {
             dispatch(SourcesActions.loadUnfollowedSources())
+        },
+        onLoadMySources: () => {
+            dispatch(SourcesActions.loadMySources())
         },
         fallowSource: (source: Source) => {
             dispatch(SourcesActions.fallowSources(source))

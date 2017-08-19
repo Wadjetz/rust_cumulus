@@ -9,6 +9,17 @@ export const loadUnfollowedSourcesSuccess = (sources: Source[]) => ({ type: LOAD
 export const LOAD_UNFOLLOWED_SOURCES_ERROR = "LOAD_UNFOLLOWED_SOURCES_ERROR"
 export const loadUnfollowedSourcesError = (error: any) => ({ type: LOAD_UNFOLLOWED_SOURCES_ERROR, error })
 
+export const LOAD_MY_SOURCES = "LOAD_MY_SOURCES"
+export const loadMySources = () => ({ type: LOAD_MY_SOURCES })
+
+export const LOAD_MY_SOURCES_SUCCESS = "LOAD_MY_SOURCES_SUCCESS"
+export const loadMySourcesSuccess = (sources: Source[]) => ({ type: LOAD_MY_SOURCES_SUCCESS, sources })
+
+export const LOAD_MY_SOURCES_ERROR = "LOAD_MY_SOURCES_ERROR"
+export const loadMySourcesError = (error: any) => ({ type: LOAD_MY_SOURCES_ERROR, error })
+
+export const ADD_MY_SOURCE = "ADD_MY_SOURCE"
+export const addMySource = (source: Source) => ({ type: ADD_MY_SOURCE, source })
 
 export const FALLOW_SOURCE = "FALLOW_SOURCE"
 export const fallowSources = (source: Source) => ({ type: FALLOW_SOURCE, source })

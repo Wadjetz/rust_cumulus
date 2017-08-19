@@ -13,8 +13,13 @@ export default class SourcesCard extends React.Component<Props, {}> {
             <div>
                 <h4>{source.rssSource.title}</h4>
                 {source.rssSource.xmlUrl}
-                <button onClick={() => fallowSource(source)}>Fallow</button>
+                {fallowSource ? <button onClick={this.fallowSourceHandler}>Fallow</button> : null }
             </div>
         )
+    }
+
+    fallowSourceHandler = () => {
+        const { source, fallowSource } = this.props
+        fallowSource(source)
     }
 }
