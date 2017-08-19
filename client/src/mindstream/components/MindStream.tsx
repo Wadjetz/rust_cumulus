@@ -21,7 +21,7 @@ export default class MindStream extends React.Component<Props, {}> {
         if (feed.readable) {
             return <FeedReadable readable={feed.readable} />
         } else if (feed.rss) {
-            return <FeedRss rss={feed.rss} />
+            return <FeedRss rss={feed.rss} feed_url={feed.url} />
         }
     }
 }

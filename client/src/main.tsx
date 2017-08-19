@@ -46,7 +46,7 @@ export let store = createStore(
     )
 )
 
-persistStore(store, { blacklist: ["login"] })
+persistStore(store, { blacklist: ["login", "feeds", "mindStream", "sources"] })
 
 ReactDOM.render(
     <Provider store={store}>
