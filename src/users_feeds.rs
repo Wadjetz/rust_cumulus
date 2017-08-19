@@ -112,6 +112,7 @@ pub fn unreaded_feeds(pool: Pool<PostgresConnectionManager>, limit: i32, offset:
             WHERE users_feeds.feed_uuid = feeds.uuid
                 AND users_feeds.user_uuid = $1
         )
+        ORDER BY feeds.updated DESC
         LIMIT $2::int OFFSET $3::int;
     "#;
     Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)

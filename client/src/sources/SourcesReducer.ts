@@ -26,7 +26,12 @@ const SourcesReducer = (state: SourcesState = initState, action: any) => {
         case ADD_SOURCE_ON_CHANGE: return { ...state, [action.field]: action.value }
 
         case ADD_SOURCE: return { ...state, addSourceLoading: true }
-        case ADD_SOURCE_SUCCESS: return { ...state, addSourceLoading: false, sources: [...state.sources, action.source] }
+        case ADD_SOURCE_SUCCESS: return {
+            ...state,
+            addSourceLoading: false,
+            newSourceUrl: "",
+            sources: [...state.sources, action.source]
+        }
         case ADD_SOURCE_ERROR: return { ...state, addSourceLoading: false, error: action.error }
 
         case LOAD_UNFOLLOWED_SOURCES: return { ...state, loading: true }
