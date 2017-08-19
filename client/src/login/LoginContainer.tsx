@@ -4,6 +4,7 @@ import { LoginState } from "./LoginReducer"
 import * as LoginActions from "./LoginActions"
 import { State } from "../Store"
 import LoginForm from "./components/LoginForm"
+import * as styles from "./components/Login.css"
 
 interface Props extends State {
     onChange: (field: keyof LoginState) => (value: any) => void
@@ -12,14 +13,19 @@ interface Props extends State {
 const LoginContainer = (props: Props) => {
     const { login, onChange, onSubmit } = props
     const { email, password, loading, error } = login
-    return <LoginForm
-        email={email}
-        password={password}
-        loading={loading}
-        error={error}
-        onChange={onChange}
-        onSubmit={onSubmit}
-    />
+    return (
+        <div className={styles.container}>
+            <h2 className={styles.appName}>Cumulus</h2>
+            <LoginForm
+                email={email}
+                password={password}
+                loading={loading}
+                error={error}
+                onChange={onChange}
+                onSubmit={onSubmit}
+            />
+        </div>
+    )
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<State>) => {

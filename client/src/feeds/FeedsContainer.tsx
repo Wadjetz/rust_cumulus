@@ -4,6 +4,7 @@ import { connect, Dispatch } from "react-redux"
 import { State } from "../Store"
 import * as FeedsActions from "./FeedsActions"
 import FeedsList from "./components/FeedsList"
+import Header from "../components/Header"
 
 interface Props extends State {
     onLoad: () => void
@@ -14,7 +15,12 @@ class FeedsContainer extends React.Component<Props, {}> {
         this.props.onLoad()
     }
     render() {
-        return <FeedsList feeds={this.props.feeds.feeds} />
+        return (
+            <div style={{ flex: 1 }}>
+                <Header />
+                <FeedsList feeds={this.props.feeds.feeds} />
+            </div>
+        )
     }
 }
 

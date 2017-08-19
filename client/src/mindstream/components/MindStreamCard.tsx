@@ -7,7 +7,7 @@ interface Props {
     feed: Feed
 }
 
-export default class MindStream extends React.Component<Props, {}> {
+export default class MindStreamCard extends React.Component<Props, {}> {
     render() {
         return (
             <div>

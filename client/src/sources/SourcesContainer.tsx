@@ -6,6 +6,7 @@ import * as SourcesActions from "./SourcesActions"
 import { Source } from "./Source"
 import SourcesList from "./components/SourcesList"
 import AddSourceForm from "./components/AddSourceForm"
+import Header from "../components/Header"
 
 interface Props extends State {
     onLoadUnfollowedSources: () => void
@@ -23,7 +24,8 @@ class FeedsContainer extends React.Component<Props, {}> {
     render() {
         const { sources, addSourceOnChange, addSourceOnSubmit } = this.props
         return (
-            <div>
+            <div style={{ flex: 1 }}>
+                <Header />
                 <AddSourceForm
                     newSourceUrl={sources.newSourceUrl}
                     loading={false}

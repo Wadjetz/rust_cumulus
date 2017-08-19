@@ -45,9 +45,12 @@ export default class LoginForm extends React.Component<Props, {}> {
 
     renderError = () => {
         const { error } = this.props
+        const errorMessage = error && error.errors.map(e => e.message).join(", ")
         return (
             <div className={styles.errorContainer}>
-                {error ? <div className={styles.errorMessage}>{error.errors.map(e => e.message).join(", ")}</div> : null }
+                <div className={!!errorMessage ? styles.errorMessage : styles.errorMessageHidden}>
+                    {errorMessage || ""}
+                </div>
             </div>
         )
     }

@@ -2,11 +2,12 @@ import * as React from "react"
 import { connect, Dispatch } from "react-redux"
 import * as ReactCSSTransitionGroup from "react-addons-css-transition-group"
 
-import * as styles from "./MindStreamContainer.css"
+import * as styles from "./components/MindStream.css"
 import { State } from "../Store"
 import { Feed, Reaction } from "../feeds/Feed"
 import * as MindStreamActions from "./MindStreamActions"
-import MindStream from "./components/MindStream"
+import MindStreamCard from "./components/MindStreamCard"
+import Header from "../components/Header"
 
 interface Props extends State {
     onReaction: (feed: Feed, reaction: Reaction) => () => void
@@ -30,7 +31,8 @@ class MindStreamContainer extends React.Component<Props, {}> {
         if (mindStream.feeds.length > 0) {
             const feed = mindStream.feeds[0]
             return (
-                <div>
+                <div className={styles.container}>
+                    <Header />
                     <button onClick={onReaction(feed, "Readed")}>Read</button>
                     <button onClick={onReaction(feed, "Liked")}>Liked</button>
                     <ReactCSSTransitionGroup
@@ -43,7 +45,7 @@ class MindStreamContainer extends React.Component<Props, {}> {
                         transitionEnterTimeout={400}
                         transitionLeaveTimeout={0}
                         key={feed.uuid}>
-                        <MindStream
+                        <MindStreamCard
                             key={feed.uuid}
                             feed={feed}
                         />

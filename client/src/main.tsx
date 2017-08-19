@@ -20,7 +20,6 @@ import MindStreamContainer from "./mindstream/MindStreamContainer"
 import MindStreamReducer from "./mindstream/MindStreamReducer"
 import SourcesContainer from "./sources/SourcesContainer"
 import SourcesReducer from "./sources/SourcesReducer"
-import Header from "./components/Header"
 
 import RootEpic from "./RootEpic"
 
@@ -51,8 +50,7 @@ persistStore(store, { blacklist: ["login", "feeds", "mindStream", "sources"] })
 ReactDOM.render(
     <Provider store={store}>
         <ConnectedRouter history={history}>
-            <div>
-                <Header />
+            <div style={{ display: "flex", position: "absolute", top: 0, bottom: 0, left: 0, right: 0 }}>
                 <Route exact path="/" component={MindStreamContainer}/>
                 <Route exact path="/feeds" component={FeedsContainer}/>
                 <Route exact path="/sources" component={SourcesContainer}/>
