@@ -37,7 +37,7 @@ fn process_rss(client: &Client, pool: &Pool<PostgresConnectionManager>) -> Resul
                         for link in &rss_feed.alternate {
                             if !is_feed_exist(&pg, &link.href, source)? {
                                 if let Ok(Some(readable)) = fetch_readable(client, &link.href) {
-                                    let feed = Feed::new(&readable.url.clone(), Some(rss_feed.clone().into()), Some(readable), None, source.uuid);
+                                    let feed = Feed::new(&link.href, Some(rss_feed.clone().into()), Some(readable), None, source.uuid);
                                     if let Ok(_) = insert_feed(&pg, &feed) {
                                         println!("readable inserted {:?} from {:?}", feed.url, &rss_source.xml_url);
                                     }
