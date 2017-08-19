@@ -1,0 +1,27 @@
+.container {
+    display: flex;
+    border: 1px solid #4A90E2;
+    height: 40px;
+    justify-content: center;
+    align-content: center;
+    cursor: pointer;
+}
+
+.container:hover {
+    background-color: #F5F9FD;
+    animation-delay: .3s;
+}
+
+.label {
+    color: #4A90E2;
+    font-weight: bold;
+    font-size: 1.3rem;
+    align-self: center;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.loading {
+    color: #4A90E2;
+    align-self: center;
+    font-family: Helvetica, Arial, sans-serif;
+}

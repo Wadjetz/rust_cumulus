@@ -1,17 +1,17 @@
 import { LOGIN_ON_CHANGE, LOGIN_ON_SUBMIT, LOGIN_ON_SUBMIT_SUCCESS, LOGIN_ON_SUBMIT_ERROR } from "./LoginActions"
-
+import { ApiError } from "../Api"
 export interface LoginState {
     email: string
     password: string
     loading: boolean
-    token?: string
+    error?: ApiError
 }
 
 const initState: LoginState = {
     email: "",
     password: "",
     loading: false,
-    token: undefined,
+    error: undefined,
 }
 
 const LoginReducer = (state: LoginState = initState, action: any) => {

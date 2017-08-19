@@ -5,6 +5,10 @@ import * as router from "./router"
 const BASE_URI = document.location.origin
 const AUTH_TOKEN_STORAGE_KEY = "AUTH_TOKEN_STORAGE_KEY"
 
+export interface ApiError {
+    errors: { message: string }[]
+}
+
 function withToken(): Promise<string> {
     return new Promise((resolve: any, reject: any) => {
         const token = localStorage.getItem(AUTH_TOKEN_STORAGE_KEY) || sessionStorage.getItem(AUTH_TOKEN_STORAGE_KEY)

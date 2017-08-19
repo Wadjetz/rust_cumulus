@@ -1,24 +1,22 @@
 import * as React from "react"
-import * as styles from "./Input.css"
+import * as styles from "./input.css"
 
 interface Props {
     label: string
     value: string
+    error?: string
     type: string
     onChange: (value: string) => void
 }
 
 export default class Input extends React.Component<Props, {}> {
     render() {
-        const { label, type, value } = this.props
+        const { label, type, error, value } = this.props
         return (
             <div className={styles.container}>
-                <div>
-                    <label>{label}</label>
-                </div>
-                <div>
-                    <input type={type} value={value} onChange={this.onChangeHandler} />
-                </div>
+                <label className={styles.label}>{label}</label>
+                <input className={styles.input} type={type} value={value} onChange={this.onChangeHandler} />
+                <span>{error}</span>
             </div>
         )
     }

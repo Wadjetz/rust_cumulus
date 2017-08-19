@@ -1,4 +1,22 @@
-
 .container {
-    
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
+.label {
+    color: #566270;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.input {
+    padding: 4px;
+    border: none;
+    border-bottom: 1px solid #979797;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.error {
+    color: red;
 }

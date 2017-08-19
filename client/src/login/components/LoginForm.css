@@ -1,0 +1,14 @@
+
+.container {
+    max-width: 400px;
+    align-self: center;
+    padding: 10px;
+}
+
+.error-container {
+    padding: 10px 0;
+}
+
+.error-message {
+    color: #F36262;
+}
