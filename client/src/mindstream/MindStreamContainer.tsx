@@ -27,12 +27,20 @@ class MindStreamContainer extends React.Component<Props, {}> {
     }
 
     render() {
+        return (
+            <div className={styles.container}>
+                <Header />
+                {this.renderStream()}
+            </div>
+        )
+    }
+
+    renderStream = () => {
         const { mindStream, onReaction } = this.props
         if (mindStream.feeds.length > 0) {
             const feed = mindStream.feeds[0]
             return (
-                <div className={styles.container}>
-                    <Header />
+                <div>
                     <button onClick={onReaction(feed, "Readed")}>Read</button>
                     <button onClick={onReaction(feed, "Liked")}>Liked</button>
                     <ReactCSSTransitionGroup
