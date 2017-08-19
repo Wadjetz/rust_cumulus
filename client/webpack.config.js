@@ -65,6 +65,13 @@ var config = {
 };
 
 if (!development) {
+    config.plugins.push(
+        new webpack.DefinePlugin({
+            'process.env': {
+              NODE_ENV: JSON.stringify('production')
+            }
+        }),
+    ),
     config.plugins.push(new webpack.optimize.UglifyJsPlugin({
         compressor: {screw_ie8: true, keep_fnames: false, warnings: false},
         sourceMap: false,
