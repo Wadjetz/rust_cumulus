@@ -2,7 +2,9 @@ const path = require("path")
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const webpack = require("webpack")
 
-module.exports = {
+const development = process.env.NODE_ENV === "development";
+
+var config = {
     entry: "./src/main.tsx",
     output: {
         filename: "main.js",
@@ -61,3 +63,13 @@ module.exports = {
     },
     */
 };
+
+if (!development) {
+    config.plugins.push(new webpack.optimize.UglifyJsPlugin({
+        compressor: {screw_ie8: true, keep_fnames: false, warnings: false},
+        sourceMap: false,
+        mangle: {screw_ie8: true, keep_fnames: false}
+    }));
+}
+
+module.exports = config
