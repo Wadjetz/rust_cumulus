@@ -13,8 +13,10 @@ import "rxjs/add/operator/mergeMap"
 import "rxjs/add/operator/filter"
 
 import LoginReducer from "./login/LoginReducer"
+import SignupReducer from "./signup/SignupReducer"
 import FeedsReducer from "./feeds/FeedsReducer"
 import LoginContainer from "./login/LoginContainer"
+import SignupContainer from "./signup/SignupContainer"
 import FeedsContainer from "./feeds/FeedsContainer"
 import MindStreamContainer from "./mindstream/MindStreamContainer"
 import MindStreamReducer from "./mindstream/MindStreamReducer"
@@ -29,6 +31,7 @@ const middleware = routerMiddleware(history)
 
 const reducers = combineReducers({
     login: LoginReducer,
+    signup: SignupReducer,
     feeds: FeedsReducer,
     mindStream: MindStreamReducer,
     sources: SourcesReducer,
@@ -55,6 +58,7 @@ ReactDOM.render(
                 <Route exact path="/feeds" component={FeedsContainer}/>
                 <Route exact path="/sources" component={SourcesContainer}/>
                 <Route exact path="/login" component={LoginContainer}/>
+                <Route exact path="/signup" component={SignupContainer}/>
             </div>
         </ConnectedRouter>
     </Provider>,

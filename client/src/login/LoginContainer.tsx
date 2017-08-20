@@ -24,6 +24,7 @@ const LoginContainer = (props: Props) => {
                 onChange={onChange}
                 onSubmit={onSubmit}
             />
+            <a href="#/signup">Signup</a>
         </div>
     )
 }

@@ -51,6 +51,14 @@ export function login(email: string, password: string): Promise<void> {
     })
 }
 
+export function signup(login: string, email: string, password: string): Promise<void> {
+    return query(`mutation {
+        signup(login: "${login}", email: "${email}", password: "${password}")
+    }`).then(result => {
+        localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, result.signup)
+    })
+}
+
 export function loadUnfollowedSources(): Promise<Source[]> {
     return withToken().then(token => query(`
         query {

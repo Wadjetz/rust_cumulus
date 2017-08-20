@@ -6,6 +6,7 @@ import {
     loadMySourcesEpic,
     fallowSourcesSuccessEpic
 } from "./sources/SourcesEpics"
+import { signupEpic, signupSuccessEpic } from "./signup/SignupEpics"
 import { loadUnreadedFeedsEpic, readFeedEpic, reloadUnreadedFeedsEpic } from "./mindstream/MindStreamEpics"
 import { loadfeedsEpic } from "./feeds/FeedsEpics"
 import { loginEpic, loginSuccessEpic, loginErrorEpic } from "./login/LoginEpics"
@@ -25,7 +26,10 @@ const RootEpic = combineEpics(
 
     loginEpic,
     loginSuccessEpic,
-    loginErrorEpic
+    loginErrorEpic,
+
+    signupEpic,
+    signupSuccessEpic,
 )
 
 export default RootEpic
