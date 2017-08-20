@@ -112,6 +112,7 @@ pub fn unreaded_feeds(pool: Pool<PostgresConnectionManager>, limit: i32, offset:
             WHERE users_feeds.feed_uuid = feeds.uuid
                 AND users_feeds.user_uuid = $1
         )
+        AND users_sources.user_uuid = '1b0efd64-028a-47b5-ac0b-723ac04fa488'
         ORDER BY feeds.updated DESC
         LIMIT $2::int OFFSET $3::int;
     "#;
@@ -131,6 +132,7 @@ pub fn feeds_by_reaction_resolver(pool: Pool<PostgresConnectionManager>, reactio
                 AND users_feeds.user_uuid = $1
                 AND users_feeds.reaction = $4
         )
+        AND users_sources.user_uuid = '1b0efd64-028a-47b5-ac0b-723ac04fa488'
         LIMIT $2::int OFFSET $3::int;
     "#;
     Ok(pg.find(query, &[&user.uuid, &limit, &offset, &reaction])?)
