@@ -96,13 +96,13 @@ impl Insertable for Bookmark {
         "#.to_owned()
     }
 
-    fn insert_params<'a>(&'a self) -> Box<[&'a ToSql]> {
+    fn insert_params(&self) -> Box<[&ToSql]> {
         Box::new([&self.uuid, &self.title, &self.url, &self.description, &self.path, &self.created, &self.updated, &self.user_uuid])
     }
 }
 
 fn is_bookmark_exist(pg: &PgDatabase, url: &str, user: &User) -> Result<bool> {
-    let query = "SELECT * FROM bookmarks WHERE url = $1 AND user_uuid = $2::uuid;";
+    let query = "SELECT COUNT(*) AS exist FROM bookmarks WHERE url = $1 AND user_uuid = $2::uuid;";
     Ok(pg.exist(query, &[&url, &user.uuid])?)
 }
 
