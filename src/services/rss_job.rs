@@ -38,12 +38,12 @@ fn process_rss(client: &Client, pool: &Pool<PostgresConnectionManager>) -> Resul
                             if !is_feed_exist(&pg, &link.href, source)? {
                                 if let Ok(Some(readable)) = fetch_readable(client, &link.href) {
                                     let feed = Feed::new(&link.href, Some(rss_feed.clone().into()), Some(readable), None, source.uuid);
-                                    if let Ok(_) = insert_feed(&pg, &feed) {
+                                    if insert_feed(&pg, &feed).is_ok() {
                                         println!("readable inserted {:?} from {:?}", feed.url, &rss_source.xml_url);
                                     }
                                 } else {
                                     let feed = Feed::new(&link.href, Some(rss_feed.clone().into()), None, None, source.uuid); // TODO remove clone, refactor
-                                    if let Ok(_) = insert_feed(&pg, &feed) {
+                                    if insert_feed(&pg, &feed).is_ok() {
                                         println!("rss inserted {:?} from {:?}", feed.url, &rss_source.xml_url);
                                     }
                                 }
@@ -52,7 +52,7 @@ fn process_rss(client: &Client, pool: &Pool<PostgresConnectionManager>) -> Resul
                     }
                 }
             }
-            _ => {}
+            SourceOption::Twitter(_) => {}
         }
     }
     Ok(())

@@ -66,7 +66,7 @@ impl Insertable for UserFeed {
         "#.to_owned()
     }
 
-    fn insert_params<'a>(&'a self) -> Box<[&'a ToSql]> {
+    fn insert_params(&self) -> Box<[&ToSql]> {
         Box::new([&self.uuid, &self.reaction, &self.user_uuid, &self.feed_uuid, &self.created, &self.updated])
     }
 }

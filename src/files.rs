@@ -130,7 +130,7 @@ impl Insertable for File {
         "#.to_owned()
     }
 
-    fn insert_params<'a>(&'a self) -> Box<[&'a ToSql]> {
+    fn insert_params(&self) -> Box<[&ToSql]> {
         Box::new([&self.uuid, &self.hash, &self.name, &self.location, &self.file_type, &self.size, &self.user_uuid])
     }
 }
@@ -159,7 +159,7 @@ fn find_files_by_uuid(pg: &PgDatabase, file_uuid: Uuid) -> Result<Option<File>> 
 }
 
 pub fn download_resolver(pg: PgDatabase, file_uuid: &str) -> Result<FsFile> {
-    let file_uuid = Uuid::parse_str(&file_uuid)?;
+    let file_uuid = Uuid::parse_str(file_uuid)?;
     if let Some(file) = find_files_by_uuid(&pg, file_uuid)? {
         let fs_file = FsFile::open(Path::new("upload/").join(Path::new(&file.location)))?;
         Ok(fs_file)

@@ -1,10 +1,7 @@
-#![allow(unused_doc_comment)]
 #![recursion_limit = "1024"]
-#![feature(plugin)]
-#![plugin(rocket_codegen)]
-#![feature(custom_attribute)]
-#![feature(custom_derive)]
-#![feature(associated_type_defaults)]
+#![feature(plugin, custom_attribute, custom_derive, associated_type_defaults)]
+#![plugin(clippy, rocket_codegen)]
+#![allow(unused_doc_comment, op_ref, unused_io_amount, clone_on_copy, double_parens, needless_pass_by_value)]
 
 #[macro_use]
 extern crate serde_derive;
@@ -40,6 +37,7 @@ extern crate rocket;
 extern crate url;
 #[macro_use]
 extern crate juniper;
+extern crate geo;
 
 mod errors;
 mod pg;
@@ -65,6 +63,7 @@ use std::error::Error;
 use dotenv::dotenv;
 use rocket::response::{NamedFile, content};
 use rocket::{Data, State};
+use rocket::http::RawStr;
 use juniper::RootNode;
 use juniper::rocket_handlers;
 
@@ -110,8 +109,8 @@ pub fn upload(auth_data: AuthData, conn: DbConn, file_data: Data, path: PathBuf)
 }
 
 #[get("/download/<file_uuid>")]
-pub fn download(_auth_data: AuthData, conn: DbConn, file_uuid: String) -> Result<FsFile, String> {
-    download_resolver(conn.into(), &file_uuid)
+pub fn download(_auth_data: AuthData, conn: DbConn, file_uuid: &RawStr) -> Result<FsFile, String> {
+    download_resolver(conn.into(), file_uuid)
         .map_err(|e| e.description().to_string())
 }
 

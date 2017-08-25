@@ -239,7 +239,7 @@ impl Insertable for Feed {
         "#.to_owned()
     }
 
-    fn insert_params<'a>(&'a self) -> Box<[&'a ToSql]> {
+    fn insert_params(&self) -> Box<[&ToSql]> {
         Box::new([
             &self.uuid,
             &self.url,

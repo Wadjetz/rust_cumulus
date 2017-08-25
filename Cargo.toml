@@ -4,16 +4,18 @@ version = "0.1.0"
 authors = ["Wadjetz <egor.neon@gmail.com>"]
 
 [profile.release]
-#lto = true # Binary size optiomisation, but longuer compile time
+#lto = true # Binary size optiomisation, but realy longuer compile time
 
 [dependencies]
 rocket = "0.3.2"
 rocket_codegen = "0.3.2"
 juniper = { git = "https://github.com/stankec/juniper", features = ["rocket-handlers"] }
 
+geo = "0.4.13"
+
 r2d2 = "0.7.3"
 r2d2_postgres = "0.12.0"
-postgres =  { version = "0.14.2", features = ["with-serde_json", "with-uuid", "with-chrono"] }
+postgres =  { version = "0.14.2", features = ["with-serde_json", "with-uuid", "with-chrono", "with-geo"] }
 postgres-shared = "0.3.0"
 postgres-protocol = "0.3.0"
 postgres-derive = "0.3.1"
@@ -43,3 +45,5 @@ url = "1.5.1"
 dotenv = "0.10.1"
 
 error-chain = "0.10.0"
+
+clippy = "0.0.152"
