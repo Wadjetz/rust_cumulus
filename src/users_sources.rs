@@ -104,3 +104,14 @@ pub fn unfollowed_sources_resolver(pool: Pool<PostgresConnectionManager>, limit:
     "#;
     Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
 }
+
+pub fn total_my_rss_sources_resolver(pool: Pool<PostgresConnectionManager>, user: &User) -> Result<i32> {
+    let pg = PgDatabase::from_pool(pool)?;
+    let find_rss_query = r#"
+        SELECT COUNT(*) AS total FROM sources
+        JOIN users_sources ON users_sources.source_uuid = sources.uuid
+        WHERE users_sources.user_uuid = $1;
+    "#;
+    let total = pg.total(find_rss_query, &[&user.uuid])? as i32;
+    Ok(total)
+}

@@ -61,6 +61,12 @@ impl PgDatabase {
         }))
     }
 
+    pub fn total<'a>(&self, query: &str, params: &[&'a ToSql]) -> Result<i64> {
+        let rows = self.connection.query(query, params)?;
+        let total = rows.iter().map(|row| row.get("total")).next().unwrap_or(0);
+        Ok(total)
+    }
+
     pub fn find<'a, E>(&self, query: &str, params: &[&'a ToSql]) -> Result<Vec<E>> where E: for<'b> From<Row<'b>> {
         let rows = self.connection.query(query, params)?;
         Ok(rows.iter().map(|row| row.into()).collect())

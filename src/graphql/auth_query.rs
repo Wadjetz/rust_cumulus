@@ -6,7 +6,7 @@ use feeds::Feed;
 use users_feeds::{unreaded_feeds, users_feeds_resolver, feeds_by_reaction_resolver};
 use bookmarks::{bookmarks_resolver, Bookmark};
 use sources::Source;
-use users_sources::{unfollowed_sources_resolver, users_sources_resolver};
+use users_sources::{unfollowed_sources_resolver, users_sources_resolver, total_my_rss_sources_resolver};
 
 use std::error::Error;
 
@@ -96,6 +96,16 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         offset: Option<i32> as "Offset",
     ) -> Result<Vec<Feed>, String> {
         feeds_by_reaction_resolver(executor.context().connection.clone(), &reaction, limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
+            .map_err(|e| {
+                println!("{:?}", e);
+                e.description().to_string()
+            })
+    }
+
+    field total_my_rss_sources(
+        &executor,
+    ) -> Result<i32, String> {
+        total_my_rss_sources_resolver(executor.context().connection.clone(), &self.user)
             .map_err(|e| {
                 println!("{:?}", e);
                 e.description().to_string()
