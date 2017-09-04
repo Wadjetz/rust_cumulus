@@ -56,6 +56,7 @@ mod users_feeds;
 mod bookmarks;
 mod files;
 mod server;
+mod routes;
 
 fn main() {
     server::run();
