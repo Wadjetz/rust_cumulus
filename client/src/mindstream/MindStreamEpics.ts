@@ -1,7 +1,6 @@
 import { Action } from "redux"
 import { Epic } from "redux-observable"
 
-import { Feed } from "../feeds/Feed"
 import {
     LOAD_UNREADED_FEEDS, loadUnreadedFeedsSuccess, loadUnreadedFeedsError,
     READ_FEED, READ_FEED_SUCCESS, readFeedSuccess, readFeedError,
@@ -17,17 +16,10 @@ export const loadUnreadedFeedsEpic: Epic<any, State> = (action$, state) => actio
     )
 
 export const reloadUnreadedFeedsEpic: Epic<Action, State> = (action$, state) => action$
-    .filter(action => action.type === READ_FEED_SUCCESS && state.getState().mindStream.feeds.length < 4)
+    .filter(action => action.type === READ_FEED_SUCCESS && state.getState().mindStream.feeds.length === 0)
     .mergeMap(action =>
-        // TODO add and use limit and offset of loadUnreadedFeeds to simplify this
         Api.loadUnreadedFeeds()
-            .then(newFeeds =>
-                loadUnreadedFeedsSuccess(
-                    newFeeds.filter((newFeed: Feed) =>
-                        state.getState().mindStream.feeds.filter(oldFees => newFeed.uuid === oldFees.uuid).length === 0
-                    )
-                )
-            )
+            .then(loadUnreadedFeedsSuccess)
             .catch(loadUnreadedFeedsError)
     )
 
