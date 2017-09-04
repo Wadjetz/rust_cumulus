@@ -1,7 +1,7 @@
 #![recursion_limit = "1024"]
 #![feature(plugin, custom_attribute, custom_derive, associated_type_defaults)]
-#![plugin(clippy, rocket_codegen)]
-#![allow(unused_doc_comment, op_ref, unused_io_amount, clone_on_copy, double_parens, needless_pass_by_value)]
+#![plugin(rocket_codegen)]
+#![allow(unused_doc_comment)]
 
 #[macro_use]
 extern crate serde_derive;

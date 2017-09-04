@@ -45,5 +45,3 @@ url = "1.5.1"
 dotenv = "0.10.1"
 
 error-chain = "0.10.0"
-
-clippy = "0.0.152"
