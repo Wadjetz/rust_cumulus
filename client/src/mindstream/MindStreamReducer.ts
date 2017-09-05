@@ -1,6 +1,6 @@
 import { Feed } from "../feeds/Feed"
 import {
-    LOAD_UNREADED_FEEDS, LOAD_UNREADED_FEEDS_ERROR, LOAD_UNREADED_FEEDS_SUCCESS,
+    LOAD_UNREADED_FEEDS, LOAD_UNREADED_FEEDS_ERROR, LOAD_UNREADED_FEEDS_SUCCESS, RELOAD_UNREADED_FEEDS,
     READ_FEED, READ_FEED_ERROR, READ_FEED_SUCCESS,
 } from "./MindStreamActions"
 
@@ -22,6 +22,7 @@ const MindStreamReducer = (state: MindStreamState = initState, action: any) => {
         case LOAD_UNREADED_FEEDS_SUCCESS: return { ...state, feeds: [...state.feeds, ...action.feeds], loading: false }
         case LOAD_UNREADED_FEEDS_ERROR: return { ...state, loading: false, error: action.error }
 
+        case RELOAD_UNREADED_FEEDS: return { ...state, loading: true }
         case READ_FEED: return { ...state, loading: true }
         case READ_FEED_ERROR: return { ...state, loading: false, error: action.error }
         case READ_FEED_SUCCESS: return {
