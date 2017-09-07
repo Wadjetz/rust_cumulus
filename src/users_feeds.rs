@@ -10,6 +10,7 @@ use r2d2_postgres::PostgresConnectionManager;
 use pg::{Insertable, PgDatabase};
 use users::User;
 use feeds::Feed;
+use sources::Source;
 use errors::*;
 
 #[derive(Debug)]
@@ -117,6 +118,25 @@ pub fn unreaded_feeds(pool: Pool<PostgresConnectionManager>, limit: i32, offset:
         LIMIT $2::int OFFSET $3::int;
     "#;
     Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
+}
+
+pub fn unreaded_feeds_by_source(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, source: &Source, user: &User) -> Result<Vec<Feed>> {
+    let pg = PgDatabase::from_pool(pool)?;
+    let query = r#"
+        SELECT feeds.* FROM feeds
+        JOIN users_sources ON users_sources.source_uuid = feeds.source_uuid
+        WHERE 0 = (
+            SELECT COUNT(*)
+            FROM users_feeds
+            WHERE users_feeds.feed_uuid = feeds.uuid
+                AND users_feeds.user_uuid = $1
+        )
+        AND users_sources.user_uuid = $1
+        AND users_sources.source_uuid = $2
+        ORDER BY feeds.updated DESC
+        LIMIT $3::int OFFSET $4::int;
+    "#;
+    Ok(pg.find(query, &[&user.uuid, &source.uuid, &limit, &offset])?)
 }
 
 pub fn feeds_by_reaction_resolver(pool: Pool<PostgresConnectionManager>, reaction: &str, limit: i32, offset: i32, user: &User) -> Result<Vec<Feed>> {
