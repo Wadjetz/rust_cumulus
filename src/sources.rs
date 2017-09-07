@@ -229,3 +229,9 @@ pub fn find_rss_sources(pg: &PgDatabase, limit: i32, offset: i32) -> Result<Vec<
     let sources = pg.find::<Source>(find_rss_query, &[&limit, &offset])?;
     Ok(sources)
 }
+
+pub fn find_source_by_uuid(pg: &PgDatabase, uuid: &Uuid) -> Result<Option<Source>> {
+    let query = "SELECT * FROM sources WHERE uuid = $1::uuid;";
+    let source = pg.find_one(query, &[uuid])?;
+    Ok(source)
+}

@@ -10,7 +10,7 @@ use r2d2_postgres::PostgresConnectionManager;
 use pg::{Insertable, PgDatabase};
 use users::User;
 use feeds::Feed;
-use sources::Source;
+use sources::{Source, find_source_by_uuid};
 use errors::*;
 
 #[derive(Debug)]
@@ -120,8 +120,11 @@ pub fn unreaded_feeds(pool: Pool<PostgresConnectionManager>, limit: i32, offset:
     Ok(pg.find(query, &[&user.uuid, &limit, &offset])?)
 }
 
-pub fn unreaded_feeds_by_source(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, source: &Source, user: &User) -> Result<Vec<Feed>> {
+pub fn unreaded_feeds_by_source_resolver(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, source_uuid: &str, user: &User) -> Result<Vec<Feed>> {
+    let source_uuid = Uuid::parse_str(source_uuid)?;
     let pg = PgDatabase::from_pool(pool)?;
+    let source = find_source_by_uuid(&pg, &source_uuid)?;
+    let source: Source = source.ok_or(ErrorKind::NotFound)?;
     let query = r#"
         SELECT feeds.* FROM feeds
         JOIN users_sources ON users_sources.source_uuid = feeds.source_uuid

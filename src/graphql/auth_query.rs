@@ -3,7 +3,7 @@ use users::User;
 use files::{File, files_resolver};
 use feeds;
 use feeds::Feed;
-use users_feeds::{unreaded_feeds, users_feeds_resolver, feeds_by_reaction_resolver};
+use users_feeds::{unreaded_feeds, users_feeds_resolver, feeds_by_reaction_resolver, unreaded_feeds_by_source_resolver};
 use bookmarks::{bookmarks_resolver, Bookmark};
 use sources::Source;
 use users_sources::{unfollowed_sources_resolver, users_sources_resolver, total_my_rss_sources_resolver};
@@ -86,6 +86,16 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         offset: Option<i32> as "Offset"
     ) -> Result<Vec<Feed>, String> {
         unreaded_feeds(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
+            .map_err(|e| e.description().to_string())
+    }
+
+    field unreaded_feeds_by_source(
+        &executor,
+        source_uuid: String as "Source Uuid",
+        limit: Option<i32> as "Limit",
+        offset: Option<i32> as "Offset"
+    ) -> Result<Vec<Feed>, String> {
+        unreaded_feeds_by_source_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &source_uuid, &self.user)
             .map_err(|e| e.description().to_string())
     }
 
