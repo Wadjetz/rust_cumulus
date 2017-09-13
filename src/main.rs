@@ -51,6 +51,7 @@ mod bookmarks;
 mod server;
 mod routes;
 mod cloud;
+mod dilem;
 
 fn main() {
     server::run();

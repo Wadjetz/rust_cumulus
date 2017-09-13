@@ -111,6 +111,11 @@ fn find_user_by_email(pg: &PgDatabase, email: &str) -> Result<Option<User>> {
     Ok(pg.find_one::<User>(query, &[&email])?)
 }
 
+pub fn find_user_by_uuid(pg: &PgDatabase, uuid: &Uuid) -> Result<Option<User>> {
+    let query = r#"SELECT * FROM users WHERE uuid = $1::uuid;"#;
+    Ok(pg.find_one::<User>(query, &[&uuid])?)
+}
+
 pub fn login_resolver(pool: Pool<PostgresConnectionManager>, email: String, password: String) -> Result<String> {
     let pg = PgDatabase::from_pool(pool)?;
     if let Some(user) = find_user_by_email(&pg, &email)? {

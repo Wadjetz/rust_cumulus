@@ -10,6 +10,7 @@ use cloud::files::File;
 use mindstream::sources::Source;
 use mindstream::users_sources;
 use mindstream::users_feeds;
+use dilem::conversations;
 
 #[derive(Debug)]
 pub struct AuthMutation {
@@ -68,6 +69,26 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
         reaction: String as "reaction",
     ) -> FieldResult<String> {
         users_feeds::reaction_feed_resolver(executor.context().connection.clone(), &feed_uuid, &reaction, &self.user)
+            .map(|_| String::from("ok"))
+            .map_err(|e| FieldError::from(e.to_string()))
+    }
+
+    field send_message(
+        &executor,
+        content: String as "Message content",
+        conversation_uuid: String as "Conversation uuid",
+    ) -> FieldResult<String> {
+        conversations::send_message_resolver(executor.context().connection.clone(), &content, &conversation_uuid, &self.user)
+            .map(|_| String::from("ok"))
+            .map_err(|e| FieldError::from(e.to_string()))
+    }
+
+    // TODO it is not a public api, delete it
+    field create_conversation(
+        &executor,
+        target_user_uuid: String as "Target user uuid",
+    ) -> FieldResult<String> {
+        conversations::create_conversation_resolver(executor.context().connection.clone(), &target_user_uuid, &self.user)
             .map(|_| String::from("ok"))
             .map_err(|e| FieldError::from(e.to_string()))
     }
