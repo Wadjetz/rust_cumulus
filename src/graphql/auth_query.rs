@@ -1,3 +1,7 @@
+use std::error::Error;
+
+use juniper::{FieldError, FieldResult};
+
 use graphql::query::Query;
 use users::User;
 use files::{File, files_resolver};
@@ -7,8 +11,6 @@ use users_feeds::{unreaded_feeds, users_feeds_resolver, feeds_by_reaction_resolv
 use bookmarks::{bookmarks_resolver, Bookmark};
 use sources::Source;
 use users_sources::{unfollowed_sources_resolver, users_sources_resolver, total_my_rss_sources_resolver};
-
-use std::error::Error;
 
 #[derive(Debug)]
 pub struct AuthQuery {
@@ -34,59 +36,59 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         &executor,
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset"
-    ) -> Result<Vec<Bookmark>, String> {
+    ) -> FieldResult<Vec<Bookmark>> {
         bookmarks_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
-            .map_err(|e| e.description().to_string())
+            .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 
-    field files(&executor, limit: Option<i32> as "Limit", offset: Option<i32> as "Offset") -> Result<Vec<File>, String> {
+    field files(&executor, limit: Option<i32> as "Limit", offset: Option<i32> as "Offset") -> FieldResult<Vec<File>> {
         files_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
-            .map_err(|e| e.description().to_string())
+            .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 
     field feeds(
         &executor,
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset"
-    ) -> Result<Vec<Feed>, String> {
+    ) -> FieldResult<Vec<Feed>> {
         feeds::find_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0))
-            .map_err(|e| e.description().to_string())
+            .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 
     field my_feeds(
         &executor,
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset"
-    ) -> Result<Vec<Feed>, String> {
+    ) -> FieldResult<Vec<Feed>> {
         users_feeds_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
-            .map_err(|e| e.description().to_string())
+            .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 
     field my_sources(
         &executor,
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset",
-    ) -> Result<Vec<Source>, String> {
+    ) -> FieldResult<Vec<Source>> {
         users_sources_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
-            .map_err(|e| e.description().to_string())
+            .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 
     field unfollowed_sources(
         &executor,
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset",
-    ) -> Result<Vec<Source>, String> {
+    ) -> FieldResult<Vec<Source>> {
         unfollowed_sources_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
-            .map_err(|e| e.description().to_string())
+            .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 
     field unreaded_feeds(
         &executor,
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset"
-    ) -> Result<Vec<Feed>, String> {
+    ) -> FieldResult<Vec<Feed>> {
         unreaded_feeds(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
-            .map_err(|e| e.description().to_string())
+            .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 
     field unreaded_feeds_by_source(
@@ -94,9 +96,9 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         source_uuid: String as "Source Uuid",
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset"
-    ) -> Result<Vec<Feed>, String> {
+    ) -> FieldResult<Vec<Feed>> {
         unreaded_feeds_by_source_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &source_uuid, &self.user)
-            .map_err(|e| e.description().to_string())
+            .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 
     field feeds_by_reaction(
@@ -104,21 +106,15 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         reaction: String as "reaction",
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset",
-    ) -> Result<Vec<Feed>, String> {
+    ) -> FieldResult<Vec<Feed>> {
         feeds_by_reaction_resolver(executor.context().connection.clone(), &reaction, limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
-            .map_err(|e| {
-                println!("{:?}", e);
-                e.description().to_string()
-            })
+            .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 
     field total_my_rss_sources(
         &executor,
-    ) -> Result<i32, String> {
+    ) -> FieldResult<i32> {
         total_my_rss_sources_resolver(executor.context().connection.clone(), &self.user)
-            .map_err(|e| {
-                println!("{:?}", e);
-                e.description().to_string()
-            })
+            .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 });

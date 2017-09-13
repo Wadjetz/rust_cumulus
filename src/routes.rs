@@ -4,7 +4,7 @@ use std::fs::File as FsFile;
 use rocket::response::{NamedFile, content};
 use rocket::{Data, State};
 use rocket::http::RawStr;
-use juniper::rocket_handlers;
+use juniper_rocket;
 
 use graphql::query::{Schema, Query};
 use pg::DbConn;
@@ -13,15 +13,15 @@ use token::AuthData;
 
 #[get("/graphql")]
 pub fn graphiql() -> content::Html<String> {
-    rocket_handlers::graphiql_source("/graphql")
+    juniper_rocket::graphiql_source("/graphql")
 }
 
 #[post("/graphql", data="<request>")]
 pub fn post_graphql_handler(
     context: State<Query>,
-    request: rocket_handlers::GraphQLRequest,
+    request: juniper_rocket::GraphQLRequest,
     schema: State<Schema>
-) -> rocket_handlers::GraphQLResponse {
+) -> juniper_rocket::GraphQLResponse {
     request.execute(&schema, &context)
 }
 

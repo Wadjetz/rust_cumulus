@@ -1,12 +1,12 @@
-use juniper::Context;
-use juniper::RootNode;
+use std::error::Error;
+
+use juniper::{FieldResult, Context, RootNode, FieldError};
 use r2d2_postgres::PostgresConnectionManager;
 use r2d2::Pool;
 
 use graphql::auth_query::AuthQuery;
 use graphql::mutation::Mutation;
 use sources::Source;
-use std::error::Error;
 use sources::find_sources_resolver;
 use users::{auth_resolver, login_resolver};
 
@@ -32,25 +32,26 @@ graphql_object!(Query: Query as "Query" |&self| {
     field auth(
         &executor,
         token: String as "Auth token"
-    ) -> Result<AuthQuery, String> as "Auth" {
-        auth_resolver(executor.context().connection.clone(), token).map_err(|e| e.description().to_string())
+    ) -> FieldResult<AuthQuery> as "Auth" {
+        auth_resolver(executor.context().connection.clone(), token)
+            .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 
     field login(
         &executor,
         email: String as "Email",
         password: String as "Password"
-    ) -> Result<String, String> as "Token" {
+    ) -> FieldResult<String> as "Token" {
         login_resolver(executor.context().connection.clone(), email, password)
-            .map_err(|e| e.description().to_string())
+            .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 
     field sources(
         &executor,
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset",
-    ) -> Result<Vec<Source>, String> {
+    ) -> FieldResult<Vec<Source>> {
         find_sources_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0))
-            .map_err(|e| e.description().to_string())
+            .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 });

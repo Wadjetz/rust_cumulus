@@ -9,7 +9,8 @@ authors = ["Wadjetz <egor.neon@gmail.com>"]
 [dependencies]
 rocket = "0.3.2"
 rocket_codegen = "0.3.2"
-juniper = { git = "https://github.com/stankec/juniper", features = ["rocket-handlers"] }
+juniper = { git = "https://github.com/graphql-rust/juniper", features = ["uuid"] }
+juniper_rocket = { git = "https://github.com/graphql-rust/juniper_rocket" }
 
 geo = "0.4.13"
 
