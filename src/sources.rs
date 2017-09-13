@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 use postgres::rows::Row;
-use postgres_shared::types::ToSql;
+use postgres::types::ToSql;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 use uuid::Uuid;
@@ -98,8 +98,8 @@ impl Source {
             source_type,
             data,
             error: None,
-            created: UTC::now().naive_utc(),
-            updated: UTC::now().naive_utc(),
+            created: Utc::now().naive_utc(),
+            updated: Utc::now().naive_utc(),
         }
     }
 }
@@ -112,8 +112,8 @@ graphql_enum!(SourceType {
 graphql_object!(Source: Query as "Source" |&self| {
     description: "Source"
 
-    field uuid() -> String as "uuid" {
-        self.uuid.hyphenated().to_string()
+    field uuid() -> Uuid as "uuid" {
+        self.uuid
     }
 
     field source_type() -> &SourceType as "source_type" {

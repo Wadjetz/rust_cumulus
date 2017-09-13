@@ -2,7 +2,7 @@ use uuid::Uuid;
 use chrono::NaiveDateTime;
 use chrono::prelude::*;
 use postgres::rows::Row;
-use postgres_shared::types::ToSql;
+use postgres::types::ToSql;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 use serde_json;
@@ -68,8 +68,8 @@ impl Feed {
             rss: serde_json::to_value(rss).ok(),
             readable: serde_json::to_value(readable).ok(),
             twitter,
-            created: UTC::now().naive_utc(),
-            updated: UTC::now().naive_utc(),
+            created: Utc::now().naive_utc(),
+            updated: Utc::now().naive_utc(),
             source_uuid,
         }
     }
@@ -182,8 +182,8 @@ graphql_object!(ReadableData: Query as "ReadableData" |&self| {
 graphql_object!(Feed: Query as "Feed" |&self| {
     description: "Feed"
 
-    field uuid() -> String as "uuid" {
-        self.uuid.hyphenated().to_string()
+    field uuid() -> Uuid as "uuid" {
+        self.uuid
     }
 
     field url() -> &String as "url" {

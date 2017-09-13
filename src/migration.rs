@@ -1,8 +1,7 @@
 use r2d2_postgres::PostgresConnectionManager;
 use r2d2::PooledConnection;
-use postgres::error::Error;
+use postgres::error::{DUPLICATE_TABLE};
 use postgres::rows::Row;
-use postgres_shared::error::{SqlState};
 
 use errors::*;
 
@@ -51,7 +50,7 @@ fn create_evolution_table(connection: &PooledConnection<PostgresConnectionManage
     "#;
     match connection.execute(create_table_query, &[]) {
         Ok(i) => Ok(i),
-        Err(Error::Db(ref e)) if e.code == SqlState::DuplicateTable => {
+        Err(ref e) if e.code() == Some(&DUPLICATE_TABLE) => {
             Ok(0)
         },
         Err(e) => Err(e.into())

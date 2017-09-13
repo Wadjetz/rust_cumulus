@@ -2,9 +2,8 @@ use r2d2::{ Pool, Config };
 use r2d2_postgres::{TlsMode, PostgresConnectionManager};
 use r2d2::PooledConnection;
 use postgres::rows::Row;
-use postgres::error::Error;
-use postgres_shared::error::{SqlState};
-use postgres_shared::types::ToSql;
+use postgres::error::{UNIQUE_VIOLATION};
+use postgres::types::ToSql;
 use rocket::http::Status;
 use rocket::request::{self, FromRequest};
 use rocket::{Request, State, Outcome};
@@ -45,7 +44,7 @@ impl PgDatabase {
         match self.connection.execute(&entity.insert_query(), &entity.insert_params()) {
             Ok(0) => Err(ErrorKind::NotInserted.into()),
             Ok(i) => Ok(i),
-            Err(Error::Db(ref e)) if e.code == SqlState::UniqueViolation => Err(ErrorKind::AlreadyExist.into()),
+            Err(ref e) if e.code() == Some(&UNIQUE_VIOLATION) => Err(ErrorKind::AlreadyExist.into()),
             Err(e) => {
                 println!("INSERT Error -> {:?}", e);
                 Err(e.into())

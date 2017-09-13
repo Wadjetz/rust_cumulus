@@ -3,7 +3,7 @@ use std::os::unix::fs::MetadataExt;
 use std::fs::File as FsFile;
 use uuid::Uuid;
 use postgres::rows::Row;
-use postgres_shared::types::ToSql;
+use postgres::types::ToSql;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 use rocket::Data;
@@ -79,8 +79,8 @@ graphql_enum!(FileType {
 graphql_object!(File: Query as "File" |&self| {
     description: "A file"
 
-    field uuid() -> String as "uuid" {
-        self.uuid.hyphenated().to_string()
+    field uuid() -> Uuid as "uuid" {
+        self.uuid
     }
 
     field hash() -> &Option<String> as "hash" {

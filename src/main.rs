@@ -18,12 +18,10 @@ extern crate chrono;
 extern crate error_chain;
 #[macro_use]
 extern crate lazy_static;
+#[macro_use]
 extern crate postgres;
 #[macro_use]
-extern crate postgres_shared;
-#[macro_use]
 extern crate postgres_derive;
-extern crate postgres_protocol;
 extern crate r2d2;
 extern crate r2d2_postgres;
 extern crate strum;

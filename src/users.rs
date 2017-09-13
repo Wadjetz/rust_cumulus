@@ -3,7 +3,7 @@ use bcrypt::{DEFAULT_COST, hash, verify};
 use chrono::NaiveDateTime;
 use chrono::prelude::*;
 use postgres::rows::Row;
-use postgres_shared::types::ToSql;
+use postgres::types::ToSql;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 
@@ -33,8 +33,8 @@ impl User {
             login,
             email,
             password: hashed_password,
-            created: UTC::now().naive_utc(),
-            updated: UTC::now().naive_utc(),
+            created: Utc::now().naive_utc(),
+            updated: Utc::now().naive_utc(),
         };
         Ok(user)
     }
@@ -51,8 +51,8 @@ pub fn verify_password(password: &str, hashed_password: &str) -> Result<bool> {
 graphql_object!(User: Query as "User" |&self| {
     description: "User"
 
-    field uuid() -> String as "uuid" {
-        self.uuid.hyphenated().to_string()
+    field uuid() -> Uuid as "uuid" {
+        self.uuid
     }
 
     field email() -> &String as "email" {

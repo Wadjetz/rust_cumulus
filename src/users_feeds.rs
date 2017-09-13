@@ -3,7 +3,7 @@ use uuid::Uuid;
 use chrono::NaiveDateTime;
 use chrono::prelude::*;
 use postgres::rows::Row;
-use postgres_shared::types::ToSql;
+use postgres::types::ToSql;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 
@@ -41,8 +41,8 @@ impl UserFeed {
             reaction: reaction,
             user_uuid,
             feed_uuid,
-            created: UTC::now().naive_utc(),
-            updated: UTC::now().naive_utc(),
+            created: Utc::now().naive_utc(),
+            updated: Utc::now().naive_utc(),
         }
     }
 }

@@ -2,7 +2,7 @@ use uuid::Uuid;
 use chrono::NaiveDateTime;
 use chrono::prelude::*;
 use postgres::rows::Row;
-use postgres_shared::types::ToSql;
+use postgres::types::ToSql;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 
@@ -30,8 +30,8 @@ impl Bookmark {
             title,
             description,
             path,
-            created: UTC::now().naive_utc(),
-            updated: UTC::now().naive_utc(),
+            created: Utc::now().naive_utc(),
+            updated: Utc::now().naive_utc(),
             user_uuid
         }
     }
@@ -40,8 +40,8 @@ impl Bookmark {
 graphql_object!(Bookmark: Query as "Bookmark" |&self| {
     description: "Bookmark"
 
-    field uuid() -> String as "uuid" {
-        self.uuid.hyphenated().to_string()
+    field uuid() -> Uuid as "uuid" {
+        self.uuid
     }
 
     field url() -> &String as "url" {
