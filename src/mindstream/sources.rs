@@ -11,7 +11,7 @@ use serde_json;
 use url::Url;
 
 use errors::*;
-use mindstream::rss_job::fetch_feeds_channel;
+use mindstream::rss::fetch_feeds_channel;
 use graphql::query::Query;
 use pg::{Insertable, PgDatabase};
 

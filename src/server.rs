@@ -7,7 +7,7 @@ use rocket;
 use graphql::query::{Schema, Query};
 use graphql::mutation::Mutation;
 use pg::create_db_pool;
-use mindstream::rss_job;
+use mindstream::rss;
 use routes;
 
 pub fn run() {
@@ -20,7 +20,7 @@ pub fn run() {
     }
     let client = reqwest::Client::new().unwrap();
     println!("Run rss_job");
-    rss_job::run(client, connection.clone());
+    rss::run_rss_job(client, connection.clone());
     rocket::ignite()
         .manage(Query::new(connection.clone()))
         .manage(create_db_pool(&conf))

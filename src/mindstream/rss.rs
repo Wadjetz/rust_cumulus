@@ -20,7 +20,7 @@ pub fn fetch_feeds_channel(url: &str) -> Result<Option<RssFeed>> {
     Ok(feed)
 }
 
-pub fn run(client: Client, pool: Pool<PostgresConnectionManager>) {
+pub fn run_rss_job(client: Client, pool: Pool<PostgresConnectionManager>) {
     thread::spawn(move || {
         loop {
             if let Err(err) = process_rss(&client, &pool) {
