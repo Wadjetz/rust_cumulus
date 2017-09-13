@@ -4,7 +4,7 @@ use juniper::{FieldError, FieldResult};
 
 use graphql::query::Query;
 use users::User;
-use files::{File, files_resolver};
+use cloud::files::{File, files_resolver};
 use feeds;
 use feeds::Feed;
 use users_feeds::{unreaded_feeds, users_feeds_resolver, feeds_by_reaction_resolver, unreaded_feeds_by_source_resolver};

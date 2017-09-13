@@ -6,7 +6,7 @@ use juniper::{FieldError, FieldResult};
 use graphql::query::Query;
 use users::User;
 use bookmarks::{Bookmark, add_bookmark_resolver};
-use files::File;
+use cloud::files::File;
 use sources::Source;
 use users_sources;
 use users_feeds;

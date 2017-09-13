@@ -8,7 +8,7 @@ use juniper_rocket;
 
 use graphql::query::{Schema, Query};
 use pg::DbConn;
-use files::{download_resolver, upload_resolver};
+use cloud::files::{download_resolver, upload_resolver};
 use token::AuthData;
 
 #[get("/graphql")]

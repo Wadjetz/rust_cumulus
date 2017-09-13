@@ -42,7 +42,6 @@ mod errors;
 mod pg;
 mod migration;
 mod migrations;
-mod file_system;
 mod token;
 mod graphql;
 mod config;
@@ -53,9 +52,9 @@ mod users;
 mod users_sources;
 mod users_feeds;
 mod bookmarks;
-mod files;
 mod server;
 mod routes;
+mod cloud;
 
 fn main() {
     server::run();

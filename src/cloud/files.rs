@@ -13,7 +13,7 @@ use token::AuthData;
 use graphql::query::Query;
 use pg::{Insertable, PgDatabase};
 use users::User;
-use file_system;
+use cloud::file_system;
 
 #[derive(Debug)]
 pub struct File {
