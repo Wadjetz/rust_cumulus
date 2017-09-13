@@ -3,14 +3,22 @@ use std::time::Duration;
 
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
+use reqwest;
 use reqwest::Client;
+use feed_rs::parser;
+use feed_rs::feed::Feed as RssFeed;
 
 use errors::*;
-use feeds::{is_feed_exist, insert_feed, Feed};
-use sources::{find_rss_sources, SourceOption};
+use mindstream::feeds::{is_feed_exist, insert_feed, Feed};
+use mindstream::sources::{find_rss_sources, SourceOption};
+use mindstream::mercury::{fetch_readable};
 use pg::PgDatabase;
-use services::rss::fetch_feeds_channel;
-use services::mercury::{fetch_readable};
+
+pub fn fetch_feeds_channel(url: &str) -> Result<Option<RssFeed>> {
+    let mut response = reqwest::get(url)?;
+    let feed = parser::parse(&mut response);
+    Ok(feed)
+}
 
 pub fn run(client: Client, pool: Pool<PostgresConnectionManager>) {
     thread::spawn(move || {

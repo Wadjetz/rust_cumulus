@@ -5,12 +5,12 @@ use juniper::{FieldError, FieldResult};
 use graphql::query::Query;
 use users::User;
 use cloud::files::{File, files_resolver};
-use feeds;
-use feeds::Feed;
-use users_feeds::{unreaded_feeds, users_feeds_resolver, feeds_by_reaction_resolver, unreaded_feeds_by_source_resolver};
+use mindstream::feeds;
+use mindstream::feeds::Feed;
+use mindstream::users_feeds::{unreaded_feeds, users_feeds_resolver, feeds_by_reaction_resolver, unreaded_feeds_by_source_resolver};
 use bookmarks::bookmarks::{bookmarks_resolver, Bookmark};
-use sources::Source;
-use users_sources::{unfollowed_sources_resolver, users_sources_resolver, total_my_rss_sources_resolver};
+use mindstream::sources::Source;
+use mindstream::users_sources::{unfollowed_sources_resolver, users_sources_resolver, total_my_rss_sources_resolver};
 
 #[derive(Debug)]
 pub struct AuthQuery {

@@ -11,7 +11,7 @@ use serde_json;
 use url::Url;
 
 use errors::*;
-use services::rss;
+use mindstream::rss_job::fetch_feeds_channel;
 use graphql::query::Query;
 use pg::{Insertable, PgDatabase};
 
@@ -203,7 +203,7 @@ fn source_existe(pg: &PgDatabase, xml_url: &str) -> Result<bool> {
 pub fn add_rss_source_resolver(pool: Pool<PostgresConnectionManager>, xml_url: &str) -> Result<Source> {
     Url::parse(xml_url)?;
     let pg = PgDatabase::from_pool(pool)?;
-    let maybe_feed = rss::fetch_feeds_channel(xml_url)?;
+    let maybe_feed = fetch_feeds_channel(xml_url)?;
     let feed = maybe_feed.ok_or_else(|| ErrorKind::NotFound)?;
     let source_title = feed.title.unwrap_or_else(|| xml_url.to_string());
     let html_url = feed.website.unwrap_or_else(|| xml_url.to_string());

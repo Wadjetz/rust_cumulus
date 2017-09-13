@@ -6,7 +6,7 @@ use r2d2_postgres::PostgresConnectionManager;
 
 use errors::*;
 use users::User;
-use sources::Source;
+use mindstream::sources::Source;
 use pg::{Insertable, PgDatabase};
 
 #[derive(Debug)]

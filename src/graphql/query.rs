@@ -6,8 +6,7 @@ use r2d2::Pool;
 
 use graphql::auth_query::AuthQuery;
 use graphql::mutation::Mutation;
-use sources::Source;
-use sources::find_sources_resolver;
+use mindstream::sources::{Source, find_sources_resolver};
 use users::{auth_resolver, login_resolver};
 
 pub struct Query {

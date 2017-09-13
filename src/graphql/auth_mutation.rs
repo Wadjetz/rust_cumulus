@@ -7,10 +7,9 @@ use graphql::query::Query;
 use users::User;
 use bookmarks::bookmarks::{Bookmark, add_bookmark_resolver};
 use cloud::files::File;
-use sources::Source;
-use users_sources;
-use users_feeds;
-
+use mindstream::sources::Source;
+use mindstream::users_sources;
+use mindstream::users_feeds;
 
 #[derive(Debug)]
 pub struct AuthMutation {

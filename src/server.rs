@@ -7,7 +7,7 @@ use rocket;
 use graphql::query::{Schema, Query};
 use graphql::mutation::Mutation;
 use pg::create_db_pool;
-use services::rss_job;
+use mindstream::rss_job;
 use routes;
 
 pub fn run() {
