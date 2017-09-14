@@ -11,6 +11,7 @@ use mindstream::sources::Source;
 use mindstream::users_sources;
 use mindstream::users_feeds;
 use dilem::conversations;
+use dilem::messages::{Message, send_message_resolver};
 
 #[derive(Debug)]
 pub struct AuthMutation {
@@ -77,9 +78,8 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
         &executor,
         content: String as "Message content",
         conversation_uuid: String as "Conversation uuid",
-    ) -> FieldResult<String> {
-        conversations::send_message_resolver(executor.context().connection.clone(), &content, &conversation_uuid, &self.user)
-            .map(|_| String::from("ok"))
+    ) -> FieldResult<Message> {
+        send_message_resolver(executor.context().connection.clone(), &content, &conversation_uuid, &self.user)
             .map_err(|e| FieldError::from(e.to_string()))
     }
 

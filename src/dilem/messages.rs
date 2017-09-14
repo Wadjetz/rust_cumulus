@@ -89,6 +89,20 @@ impl Insertable for Message {
     }
 }
 
+pub fn send_message_resolver(pool: Pool<PostgresConnectionManager>, content: &str, conversation_uuid: &str, sender: &User) -> Result<Message> {
+    let pg = PgDatabase::from_pool(pool)?;
+    let conversation_uuid = Uuid::parse_str(conversation_uuid)?;
+    let conversation = find_conversation(&pg, &conversation_uuid)?;
+    let conversation = conversation.ok_or_else(|| ErrorKind::NotFound)?;
+    if is_user_belong_to_conversation(&pg, &conversation, &sender)? {
+        let message = Message::new(content, &conversation, sender);
+        pg.insert(&message)?;
+        Ok(message)
+    } else {
+        Err(ErrorKind::Unauthorized.into())
+    }
+}
+
 fn find_messages(pg: &PgDatabase, limit: i32, offset: i32, conversation_uuid: &Uuid) -> Result<Vec<Message>> {
     let query = r#"
         SELECT messages.* FROM messages
