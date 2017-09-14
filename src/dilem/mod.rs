@@ -15,13 +15,13 @@ pub const CHAT_EVOLUTIONS_UP: &'static str = r#"
         content TEXT NOT NULL,
         created TIMESTAMP,
         updated TIMESTAMP,
-        conversations_uuid UUID NOT NULL REFERENCES conversations(uuid),
+        conversation_uuid UUID NOT NULL REFERENCES conversations(uuid),
         user_uuid UUID NOT NULL REFERENCES users(uuid)
     );
 
     CREATE TABLE conversations_users (
         uuid UUID PRIMARY KEY,
-        conversations_uuid UUID NOT NULL REFERENCES conversations(uuid),
+        conversation_uuid UUID NOT NULL REFERENCES conversations(uuid),
         user_uuid UUID NOT NULL REFERENCES users(uuid)
     );
 "#;

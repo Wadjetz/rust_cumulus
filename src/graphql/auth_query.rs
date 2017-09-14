@@ -11,6 +11,7 @@ use mindstream::users_feeds::{unreaded_feeds, users_feeds_resolver, feeds_by_rea
 use bookmarks::bookmarks::{bookmarks_resolver, Bookmark};
 use mindstream::sources::Source;
 use mindstream::users_sources::{unfollowed_sources_resolver, users_sources_resolver, total_my_rss_sources_resolver};
+use dilem::messages::{Message, find_messages_resolver};
 
 #[derive(Debug)]
 pub struct AuthQuery {
@@ -116,5 +117,15 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
     ) -> FieldResult<i32> {
         total_my_rss_sources_resolver(executor.context().connection.clone(), &self.user)
             .map_err(|e| FieldError::from(&e.description().to_string()))
+    }
+
+    field messages(
+        &executor,
+        conversation_uuid: String as "Conversation uuid",
+        limit: Option<i32> as "Limit",
+        offset: Option<i32> as "Offset",
+    ) -> FieldResult<Vec<Message>> {
+        find_messages_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &conversation_uuid, &self.user)
+            .map_err(|e| FieldError::from(e.to_string()))
     }
 });

@@ -77,7 +77,7 @@ impl Insertable for Conversation {
     }
 }
 
-fn find_conversation(pg: &PgDatabase, conversation_uuid: &Uuid) -> Result<Option<Conversation>> {
+pub fn find_conversation(pg: &PgDatabase, conversation_uuid: &Uuid) -> Result<Option<Conversation>> {
     let query = "SELECT * FROM conversations WHERE uuid = $1::uuid;";
     Ok(pg.find_one(query, &[conversation_uuid])?)
 }
@@ -99,8 +99,21 @@ pub fn send_message_resolver(pool: Pool<PostgresConnectionManager>, content: &st
     let conversation_uuid = Uuid::parse_str(conversation_uuid)?;
     let conversation = find_conversation(&pg, &conversation_uuid)?;
     let conversation = conversation.ok_or_else(|| ErrorKind::NotFound)?;
-    let message = Message::new(content, &conversation, sender);
-    pg.insert(&message)?;
-    Ok(())
+    if is_user_belong_to_conversation(&pg, &conversation, &sender)? {
+        let message = Message::new(content, &conversation, sender);
+        pg.insert(&message)?;
+        Ok(())
+    } else {
+        Err(ErrorKind::Unauthorized.into())
+    }
 }
 
+pub fn is_user_belong_to_conversation(pg: &PgDatabase, conversation: &Conversation, user: &User) -> Result<bool> {
+    let query = r#"
+        SELECT COUNT(*) AS exist
+        FROM conversations_users
+        WHERE conversations_users.conversation_uuid = $1::uuid
+        AND conversations_users.user_uuid = $2::uuid;
+    "#;
+    Ok(pg.exist(query, &[&conversation.uuid, &user.uuid])?)
+}
