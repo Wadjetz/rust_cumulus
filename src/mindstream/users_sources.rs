@@ -115,3 +115,12 @@ pub fn total_my_rss_sources_resolver(pool: Pool<PostgresConnectionManager>, user
     let total = pg.total(find_rss_query, &[&user.uuid])? as i32;
     Ok(total)
 }
+
+pub fn find_users_by_source(pg: &PgDatabase, source: &Source) -> Result<Vec<User>> {
+    let query = r#"
+    SELECT users.* FROM users
+    JOIN users_sources ON users_sources.user_uuid = users.uuid
+    WHERE users_sources.source_uuid = $1;
+    "#;
+    Ok(pg.find(query, &[&source.uuid])?)
+}

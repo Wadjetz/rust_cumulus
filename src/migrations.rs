@@ -104,9 +104,10 @@ pub fn run(connection: PooledConnection<PostgresConnectionManager>) -> Result<()
         DROP TYPE "reaction";
     "#);
 
+    let mindstream_reaction_evolutions = Evolution::new("3", "ALTER TYPE Reaction ADD VALUE 'Unreaded' BEFORE 'Readed';", "");
     let chat_evolutions = Evolution::new("2", dilem::CHAT_EVOLUTIONS_UP, dilem::CHAT_EVOLUTIONS_DOWN);
-    let _profile_evolutions = Evolution::new("3", dilem::PROFILE_EVOLUTION_UP, dilem::PROFILE_EVOLUTION_DOWN);
-    let migrations = vec![cumulus_evolutions, chat_evolutions];
+    let _profile_evolutions = Evolution::new("4", dilem::PROFILE_EVOLUTION_UP, dilem::PROFILE_EVOLUTION_DOWN);
+    let migrations = vec![cumulus_evolutions, chat_evolutions, mindstream_reaction_evolutions];
 
     sync(connection, migrations)
 }

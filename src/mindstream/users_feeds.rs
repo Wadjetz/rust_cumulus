@@ -14,7 +14,7 @@ use mindstream::sources::{Source, find_source_by_uuid};
 use errors::*;
 
 #[derive(Debug)]
-struct UserFeed {
+pub struct UserFeed {
     pub uuid: Uuid,
     pub reaction: Reaction,
     pub feed_uuid: Uuid,
@@ -26,6 +26,7 @@ struct UserFeed {
 #[derive(Debug, EnumString, ToString, ToSql, FromSql)]
 #[postgres(name = "reaction")]
 pub enum Reaction {
+    Unreaded,
     Readed,
     ReadLater,
     Viewed,
@@ -77,6 +78,16 @@ fn is_user_feed_exist(pg: &PgDatabase, user_feed: &UserFeed) -> Result<bool> {
         SELECT COUNT(*) AS exist FROM users_feeds WHERE user_uuid = $1::uuid AND feed_uuid = $2::uuid;
     "#;
     Ok(pg.exist(exist_query, &[&user_feed.user_uuid, &user_feed.feed_uuid])?)
+}
+
+pub fn is_user_feed_already_inserted(pg: &PgDatabase, url: &str, user: &User) -> Result<bool> {
+    let query = r#"
+        SELECT COUNT(*) AS exist FROM feeds
+        JOIN users_feeds ON users_feeds.feed_uuid = feeds.uuid
+        WHERE users_feeds.user_uuid = $1::uuid
+        AND feeds.url = $2
+    "#;
+    Ok(pg.exist(query, &[&user.uuid, &url])?)
 }
 
 pub fn reaction_feed_resolver(pool: Pool<PostgresConnectionManager>, feed_uuid: &str, reaction: &str, user: &User) -> Result<u64> {
