@@ -23,14 +23,13 @@ pub fn fetch_feeds_channel(url: &str) -> Result<Option<RssFeed>> {
     Ok(feed)
 }
 
-pub fn run_rss_job(client: Client, pool: Pool<PostgresConnectionManager>) {
+pub fn run_rss_job(rss_job_interval: Duration, client: Client, pool: Pool<PostgresConnectionManager>) {
     thread::spawn(move || {
         loop {
             if let Err(err) = process_feeds(&client, &pool) {
                 println!("process_rss error {:?}", err);
             }
-            let duration = Duration::from_secs(1 * 60);
-            thread::sleep(duration);
+            thread::sleep(rss_job_interval);
         }
     });
 }

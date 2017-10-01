@@ -1,4 +1,5 @@
 use dotenv::dotenv;
+use std::time::Duration;
 
 use migrations;
 use config;
@@ -20,7 +21,7 @@ pub fn run() {
     }
     let client = reqwest::Client::new().unwrap();
     println!("Run rss_job");
-    rss::run_rss_job(client, connection.clone());
+    rss::run_rss_job(Duration::from_secs(&conf.rss_job_interval * 60), client, connection.clone());
     rocket::ignite()
         .manage(Query::new(connection.clone()))
         .manage(create_db_pool(&conf))
