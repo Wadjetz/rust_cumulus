@@ -52,6 +52,10 @@ impl PgDatabase {
         }
     }
 
+    pub fn update<'a>(&self, query: &str, params: &[&'a ToSql]) -> Result<u64> {
+        Ok(self.connection.execute(query, params)?)
+    }
+
     pub fn exist<'a>(&self, query: &str, params: &[&'a ToSql]) -> Result<bool> {
         let rows = self.connection.query(query, params)?;
         Ok(rows.iter().fold(false, |_, row| {

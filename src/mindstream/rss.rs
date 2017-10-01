@@ -56,7 +56,12 @@ fn process_rss_source(subscribers: &Vec<User>, source: &Source, rss_source: &Rss
         for rss_feed in &feeds_channel.entries {
             for link in &rss_feed.alternate {
                 if !is_feed_exist(&pg, &link.href, source)? {
-                    let readable = fetch_readable(client, &link.href)?;
+                    let readable = {
+                        match fetch_readable(client, &link.href) {
+                            Ok(r) => r,
+                            Err(_) => None,
+                        }
+                    };
                     let feed = Feed::new(&link.href, Some(rss_feed.clone().into()), readable, None, source.uuid);
                     if insert_feed(&pg, &feed).is_ok() {
                         println!("readable inserted {:?} from {:?}", feed.url, &rss_source.xml_url);
@@ -76,40 +81,6 @@ fn insert_subscribers_feeds(subscribers: &Vec<User>, feed: &Feed, pg: &PgDatabas
             if pg.insert(&user_feed).is_ok() {
                 println!("insert subscriber {:?} -> {:?}", &feed.url, subscriber.uuid);
             }
-        }
-    }
-    Ok(())
-}
-
-fn _process_rss(client: &Client, pool: &Pool<PostgresConnectionManager>) -> Result<()> {
-    let conn = pool.get()?;
-    let pg = PgDatabase::new(conn);
-    let sources = find_rss_sources(&pg, i32::max_value(), 0)?;
-    for source in &sources {
-        match source.options()? {
-            SourceOption::Rss(rss_source) => {
-                let maybe_feeds_channel = fetch_feeds_channel(&rss_source.xml_url)?;
-                if let Some(feeds_channel) = maybe_feeds_channel {
-                    for rss_feed in &feeds_channel.entries {
-                        for link in &rss_feed.alternate {
-                            if !is_feed_exist(&pg, &link.href, source)? {
-                                if let Ok(Some(readable)) = fetch_readable(client, &link.href) {
-                                    let feed = Feed::new(&link.href, Some(rss_feed.clone().into()), Some(readable), None, source.uuid);
-                                    if insert_feed(&pg, &feed).is_ok() {
-                                        println!("readable inserted {:?} from {:?}", feed.url, &rss_source.xml_url);
-                                    }
-                                } else {
-                                    let feed = Feed::new(&link.href, Some(rss_feed.clone().into()), None, None, source.uuid); // TODO remove clone, refactor
-                                    if insert_feed(&pg, &feed).is_ok() {
-                                        println!("rss inserted {:?} from {:?}", feed.url, &rss_source.xml_url);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            SourceOption::Twitter(_) => {}
         }
     }
     Ok(())

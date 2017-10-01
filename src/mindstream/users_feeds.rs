@@ -73,13 +73,6 @@ impl Insertable for UserFeed {
     }
 }
 
-fn is_user_feed_exist(pg: &PgDatabase, user_feed: &UserFeed) -> Result<bool> {
-    let exist_query = r#"
-        SELECT COUNT(*) AS exist FROM users_feeds WHERE user_uuid = $1::uuid AND feed_uuid = $2::uuid;
-    "#;
-    Ok(pg.exist(exist_query, &[&user_feed.user_uuid, &user_feed.feed_uuid])?)
-}
-
 pub fn is_user_feed_already_inserted(pg: &PgDatabase, url: &str, user: &User) -> Result<bool> {
     let query = r#"
         SELECT COUNT(*) AS exist FROM feeds
@@ -90,16 +83,20 @@ pub fn is_user_feed_already_inserted(pg: &PgDatabase, url: &str, user: &User) ->
     Ok(pg.exist(query, &[&user.uuid, &url])?)
 }
 
+pub fn update_feed_reaction(pg: &PgDatabase, feed_uuid: &Uuid, reaction: &Reaction, user: &User) -> Result<u64> {
+    let query = r#"
+        UPDATE users_feeds SET reaction = $1
+        WHERE users_feeds.user_uuid = $2::uuid
+        AND users_feeds.feed_uuid = $3::uuid
+    "#;
+    Ok(pg.update(query, &[reaction, &user.uuid, feed_uuid])?)
+}
+
 pub fn reaction_feed_resolver(pool: Pool<PostgresConnectionManager>, feed_uuid: &str, reaction: &str, user: &User) -> Result<u64> {
     let pg = PgDatabase::from_pool(pool)?;
     let feed_uuid = Uuid::parse_str(feed_uuid)?;
     let reaction = Reaction::from_str(reaction)?;
-    let user_feed = UserFeed::new(user.uuid.clone(), feed_uuid, reaction);
-    if !is_user_feed_exist(&pg, &user_feed)? {
-        Ok(pg.insert(&user_feed)?)
-    } else {
-        Err(ErrorKind::AlreadyExist.into())
-    }
+    Ok(update_feed_reaction(&pg, &feed_uuid, &reaction, user)?)
 }
 
 pub fn users_feeds_resolver(pool: Pool<PostgresConnectionManager>, limit: i32, offset: i32, user: &User) -> Result<Vec<Feed>> {
@@ -117,14 +114,9 @@ pub fn unreaded_feeds(pool: Pool<PostgresConnectionManager>, limit: i32, offset:
     let pg = PgDatabase::from_pool(pool)?;
     let query = r#"
         SELECT feeds.* FROM feeds
-        JOIN users_sources ON users_sources.source_uuid = feeds.source_uuid
-        WHERE 0 = (
-            SELECT COUNT(*)
-            FROM users_feeds
-            WHERE users_feeds.feed_uuid = feeds.uuid
-                AND users_feeds.user_uuid = $1
-        )
-        AND users_sources.user_uuid = $1
+        JOIN users_feeds ON users_feeds.feed_uuid = feeds.uuid
+        WHERE users_feeds.reaction = 'Unreaded'
+        AND users_feeds.user_uuid = $1
         ORDER BY feeds.updated DESC
         LIMIT $2::int OFFSET $3::int;
     "#;
@@ -138,15 +130,10 @@ pub fn unreaded_feeds_by_source_resolver(pool: Pool<PostgresConnectionManager>, 
     let source: Source = source.ok_or(ErrorKind::NotFound)?;
     let query = r#"
         SELECT feeds.* FROM feeds
-        JOIN users_sources ON users_sources.source_uuid = feeds.source_uuid
-        WHERE 0 = (
-            SELECT COUNT(*)
-            FROM users_feeds
-            WHERE users_feeds.feed_uuid = feeds.uuid
-                AND users_feeds.user_uuid = $1
-        )
-        AND users_sources.user_uuid = $1
-        AND users_sources.source_uuid = $2
+        JOIN users_feeds ON users_feeds.feed_uuid = feeds.uuid
+        WHERE users_feeds.reaction = 'Unreaded'
+        AND users_feeds.user_uuid = $1
+        AND feeds.source_uuid = $2
         ORDER BY feeds.updated DESC
         LIMIT $3::int OFFSET $4::int;
     "#;
@@ -158,16 +145,10 @@ pub fn feeds_by_reaction_resolver(pool: Pool<PostgresConnectionManager>, reactio
     let pg = PgDatabase::from_pool(pool)?;
     let query = r#"
         SELECT feeds.* FROM feeds
-        JOIN users_sources ON users_sources.source_uuid = feeds.source_uuid
-        WHERE 0 < (
-            SELECT COUNT(*)
-            FROM users_feeds
-            WHERE users_feeds.feed_uuid = feeds.uuid
-                AND users_feeds.user_uuid = $1
-                AND users_feeds.reaction = $4
-        )
-        AND users_sources.user_uuid = $1
+        JOIN users_feeds ON users_feeds.feed_uuid = feeds.uuid
+        WHERE users_feeds.reaction = $1
+        AND users_feeds.user_uuid = $2
         LIMIT $2::int OFFSET $3::int;
     "#;
-    Ok(pg.find(query, &[&user.uuid, &limit, &offset, &reaction])?)
+    Ok(pg.find(query, &[&reaction, &user.uuid, &limit, &offset])?)
 }
