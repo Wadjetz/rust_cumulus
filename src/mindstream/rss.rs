@@ -52,7 +52,7 @@ fn process_feeds(client: &Client, pool: &Pool<PostgresConnectionManager>) -> Res
 }
 
 fn process_rss_source(subscribers: &Vec<User>, source: &Source, rss_source: &RssSource, client: &Client, pg: &PgDatabase) -> Result<()> {
-    if let Some(feeds_channel) = fetch_feeds_channel(&rss_source.xml_url)? {
+    if let Ok(Some(feeds_channel)) = fetch_feeds_channel(&rss_source.xml_url) {
         for rss_feed in &feeds_channel.entries {
             for link in &rss_feed.alternate {
                 if !is_feed_exist(&pg, &link.href, source)? {
@@ -64,7 +64,6 @@ fn process_rss_source(subscribers: &Vec<User>, source: &Source, rss_source: &Rss
                     };
                     let feed = Feed::new(&link.href, Some(rss_feed.clone().into()), readable, None, source.uuid);
                     if insert_feed(&pg, &feed).is_ok() {
-                        println!("readable inserted {:?} from {:?}", feed.url, &rss_source.xml_url);
                         insert_subscribers_feeds(subscribers, &feed, pg)?;
                     }
                 }
@@ -79,7 +78,7 @@ fn insert_subscribers_feeds(subscribers: &Vec<User>, feed: &Feed, pg: &PgDatabas
         let user_feed = UserFeed::new(subscriber.uuid, feed.uuid.clone(), Reaction::Unreaded);
         if !is_user_feed_already_inserted(pg, &feed.url, &subscriber)? {
             if pg.insert(&user_feed).is_ok() {
-                println!("insert subscriber {:?} -> {:?}", &feed.url, subscriber.uuid);
+                println!("insert subscriber {:?} -> {:?}", &feed.url, subscriber.login);
             }
         }
     }

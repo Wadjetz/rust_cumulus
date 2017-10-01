@@ -104,9 +104,14 @@ pub fn run(connection: PooledConnection<PostgresConnectionManager>) -> Result<()
         DROP TYPE "reaction";
     "#);
 
-    // CREATE EXTENSION "uuid-ossp";
+    let chat_evolutions = Evolution::new("2", dilem::CHAT_EVOLUTIONS_UP, dilem::CHAT_EVOLUTIONS_DOWN);
+
+    // require CREATE EXTENSION "uuid-ossp";
     let mindstream_reaction_evolutions = Evolution::new("3", r#"
         ALTER TYPE Reaction ADD VALUE 'Unreaded' BEFORE 'Readed';
+    "#, "");
+
+    let mindstream_feeds_evolutions = Evolution::new("4", r#"
         INSERT INTO users_feeds (uuid, reaction, user_uuid, feed_uuid, created, updated)
             SELECT uuid_generate_v4() as uuid, 'Unreaded', users_sources.user_uuid, feeds.uuid as feed_uuid, now(), now()
             FROM feeds
@@ -118,9 +123,9 @@ pub fn run(connection: PooledConnection<PostgresConnectionManager>) -> Result<()
             )
         ;
     "#, "");
-    let chat_evolutions = Evolution::new("2", dilem::CHAT_EVOLUTIONS_UP, dilem::CHAT_EVOLUTIONS_DOWN);
-    let _profile_evolutions = Evolution::new("4", dilem::PROFILE_EVOLUTION_UP, dilem::PROFILE_EVOLUTION_DOWN);
-    let migrations = vec![cumulus_evolutions, chat_evolutions, mindstream_reaction_evolutions];
+    
+    let _profile_evolutions = Evolution::new("5", dilem::PROFILE_EVOLUTION_UP, dilem::PROFILE_EVOLUTION_DOWN);
+    let migrations = vec![cumulus_evolutions, chat_evolutions, mindstream_reaction_evolutions, mindstream_feeds_evolutions];
 
     sync(connection, migrations)
 }
