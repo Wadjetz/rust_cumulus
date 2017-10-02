@@ -9,15 +9,22 @@ import * as MindStreamActions from "./MindStreamActions"
 import MindStreamCard from "./components/MindStreamCard"
 import Header from "../components/Header"
 
-interface Props extends State {
+interface DispatchProps {
     onReaction: (feed: Feed, reaction: Reaction) => () => void
-    loadUnreadedFeeds: () => void
+    loadData: () => void
 }
 
-class MindStreamContainer extends React.Component<Props, {}> {
+interface StateProps {
+    feeds: Feed[]
+    loading: boolean
+}
+
+type Props = StateProps & DispatchProps
+
+class MindStreamContainer extends React.PureComponent<Props> {
     componentWillMount() {
-        if (this.props.feeds.feeds.length === 0) {
-            this.props.loadUnreadedFeeds()
+        if (this.props.feeds.length === 0) {
+            this.props.loadData()
         }
         document.addEventListener("keydown", this.onKeyPressHandler, false)
     }
@@ -36,13 +43,13 @@ class MindStreamContainer extends React.Component<Props, {}> {
     }
 
     renderStream = () => {
-        const { mindStream, onReaction } = this.props
-        if (mindStream.feeds.length > 0) {
-            const feed = mindStream.feeds[0]
+        const { feeds, loading, onReaction } = this.props
+        if (feeds.length > 0) {
+            const feed = feeds[0]
             return (
                 <div>
-                    <button disabled={mindStream.loading} onClick={onReaction(feed, "Readed")}>Read</button>
-                    <button disabled={mindStream.loading} onClick={onReaction(feed, "Liked")}>Liked</button>
+                    <button disabled={loading} onClick={onReaction(feed, "Readed")}>Read</button>
+                    <button disabled={loading} onClick={onReaction(feed, "Liked")}>Liked</button>
                     <ReactCSSTransitionGroup
                         transitionName={{
                             enter: styles.transitionEnter,
@@ -60,7 +67,7 @@ class MindStreamContainer extends React.Component<Props, {}> {
                     </ReactCSSTransitionGroup>
                 </div>
             )
-        } else if (mindStream.loading) {
+        } else if (loading) {
             return <div>Loading</div>
         } else {
             return <div>No more feeds</div>
@@ -68,23 +75,25 @@ class MindStreamContainer extends React.Component<Props, {}> {
     }
 
     onKeyPressHandler = (event: any) => {
-        const { mindStream: { feeds }, onReaction } = this.props
+        const { feeds, onReaction } = this.props
         if (feeds.length > 0 && event.code === "ArrowRight" || event.code === "KeyD") {
             onReaction(feeds[0], "Readed")()
         }
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<State>, state: any) => {
+const mapStateToProps = (state: State): StateProps => {
     return {
-        loadUnreadedFeeds: () => {
-            dispatch(MindStreamActions.loadUnreadedFeeds())
-        },
-        onReaction: (feed: Feed, reaction: Reaction) => () => {
-            dispatch(MindStreamActions.readFeed(feed, reaction))
-        }
+        feeds: state.mindStream.feeds,
+        loading: state.mindStream.loading,
     }
 }
 
-export default connect((state: State) => state, mapDispatchToProps)(MindStreamContainer)
+const mapDispatchToProps = (dispatch: Dispatch<State>): DispatchProps => {
+    return {
+        loadData: () => dispatch(MindStreamActions.loadUnreadedFeeds()),
+        onReaction: (feed, reaction) => () => dispatch(MindStreamActions.readFeed(feed, reaction))
+    }
+}
 
+export default connect(mapStateToProps, mapDispatchToProps)(MindStreamContainer)
