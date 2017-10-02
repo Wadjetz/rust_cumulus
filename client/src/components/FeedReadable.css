@@ -7,6 +7,7 @@
 .feed_readable {
     max-width: 900px;
     padding: 30px;
+    hyphens: auto;
 }
 
 .container img {
