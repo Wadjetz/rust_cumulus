@@ -10,6 +10,14 @@
     hyphens: auto;
 }
 
+.feed_rss p, .feed_rss div, .feed_rss figure {
+    width: 100%;
+}
+
+.feed_rss figure {
+    margin: 0;
+}
+
 .container img {
     width: 100%;
 }
