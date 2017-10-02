@@ -47,15 +47,15 @@
     "@types/react-addons-css-transition-group": "15.0.3",
     "@types/react-router": "4.0.14",
     "@types/react-router-redux": "5.0.4",
-    "awesome-typescript-loader": "3.2.2",
-    "css-loader": "0.28.4",
+    "awesome-typescript-loader": "3.2.3",
+    "css-loader": "0.28.7",
     "extract-text-webpack-plugin": "3.0.0",
     "redux-devtools": "3.4.0",
-    "source-map-loader": "0.2.1",
+    "source-map-loader": "0.2.2",
     "style-loader": "0.18.2",
-    "tslint": "5.5.0",
-    "typescript": "2.4.2",
-    "typings-for-css-modules-loader": "1.5.0",
-    "webpack": "3.4.1"
+    "tslint": "5.7.0",
+    "typescript": "2.5.3",
+    "typings-for-css-modules-loader": "1.6.1",
+    "webpack": "3.6.0"
   }
 }
