@@ -42,7 +42,7 @@
   "devDependencies": {
     "@types/react": "15.0.38",
     "@types/react-dom": "15.5.5",
-    "@types/react-redux": "4.4.47",
+    "@types/react-redux": "5.0.9",
     "@types/history": "4.6.0",
     "@types/react-addons-css-transition-group": "15.0.3",
     "@types/react-router": "4.0.15",
