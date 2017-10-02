@@ -38,15 +38,15 @@ const reducers = combineReducers({
     router: routerReducer
 })
 
-export let store = createStore(
-    reducers,
-    compose(
-        applyMiddleware(middleware),
-        applyMiddleware(epicMiddleware),
-        autoRehydrate(),
-        (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__()
-    )
+const _window = (window as any)
+const composeEnhancers = typeof _window === "object" && _window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? _window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({}) : compose
+
+const enhancer = composeEnhancers(
+    applyMiddleware(middleware),
+    applyMiddleware(epicMiddleware),
+    autoRehydrate(),
 )
+export const store = createStore(reducers, enhancer)
 
 persistStore(store, { blacklist: ["login", "feeds", "mindStream", "sources"] })
 
