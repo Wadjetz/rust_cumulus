@@ -1,12 +1,12 @@
 import * as React from "react"
 import { connect, Dispatch } from "react-redux"
 
-import { State } from "../Store"
+import { GlobalState } from "../app/AppState"
 import * as FeedsActions from "./FeedsActions"
 import FeedsList from "./components/FeedsList"
-import Header from "../components/Header"
+import HeaderContainer from "../app/HeaderContainer"
 
-interface Props extends State {
+interface Props extends GlobalState {
     onLoad: () => void
 }
 
@@ -17,20 +17,20 @@ class FeedsContainer extends React.Component<Props, {}> {
     render() {
         return (
             <div style={{ flex: 1 }}>
-                <Header />
+                <HeaderContainer />
                 <FeedsList feeds={this.props.feeds.feeds} />
             </div>
         )
     }
 }
 
-const mapStateToProps = (state: State) => {
+const mapStateToProps = (state: GlobalState) => {
     return {
         ...state
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<State>, state: any) => {
+const mapDispatchToProps = (dispatch: Dispatch<GlobalState>, state: any) => {
     return {
         onLoad: () => {
             dispatch(FeedsActions.loadfeeds())

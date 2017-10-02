@@ -1,10 +1,32 @@
 .header {
     display: flex;
+    height: 50px;
     align-content: center;
-
-    width: 100%;
     border-bottom: 1px solid rgba(163, 163, 163, 0.20);
-    box-shadow: 0 2px 5px 1px rgba(194, 194, 194, 0.20);
+}
+
+.menuToggle {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    cursor: pointer;
+}
+
+.links {
+    display: inline-flex;
+    overflow-y: scroll;
+}
+
+@media screen and (min-width: 760px) {
+    .header {
+        display: flex;
+        align-content: center;
+        box-shadow: 0 2px 5px 1px rgba(194, 194, 194, 0.20);
+    }
+
+    .links {
+        display: flex;
+    }
 }
 
 .item {

@@ -2,12 +2,12 @@ import * as React from "react"
 import { connect, Dispatch } from "react-redux"
 import * as ReactCSSTransitionGroup from "react-addons-css-transition-group"
 
-import * as styles from "./components/MindStream.css"
-import { State } from "../Store"
+import * as styles from "./MindStream.css"
+import { GlobalState } from "../app/AppState"
 import { Feed, Reaction } from "../feeds/Feed"
 import * as MindStreamActions from "./MindStreamActions"
 import MindStreamCard from "./components/MindStreamCard"
-import Header from "../components/Header"
+import HeaderContainer from "../app/HeaderContainer"
 
 interface DispatchProps {
     onReaction: (feed: Feed, reaction: Reaction) => () => void
@@ -36,7 +36,7 @@ class MindStreamContainer extends React.PureComponent<Props> {
     render() {
         return (
             <div className={styles.container}>
-                <Header />
+                <HeaderContainer />
                 {this.renderStream()}
             </div>
         )
@@ -82,14 +82,14 @@ class MindStreamContainer extends React.PureComponent<Props> {
     }
 }
 
-const mapStateToProps = (state: State): StateProps => {
+const mapStateToProps = (state: GlobalState): StateProps => {
     return {
         feeds: state.mindStream.feeds,
         loading: state.mindStream.loading,
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<State>): DispatchProps => {
+const mapDispatchToProps = (dispatch: Dispatch<GlobalState>): DispatchProps => {
     return {
         loadData: () => dispatch(MindStreamActions.loadUnreadedFeeds()),
         onReaction: (feed, reaction) => () => dispatch(MindStreamActions.readFeed(feed, reaction))

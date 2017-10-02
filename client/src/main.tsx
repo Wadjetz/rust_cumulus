@@ -2,8 +2,9 @@ import * as React from "react"
 import * as ReactDOM from "react-dom"
 import { Route } from "react-router"
 import { Provider } from "react-redux"
-import { createStore, compose, combineReducers, applyMiddleware } from "redux"
+import { createStore, combineReducers, applyMiddleware } from "redux"
 import { ConnectedRouter, routerReducer, routerMiddleware } from "react-router-redux"
+import { composeWithDevTools } from "redux-devtools-extension"
 import { createEpicMiddleware } from "redux-observable"
 import { persistStore, autoRehydrate } from "redux-persist"
 import { history } from "./router"
@@ -12,6 +13,7 @@ import "rxjs/add/operator/map"
 import "rxjs/add/operator/mergeMap"
 import "rxjs/add/operator/filter"
 
+import AppReducer from "./app/AppReducer"
 import LoginReducer from "./login/LoginReducer"
 import SignupReducer from "./signup/SignupReducer"
 import FeedsReducer from "./feeds/FeedsReducer"
@@ -30,6 +32,7 @@ const epicMiddleware = createEpicMiddleware(RootEpic)
 const middleware = routerMiddleware(history)
 
 const reducers = combineReducers({
+    app: AppReducer,
     login: LoginReducer,
     signup: SignupReducer,
     feeds: FeedsReducer,
@@ -38,10 +41,7 @@ const reducers = combineReducers({
     router: routerReducer
 })
 
-const _window = (window as any)
-const composeEnhancers = typeof _window === "object" && _window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? _window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({}) : compose
-
-const enhancer = composeEnhancers(
+const enhancer = composeWithDevTools(
     applyMiddleware(middleware),
     applyMiddleware(epicMiddleware),
     autoRehydrate(),
@@ -53,7 +53,7 @@ persistStore(store, { blacklist: ["login", "feeds", "mindStream", "sources"] })
 ReactDOM.render(
     <Provider store={store}>
         <ConnectedRouter history={history}>
-            <div style={{ display: "flex", position: "absolute", top: 0, bottom: 0, left: 0, right: 0 }}>
+            <div>
                 <Route exact path="/" component={MindStreamContainer}/>
                 <Route exact path="/feeds" component={FeedsContainer}/>
                 <Route exact path="/sources" component={SourcesContainer}/>

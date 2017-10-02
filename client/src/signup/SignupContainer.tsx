@@ -2,11 +2,11 @@ import * as React from "react"
 import { connect, Dispatch } from "react-redux"
 import { SignupState } from "./SignupReducer"
 import * as SignupActions from "./SignupActions"
-import { State } from "../Store"
+import { GlobalState } from "../app/AppState"
 import SignupForm from "./components/SignupForm"
 import * as styles from "./components/Signup.css"
 
-interface Props extends State {
+interface Props extends GlobalState {
     onChange: (field: keyof SignupState) => void
     onSubmit: (login: string, email: string, password: string) => () => void
 }
@@ -30,7 +30,7 @@ const SignupContainer = (props: Props) => {
     )
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<State>) => {
+const mapDispatchToProps = (dispatch: Dispatch<GlobalState>) => {
     return {
         onChange: (field: string, value: string) => {
             dispatch(SignupActions.signupOnChange(field, value))
@@ -41,5 +41,5 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) => {
     }
 }
 
-const mapStateToProps = (state: State) => state
+const mapStateToProps = (state: GlobalState) => state
 export default connect(mapStateToProps, mapDispatchToProps)(SignupContainer)

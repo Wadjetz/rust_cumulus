@@ -1,14 +1,14 @@
 import * as React from "react"
 import { connect, Dispatch } from "react-redux"
 
-import { State } from "../Store"
+import { GlobalState } from "../app/AppState"
 import * as SourcesActions from "./SourcesActions"
 import { Source } from "./Source"
 import SourcesList from "./components/SourcesList"
 import AddSourceForm from "./components/AddSourceForm"
-import Header from "../components/Header"
+import HeaderContainer from "../app/HeaderContainer"
 
-interface Props extends State {
+interface Props extends GlobalState {
     onLoadUnfollowedSources: () => void
     onLoadMySources: () => void
     addSourceOnChange: (field: "newSourceUrl") => (value: any) => void
@@ -25,7 +25,7 @@ class FeedsContainer extends React.Component<Props, {}> {
         const { sources, addSourceOnChange, addSourceOnSubmit } = this.props
         return (
             <div style={{ flex: 1 }}>
-                <Header />
+                <HeaderContainer />
                 <AddSourceForm
                     newSourceUrl={sources.newSourceUrl}
                     loading={false}
@@ -68,7 +68,7 @@ class FeedsContainer extends React.Component<Props, {}> {
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<State>, state: any) => {
+const mapDispatchToProps = (dispatch: Dispatch<GlobalState>, state: any) => {
     return {
         addSourceOnChange: (field: string, value: string) => {
             dispatch(SourcesActions.addSourceOnChange(field, value))
@@ -88,4 +88,4 @@ const mapDispatchToProps = (dispatch: Dispatch<State>, state: any) => {
     }
 }
 
-export default connect((state: State) => state, mapDispatchToProps)(FeedsContainer)
+export default connect((state: GlobalState) => state, mapDispatchToProps)(FeedsContainer)
