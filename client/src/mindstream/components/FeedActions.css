@@ -1,0 +1,13 @@
+
+.container {
+    display: flex;
+    height: 30px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.action {
+    flex: 1;
+}

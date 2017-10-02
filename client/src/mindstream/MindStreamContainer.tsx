@@ -8,6 +8,7 @@ import { Feed, Reaction } from "../feeds/Feed"
 import * as MindStreamActions from "./MindStreamActions"
 import MindStreamCard from "./components/MindStreamCard"
 import HeaderContainer from "../app/HeaderContainer"
+import FeedActions from "./components/FeedActions"
 
 interface DispatchProps {
     onReaction: (feed: Feed, reaction: Reaction) => () => void
@@ -48,8 +49,7 @@ class MindStreamContainer extends React.PureComponent<Props> {
             const feed = feeds[0]
             return (
                 <div>
-                    <button disabled={loading} onClick={onReaction(feed, "Readed")}>Read</button>
-                    <button disabled={loading} onClick={onReaction(feed, "Liked")}>Liked</button>
+                    <FeedActions feed={feed} loading={loading} onReaction={onReaction} />
                     <ReactCSSTransitionGroup
                         transitionName={{
                             enter: styles.transitionEnter,
