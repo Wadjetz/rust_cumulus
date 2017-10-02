@@ -19,7 +19,7 @@ export type LOAD_UNREADED_FEEDS_ERROR = {
     type: "LOAD_UNREADED_FEEDS_ERROR"
     error: any
 }
-export function loadUnreadedFeedsError(error: any) {
+export function loadUnreadedFeedsError(error: any): LOAD_UNREADED_FEEDS_ERROR {
     return { type: "LOAD_UNREADED_FEEDS_ERROR", error }
 }
 
