@@ -1,6 +1,7 @@
 const path = require("path")
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const webpack = require("webpack")
+const autoprefixer = require('autoprefixer')
 
 const development = process.env.NODE_ENV === "development";
 
@@ -18,50 +19,14 @@ var config = {
     module: {
         rules: [
             { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
-            { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
-            {
-                test: /\.css$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: [
-                        {
-                            loader: 'typings-for-css-modules-loader',
-                            options: {
-                                modules: true,
-                                namedExport: true,
-                                camelCase: true
-                            }
-                        },
-                        /*
-                        {
-                            loader: 'postcss-loader',
-                            options: {
-                                plugins: postcssPlugins,
-                                importLoaders: 1
-                            }
-                        }
-                        */
-                    ]
-                }),
-                exclude: /(node_modules|\.global\.css)/
-            }
+            { test: /\.js$/, enforce: "pre", loader: "source-map-loader" },
+            { test: /\.css$/, use: ExtractTextPlugin.extract({ fallback: 'style-loader', use: [
+                { loader: 'css-loader', query: { modules: true, localIdentName: '[local]-[hash:base64:5]' } },
+                { loader: 'postcss-loader', options: { plugins: (loader) => [autoprefixer({ browsers: ['last 3 versions'] })] }},
+            ] }) }
         ]
     },
-    plugins: [
-        new ExtractTextPlugin({
-            filename: 'main.css',
-            allChunks: true
-        }),
-        new webpack.WatchIgnorePlugin([
-            /css\.d\.ts$/
-        ]),
-    ]
-    /*
-    externals: {
-        "react": "React",
-        "react-dom": "ReactDOM"
-    },
-    */
+    plugins: [ new ExtractTextPlugin({ filename: 'main.css', allChunks: true }) ]
 };
 
 if (!development) {
