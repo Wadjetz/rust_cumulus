@@ -30,13 +30,11 @@ type Props = StateProps & DispatchProps & Params
 
 class MindStreamContainer extends React.PureComponent<Props> {
     componentWillMount() {
-        const { feeds, sourceUuid, loadUnreadedFeedsBySource, loadUnreadedFeeds } = this.props
-        if (feeds.length === 0) {
-            if (sourceUuid) {
-                loadUnreadedFeedsBySource(sourceUuid)
-            } else {
-                loadUnreadedFeeds()
-            }
+        const { sourceUuid, loadUnreadedFeedsBySource, loadUnreadedFeeds } = this.props
+        if (sourceUuid) {
+            loadUnreadedFeedsBySource(sourceUuid)
+        } else {
+            loadUnreadedFeeds()
         }
         document.addEventListener("keydown", this.onKeyPressHandler, false)
     }
