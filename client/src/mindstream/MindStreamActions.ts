@@ -60,16 +60,18 @@ export function loadUnreadedFeedsBySource(sourceUuid: string): LOAD_UNREADED_FEE
 
 export type LOAD_UNREADED_FEEDS_BY_SOURCE_SUCCESS = {
     type: "LOAD_UNREADED_FEEDS_BY_SOURCE_SUCCESS"
+    feeds: Feed[]
 }
-export function loadUnreadedFeedsBySourceSuccess(): LOAD_UNREADED_FEEDS_BY_SOURCE_SUCCESS {
-    return { type: "LOAD_UNREADED_FEEDS_BY_SOURCE_SUCCESS" }
+export function loadUnreadedFeedsBySourceSuccess(feeds: Feed[]): LOAD_UNREADED_FEEDS_BY_SOURCE_SUCCESS {
+    return { type: "LOAD_UNREADED_FEEDS_BY_SOURCE_SUCCESS", feeds }
 }
 
 export type LOAD_UNREADED_FEEDS_BY_SOURCE_ERROR = {
     type: "LOAD_UNREADED_FEEDS_BY_SOURCE_ERROR"
+    error: any
 }
 export function loadUnreadedFeedsBySourceError(error: any): LOAD_UNREADED_FEEDS_BY_SOURCE_ERROR {
-    return { type: "LOAD_UNREADED_FEEDS_BY_SOURCE_ERROR" }
+    return { type: "LOAD_UNREADED_FEEDS_BY_SOURCE_ERROR", error }
 }
 
 export type MindStreamAction =

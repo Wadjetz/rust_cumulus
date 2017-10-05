@@ -16,7 +16,7 @@ const initState: MindStreamState = {
 const MindStreamReducer = (state: MindStreamState = initState, action: MindStreamAction) => {
     switch (action.type) {
         case "LOAD_UNREADED_FEEDS": return { ...state, loading: true }
-        case "LOAD_UNREADED_FEEDS_SUCCESS": return { ...state, feeds: [...state.feeds, ...action.feeds], loading: false }
+        case "LOAD_UNREADED_FEEDS_SUCCESS": return { ...state, feeds: action.feeds, loading: false }
         case "LOAD_UNREADED_FEEDS_ERROR": return { ...state, loading: false, error: action.error }
         case "READ_FEED": return { ...state, loading: true }
         case "READ_FEED_ERROR": return { ...state, loading: false, error: action.error }
@@ -25,6 +25,9 @@ const MindStreamReducer = (state: MindStreamState = initState, action: MindStrea
             loading: false,
             feeds: state.feeds.filter(feed => feed.uuid !== action.feed.uuid)
         }
+        case "LOAD_UNREADED_FEEDS_BY_SOURCE": return { ...state, loading: true }
+        case "LOAD_UNREADED_FEEDS_BY_SOURCE_SUCCESS": return { ...state, feeds: action.feeds, loading: false }
+        case "LOAD_UNREADED_FEEDS_BY_SOURCE_ERROR": return { ...state, loading: false, error: action.error }
         default: return state
     }
 }
