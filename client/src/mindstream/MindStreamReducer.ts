@@ -18,7 +18,6 @@ const MindStreamReducer = (state: MindStreamState = initState, action: MindStrea
         case "LOAD_UNREADED_FEEDS": return { ...state, loading: true }
         case "LOAD_UNREADED_FEEDS_SUCCESS": return { ...state, feeds: [...state.feeds, ...action.feeds], loading: false }
         case "LOAD_UNREADED_FEEDS_ERROR": return { ...state, loading: false, error: action.error }
-        case "RELOAD_UNREADED_FEEDS": return { ...state, loading: true }
         case "READ_FEED": return { ...state, loading: true }
         case "READ_FEED_ERROR": return { ...state, loading: false, error: action.error }
         case "READ_FEED_SUCCESS": return {

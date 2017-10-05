@@ -24,7 +24,6 @@ function withToken(): Promise<string> {
 }
 
 function query(query: string): Promise<any> {
-    console.log("query", BASE_URI)
     return fetch(`${BASE_URI}/graphql`, fetchOptions(query))
         .then(response => response.json())
         .then(success)
@@ -83,7 +82,7 @@ export function loadMySources(): Promise<Source[]> {
     return withToken().then(token => query(`
         query {
             auth(token: "${token}") {
-                mySources {
+                mySources(limit: 10000) {
                     uuid
                     sourceType
                     rssSource {
@@ -103,7 +102,7 @@ export function loadUnreadedFeeds(): Promise<Feed[]> {
     return withToken().then(token => query(`
         query {
             auth(token: "${token}") {
-                unreadedFeeds {
+                unreadedFeeds(limit: 50) {
                     uuid
                     url
                     readable {
@@ -123,6 +122,32 @@ export function loadUnreadedFeeds(): Promise<Feed[]> {
         }
     `))
     .then(result => result.auth.unreadedFeeds)
+}
+
+export function loadUnreadedFeedsBySource(sourceUuid: string): Promise<Feed[]> {
+    return withToken().then(token => query(`
+        query {
+            auth(token: "${token}") {
+                unreadedFeedsBySource(sourceUuid: "${sourceUuid}", limit: 2) {
+                    uuid
+                    url
+                    readable {
+                        url
+                        title
+                        content
+                        excerpt
+                        leadImageUrl
+                    }
+                    rss {
+                        title
+                        content
+                        summary
+                    }
+                }
+            }
+        }
+    `))
+    .then(result => result.auth.unreadedFeedsBySource)
 }
 
 export function feedsByReaction(reaction: Reaction): Promise<Feed[]> {

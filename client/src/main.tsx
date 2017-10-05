@@ -55,6 +55,7 @@ ReactDOM.render(
         <ConnectedRouter history={history}>
             <div>
                 <Route exact path="/" component={MindStreamContainer}/>
+                <Route exact path="/stream/:sourceUuid" component={MindStreamContainer}/>
                 <Route exact path="/feeds" component={FeedsContainer}/>
                 <Route exact path="/sources" component={SourcesContainer}/>
                 <Route exact path="/login" component={LoginContainer}/>

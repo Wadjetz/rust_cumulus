@@ -1,6 +1,7 @@
 import * as React from "react"
 import { connect, Dispatch } from "react-redux"
 import * as ReactCSSTransitionGroup from "react-addons-css-transition-group"
+import { match as RouterMatch } from "react-router"
 
 import * as styles from "./MindStream.css"
 import { GlobalState } from "../app/AppState"
@@ -11,8 +12,9 @@ import HeaderContainer from "../app/HeaderContainer"
 import FeedActions from "./components/FeedActions"
 
 interface DispatchProps {
-    onReaction: (feed: Feed, reaction: Reaction) => () => void
+    onReaction: (feed: Feed, reaction: Reaction, sourceUuid?: string) => () => void
     loadData: () => void
+    loadUnreadedFeedsBySource: (sourceUuid: string) => void
 }
 
 interface StateProps {
@@ -20,12 +22,21 @@ interface StateProps {
     loading: boolean
 }
 
-type Props = StateProps & DispatchProps
+interface Params {
+    sourceUuid?: string
+}
+
+type Props = StateProps & DispatchProps & Params
 
 class MindStreamContainer extends React.PureComponent<Props> {
     componentWillMount() {
-        if (this.props.feeds.length === 0) {
-            this.props.loadData()
+        const { feeds, sourceUuid, loadUnreadedFeedsBySource, loadData } = this.props
+        if (feeds.length === 0) {
+            if (sourceUuid) {
+                loadUnreadedFeedsBySource(sourceUuid)
+            } else {
+                loadData()
+            }
         }
         document.addEventListener("keydown", this.onKeyPressHandler, false)
     }
@@ -44,12 +55,12 @@ class MindStreamContainer extends React.PureComponent<Props> {
     }
 
     renderStream = () => {
-        const { feeds, loading, onReaction } = this.props
+        const { feeds, loading, onReaction, sourceUuid } = this.props
         if (feeds.length > 0) {
             const feed = feeds[0]
             return (
                 <div>
-                    <FeedActions feed={feed} loading={loading} onReaction={onReaction} />
+                    <FeedActions feed={feed} loading={loading} onReaction={onReaction} sourceUuid={sourceUuid} />
                     <ReactCSSTransitionGroup
                         transitionName={{
                             enter: styles.transitionEnter,
@@ -75,15 +86,16 @@ class MindStreamContainer extends React.PureComponent<Props> {
     }
 
     onKeyPressHandler = (event: any) => {
-        const { feeds, onReaction } = this.props
+        const { feeds, onReaction, sourceUuid } = this.props
         if (feeds.length > 0 && event.code === "ArrowRight" || event.code === "KeyD") {
-            onReaction(feeds[0], "Readed")()
+            onReaction(feeds[0], "Readed", sourceUuid)()
         }
     }
 }
 
-const mapStateToProps = (state: GlobalState): StateProps => {
+const mapStateToProps = (state: GlobalState, props?: RouterMatch<Params>): StateProps & Params => {
     return {
+        sourceUuid: props && props.params && props.params.sourceUuid,
         feeds: state.mindStream.feeds,
         loading: state.mindStream.loading,
     }
@@ -92,7 +104,10 @@ const mapStateToProps = (state: GlobalState): StateProps => {
 const mapDispatchToProps = (dispatch: Dispatch<GlobalState>): DispatchProps => {
     return {
         loadData: () => dispatch(MindStreamActions.loadUnreadedFeeds()),
-        onReaction: (feed, reaction) => () => dispatch(MindStreamActions.readFeed(feed, reaction))
+        onReaction: (feed, reaction, sourceUuid?: string) => () => dispatch(MindStreamActions.readFeed(feed, reaction, sourceUuid)),
+        loadUnreadedFeedsBySource: (sourceUuid: string) => {
+            dispatch(MindStreamActions.loadUnreadedFeedsBySource(sourceUuid))
+        }
     }
 }
 

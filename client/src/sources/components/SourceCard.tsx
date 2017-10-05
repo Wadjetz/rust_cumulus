@@ -11,7 +11,7 @@ export default class SourcesCard extends React.Component<Props, {}> {
         const { source, fallowSource } = this.props
         return (
             <div>
-                <h4>{source.rssSource!.title}</h4>
+                <h4><a href={`#/stream/${source.uuid}`}>{source.rssSource!.title}</a></h4>
                 {source.rssSource!.xmlUrl}
                 {fallowSource ? <button onClick={this.fallowSourceHandler}>Fallow</button> : null }
             </div>
