@@ -13,7 +13,7 @@ import FeedActions from "./components/FeedActions"
 
 interface DispatchProps {
     onReaction: (feed: Feed, reaction: Reaction, sourceUuid?: string) => () => void
-    loadData: () => void
+    loadUnreadedFeeds: () => void
     loadUnreadedFeedsBySource: (sourceUuid: string) => void
 }
 
@@ -30,12 +30,12 @@ type Props = StateProps & DispatchProps & Params
 
 class MindStreamContainer extends React.PureComponent<Props> {
     componentWillMount() {
-        const { feeds, sourceUuid, loadUnreadedFeedsBySource, loadData } = this.props
+        const { feeds, sourceUuid, loadUnreadedFeedsBySource, loadUnreadedFeeds } = this.props
         if (feeds.length === 0) {
             if (sourceUuid) {
                 loadUnreadedFeedsBySource(sourceUuid)
             } else {
-                loadData()
+                loadUnreadedFeeds()
             }
         }
         document.addEventListener("keydown", this.onKeyPressHandler, false)
@@ -93,9 +93,10 @@ class MindStreamContainer extends React.PureComponent<Props> {
     }
 }
 
-const mapStateToProps = (state: GlobalState, props?: RouterMatch<Params>): StateProps & Params => {
+const mapStateToProps = (state: GlobalState, props?: { match?: RouterMatch<Params> }): StateProps & Params => {
+    const sourceUuid = props && props.match && props.match.params && props.match.params.sourceUuid
     return {
-        sourceUuid: props && props.params && props.params.sourceUuid,
+        sourceUuid,
         feeds: state.mindStream.feeds,
         loading: state.mindStream.loading,
     }
@@ -103,11 +104,11 @@ const mapStateToProps = (state: GlobalState, props?: RouterMatch<Params>): State
 
 const mapDispatchToProps = (dispatch: Dispatch<GlobalState>): DispatchProps => {
     return {
-        loadData: () => dispatch(MindStreamActions.loadUnreadedFeeds()),
-        onReaction: (feed, reaction, sourceUuid?: string) => () => dispatch(MindStreamActions.readFeed(feed, reaction, sourceUuid)),
+        loadUnreadedFeeds: () => dispatch(MindStreamActions.loadUnreadedFeeds()),
         loadUnreadedFeedsBySource: (sourceUuid: string) => {
             dispatch(MindStreamActions.loadUnreadedFeedsBySource(sourceUuid))
-        }
+        },
+        onReaction: (feed, reaction, sourceUuid?: string) => () => dispatch(MindStreamActions.readFeed(feed, reaction, sourceUuid)),
     }
 }
 
