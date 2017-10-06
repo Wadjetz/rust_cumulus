@@ -102,7 +102,7 @@ export function loadUnreadedFeeds(): Promise<Feed[]> {
     return withToken().then(token => query(`
         query {
             auth(token: "${token}") {
-                unreadedFeeds(limit: 50) {
+                unreadedFeeds(limit: 30) {
                     uuid
                     url
                     readable {
@@ -128,7 +128,7 @@ export function loadUnreadedFeedsBySource(sourceUuid: string): Promise<Feed[]> {
     return withToken().then(token => query(`
         query {
             auth(token: "${token}") {
-                unreadedFeedsBySource(sourceUuid: "${sourceUuid}", limit: 2) {
+                unreadedFeedsBySource(sourceUuid: "${sourceUuid}", limit: 30) {
                     uuid
                     url
                     readable {
@@ -177,7 +177,7 @@ export function feedsByReaction(reaction: Reaction): Promise<Feed[]> {
 }
 
 function log<T>(t: T): T {
-    console.log("fetch log", t)
+    // console.log("fetch log", t)
     return t
 }
 

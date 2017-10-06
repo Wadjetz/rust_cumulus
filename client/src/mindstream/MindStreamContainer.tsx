@@ -39,7 +39,7 @@ class MindStreamContainer extends React.PureComponent<Props> {
         document.addEventListener("keydown", this.onKeyPressHandler, false)
     }
 
-    componentWillUnMount() {
+    componentWillUnmount() {
         document.removeEventListener("keydown", this.onKeyPressHandler, false)
     }
 
