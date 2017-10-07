@@ -1,11 +1,11 @@
 use std::error::Error;
-
+use validator::{Validate};
 use juniper::{FieldError, FieldResult};
 
 use graphql::query::Query;
 use graphql::auth_mutation::AuthMutation;
 use mindstream::sources::{Source, add_rss_source_resolver};
-use users::{signup_resolver, auth_resolver};
+use users::{User, signup_resolver, auth_resolver};
 
 #[derive(Debug)]
 pub struct Mutation;
@@ -19,8 +19,16 @@ graphql_object!(Mutation: Query as "Mutation" |&self| {
         email: String as "Email",
         password: String as "Password"
     ) -> FieldResult<String> as "Token" {
-        signup_resolver(executor.context().connection.clone(), login, email, password)
-            .map_err(|e| FieldError::from(&e.description().to_string()))
+        let user = User::new_secure(login, email, password)?;
+        match user.validate() {
+            Ok(_) => {
+                signup_resolver(executor.context().connection.clone(), user)
+                        .map_err(|e| FieldError::from(&e.description().to_string()))
+            }
+            Err(err) => {
+                Err(FieldError::from("Validation Error"))
+            }
+        }
     }
 
     field auth(

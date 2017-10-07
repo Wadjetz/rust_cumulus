@@ -6,6 +6,7 @@ use postgres::rows::Row;
 use postgres::types::ToSql;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
+use validator::Validate;
 
 use config;
 use errors::*;
@@ -15,11 +16,14 @@ use graphql::auth_query::AuthQuery;
 use graphql::auth_mutation::AuthMutation;
 use pg::{Insertable, PgDatabase};
 
-#[derive(Debug)]
+#[derive(Debug, Validate)]
 pub struct User {
     pub uuid: Uuid,
+    #[validate(length(min = "1"))]
     pub login: String,
+    #[validate(email)]
     pub email: String,
+    #[validate(length(min = "6"))]
     pub password: String,
     pub created: NaiveDateTime,
     pub updated: NaiveDateTime,
@@ -98,9 +102,8 @@ impl Insertable for User {
     }
 }
 
-pub fn signup_resolver(pool: Pool<PostgresConnectionManager>, login: String, email: String, password: String) -> Result<String> {
+pub fn signup_resolver(pool: Pool<PostgresConnectionManager>, user: User) -> Result<String> {
     let pg = PgDatabase::from_pool(pool)?;
-    let user = User::new_secure(login, email, password)?;
     pg.insert(&user)?;
     let token = token::create_token(user.uuid, user.email, config::CONFIG.secret_key.as_ref())?;
     Ok(token)

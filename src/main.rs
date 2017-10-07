@@ -37,6 +37,9 @@ extern crate url;
 extern crate juniper;
 extern crate juniper_rocket;
 extern crate geo;
+#[macro_use] 
+extern crate validator_derive;
+extern crate validator;
 
 mod errors;
 mod pg;
