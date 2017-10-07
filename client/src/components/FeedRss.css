@@ -1,13 +1,28 @@
 .container {
     width: 100%;
+    hyphens: auto;
+    overflow: hidden;
     display: flex;
     justify-content: center;
 }
 
 .feed_rss {
-    max-width: 900px;
-    padding: 30px;
+    width: 100%;
     hyphens: auto;
+    overflow: hidden;
+    padding: 20px;
+    hyphens: auto;
+}
+
+@media screen and (min-width: 900px) {
+    .container {
+        align-self: center;
+    }
+
+    .feed_rss {
+        width: 900px;
+        align-self: center;
+    }
 }
 
 .feed_rss p, .feed_rss div, .feed_rss figure {

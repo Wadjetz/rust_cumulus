@@ -1,14 +1,28 @@
 .container {
     width: 100%;
+    hyphens: auto;
+    overflow: hidden;
     display: flex;
     justify-content: center;
 }
 
 .feed_readable {
     width: 100%;
-    flex: 1;
-    padding: 30px;
     hyphens: auto;
+    overflow: hidden;
+    padding: 20px;
+    hyphens: auto;
+}
+
+@media screen and (min-width: 900px) {
+    .container {
+        align-self: center;
+    }
+
+    .feed_readable {
+        width: 900px;
+        align-self: center;
+    }
 }
 
 .feed_readable p, .feed_readable div, .feed_readable figure {
@@ -19,10 +33,9 @@
     margin: 0;
 }
 
-@media screen and (min-width: 360px) {
-    .feed_readable {
-        max-width: 900px;
-    }
+.feed_readable pre, .feed_readable code {
+    padding: 8px;
+    border: 1px solid #EEEEEE;
 }
 
 .container img {
