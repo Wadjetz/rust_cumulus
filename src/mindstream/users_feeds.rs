@@ -148,7 +148,7 @@ pub fn feeds_by_reaction_resolver(pool: Pool<PostgresConnectionManager>, reactio
         JOIN users_feeds ON users_feeds.feed_uuid = feeds.uuid
         WHERE users_feeds.reaction = $1
         AND users_feeds.user_uuid = $2
-        LIMIT $2::int OFFSET $3::int;
+        LIMIT $3::int OFFSET $4::int;
     "#;
     Ok(pg.find(query, &[&reaction, &user.uuid, &limit, &offset])?)
 }
