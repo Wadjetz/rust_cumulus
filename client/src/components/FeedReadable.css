@@ -60,3 +60,9 @@
     color: #3149AE;
     text-decoration: underline;
 }
+
+.url {
+    padding-bottom: 10px;
+    font-size: 1rem;
+    color: #47865f;
+}

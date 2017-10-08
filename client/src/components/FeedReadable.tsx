@@ -13,7 +13,7 @@ export default class FeedReadable extends React.Component<Props, {}> {
             <div className={styles.container}>
                 <div className={styles.feed_readable}>
                     <a className={styles.title} target="_blanc" href={url}>{title}</a>
-                    <div>{url}</div>
+                    <div className={styles.url}>{url}</div>
                     {this.isImageAlreadyShow() ? <img src={leadImageUrl} /> : null}
                     {<div dangerouslySetInnerHTML={{ __html: content }} />}
                 </div>

@@ -1,13 +1,36 @@
 
 .container {
     display: flex;
-    height: 30px;
+    height: 40px;
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
+    border-top: 1px solid #EEE;
 }
 
 .action {
     flex: 1;
+    border: none;
+    background-color: white;
+    font-size: .9rem;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.action:hover {
+    background-color: rgb(241, 241, 241);
+}
+
+.actionNext {
+    color: #1AA8E9;
+}
+
+.actionLike {
+    color: #309D22;
+}
+
+.actionRead {
+    color: rgb(75, 75, 75);
 }

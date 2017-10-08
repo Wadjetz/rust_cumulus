@@ -14,8 +14,9 @@ export default class FeedActions extends React.Component<Props, {}> {
         const { feed, loading, onReaction, sourceUuid } = this.props
         return (
             <div className={styles.container}>
-                <button className={styles.action} disabled={loading} onClick={onReaction(feed, "Liked", sourceUuid)}>Liked</button>
-                <button className={styles.action} disabled={loading} onClick={onReaction(feed, "Readed", sourceUuid)}>Read</button>
+                <button className={`${styles.action} ${styles.actionLike}`} disabled={loading} onClick={onReaction(feed, "Liked", sourceUuid)}>Liked</button>
+                <button className={`${styles.action} ${styles.actionRead}`} disabled={loading} onClick={onReaction(feed, "Readed", sourceUuid)}>Readed</button>
+                <button className={`${styles.action} ${styles.actionNext}`} disabled={loading} onClick={onReaction(feed, "Viewed", sourceUuid)}>Next</button>
             </div>
         )
     }
