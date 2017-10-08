@@ -86,7 +86,7 @@ class MindStreamContainer extends React.PureComponent<Props> {
     onKeyPressHandler = (event: any) => {
         const { feeds, onReaction, sourceUuid } = this.props
         if (feeds.length > 0 && event.code === "ArrowRight" || event.code === "KeyD") {
-            onReaction(feeds[0], "Readed", sourceUuid)()
+            onReaction(feeds[0], "Viewed", sourceUuid)()
         }
     }
 }
