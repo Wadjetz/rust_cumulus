@@ -4,9 +4,10 @@
     overflow: hidden;
     display: flex;
     justify-content: center;
+    padding-bottom: 50px;
 }
 
-.feed_rss {
+.feed_readable {
     width: 100%;
     hyphens: auto;
     overflow: hidden;
@@ -19,22 +20,27 @@
         align-self: center;
     }
 
-    .feed_rss {
+    .feed_readable {
         width: 900px;
         align-self: center;
     }
 }
 
-.feed_rss p, .feed_rss div, .feed_rss figure {
+.feed_readable p, .feed_readable div, .feed_readable figure, .feed_readable iframe {
     width: 100%;
 }
 
-.feed_rss figure {
+.feed_readable figure {
     margin: 0;
 }
 
 .container img {
     width: 100%;
+}
+
+.container code, .container pre {
+    width: 100%;
+    overflow-x: scroll;
 }
 
 .title {
@@ -49,4 +55,10 @@
 .title:hover {
     color: #3149AE;
     text-decoration: underline;
+}
+
+.url {
+    padding-bottom: 10px;
+    font-size: 1rem;
+    color: #47865f;
 }
