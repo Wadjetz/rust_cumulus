@@ -5,8 +5,10 @@ use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 
 use errors::*;
+use graphql::query::Query;
 use users::User;
 use mindstream::sources::Source;
+use mindstream::users_feeds::Reaction;
 use pg::{Insertable, PgDatabase};
 
 #[derive(Debug)]
@@ -123,4 +125,52 @@ pub fn find_users_by_source(pg: &PgDatabase, source: &Source) -> Result<Vec<User
     WHERE users_sources.source_uuid = $1;
     "#;
     Ok(pg.find(query, &[&source.uuid])?)
+}
+
+#[derive(Debug)]
+pub struct SourceStat {
+    pub uuid: Uuid,
+    pub count: i64,
+}
+
+impl<'a> From<Row<'a>> for SourceStat {
+    fn from(row: Row) -> Self {
+        SourceStat {
+            uuid: row.get("uuid"),
+            count: row.get("count"),
+        }
+    }
+}
+
+graphql_object!(SourceStat: Query as "SourceStat" |&self| {
+    description: "SourceStat"
+
+    field uuid() -> Uuid as "Source Uuid" {
+        self.uuid
+    }
+
+    field count() -> i32 as "Count" {
+        self.count as i32
+    }
+});
+
+fn sources_stats(pg: &PgDatabase, user: &User, reaction: &Reaction) -> Result<Vec<SourceStat>> {
+    let query = r#"
+        SELECT sources.uuid, (
+            SELECT COUNT(feeds.uuid)
+            FROM feeds
+            JOIN users_feeds ON users_feeds.feed_uuid = feeds.uuid
+            WHERE feeds.source_uuid = sources.uuid
+                AND users_feeds.reaction = $1
+                AND users_feeds.user_uuid = $2::uuid
+        ) AS count FROM sources
+        JOIN users_sources ON users_sources.source_uuid = sources.uuid
+        WHERE users_sources.user_uuid = $2::uuid
+    "#;
+    Ok(pg.find(query, &[reaction, &user.uuid])?)
+}
+
+pub fn sources_stats_resolver(pool: Pool<PostgresConnectionManager>, user: &User) -> Result<Vec<SourceStat>> {
+    let pg = PgDatabase::from_pool(pool)?;
+    Ok(sources_stats(&pg, user, &Reaction::Unreaded)?)
 }

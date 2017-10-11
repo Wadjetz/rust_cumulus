@@ -10,7 +10,7 @@ use mindstream::feeds::Feed;
 use mindstream::users_feeds::{unreaded_feeds, users_feeds_resolver, feeds_by_reaction_resolver, unreaded_feeds_by_source_resolver};
 use bookmarks::bookmarks::{bookmarks_resolver, Bookmark};
 use mindstream::sources::Source;
-use mindstream::users_sources::{unfollowed_sources_resolver, users_sources_resolver, total_my_rss_sources_resolver};
+use mindstream::users_sources::{SourceStat, unfollowed_sources_resolver, users_sources_resolver, total_my_rss_sources_resolver, sources_stats_resolver};
 use dilem::messages::{Message, find_messages_resolver};
 
 #[derive(Debug)]
@@ -126,6 +126,13 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         offset: Option<i32> as "Offset",
     ) -> FieldResult<Vec<Message>> {
         find_messages_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &conversation_uuid, &self.user)
+            .map_err(|e| FieldError::from(e.to_string()))
+    }
+
+    field sources_stats(
+        &executor,
+    ) -> FieldResult<Vec<SourceStat>> {
+        sources_stats_resolver(executor.context().connection.clone(), &self.user)
             .map_err(|e| FieldError::from(e.to_string()))
     }
 });
