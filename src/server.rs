@@ -19,7 +19,7 @@ pub fn run() {
     if let Err(error) = migrations::run(connection.clone().get().unwrap()) {
         println!("Run migrations error {:?}", error);
     }
-    let client = reqwest::Client::new().unwrap();
+    let client = reqwest::Client::new();
     println!("Run rss_job");
     rss::run_rss_job(Duration::from_secs(&conf.rss_job_interval * 60), client, connection.clone());
     rocket::ignite()
