@@ -1,5 +1,6 @@
 import * as React from "react"
 import { connect, Dispatch } from "react-redux"
+import * as styles from "./SourcesContainer.css"
 
 import { GlobalState } from "../app/AppState"
 import * as SourcesActions from "./SourcesActions"
@@ -27,7 +28,7 @@ class SourcesContainer extends React.Component<Props, {}> {
     render() {
         const { newSourceUrl, addSourceOnChange, addSourceOnSubmit } = this.props
         return (
-            <div style={{ flex: 1 }}>
+            <div className={styles.sourcesContainer}>
                 <HeaderContainer />
                 <AddSourceForm
                     newSourceUrl={newSourceUrl}

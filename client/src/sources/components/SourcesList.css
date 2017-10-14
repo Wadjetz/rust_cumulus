@@ -1,0 +1,10 @@
+.sourcesList {
+    width: 100%;
+}
+
+@media screen and (min-width: 900px) {
+    .sourcesList {
+        width: 900px;
+        align-self: center;
+    }
+}

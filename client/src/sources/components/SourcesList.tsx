@@ -1,4 +1,5 @@
 import * as React from "react"
+import * as styles from "./SourcesList.css"
 import { Source, SourceStat } from "../../sources/Source"
 import SourcesCard from "../components/SourceCard"
 
@@ -12,7 +13,7 @@ export default class SourcesList extends React.Component<Props, {}> {
     render() {
         const { sources, fallowSource, mySourcesStats } = this.props
         return (
-            <div>
+            <div className={styles.sourcesList}>
                 {sources.map(source => {
                     const stats = mySourcesStats && mySourcesStats.find(s => s.uuid === source.uuid)
                     return <SourcesCard count={stats && stats.count} key={source.uuid} source={source} fallowSource={fallowSource}/>

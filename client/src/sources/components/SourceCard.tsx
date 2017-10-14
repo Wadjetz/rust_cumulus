@@ -1,4 +1,6 @@
 import * as React from "react"
+import * as styles from "./SourceCard.css"
+import IconButton from "../../components/IconButton"
 import { Source } from "../../sources/Source"
 
 interface Props {
@@ -11,11 +13,19 @@ export default class SourcesCard extends React.Component<Props, {}> {
     render() {
         const { source, fallowSource, count = 0 } = this.props
         return (
-            <div>
-                <h4><a href={`#/stream/${source.uuid}`}>{source.rssSource!.title}</a></h4>
-                {count}
-                {fallowSource ? <button onClick={this.fallowSourceHandler}>Fallow</button> : null }
+            <div className={styles.sourceCard}>
+                <div className={styles.counter}>{count}</div>
+                <a className={styles.title} href={`#/stream/${source.uuid}`}>
+                    {source.rssSource!.title}
+                </a>
+                {!fallowSource ? this.renderFallow() : null }
             </div>
+        )
+    }
+
+    renderFallow = () => {
+        return (
+            <IconButton type="Add" onClick={this.fallowSourceHandler} />
         )
     }
 
