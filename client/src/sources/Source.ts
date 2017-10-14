@@ -13,3 +13,8 @@ export interface Source {
     rssSource?: RssSource
     error?: string
 }
+
+export interface SourceStat {
+    uuid: string
+    count: number
+}

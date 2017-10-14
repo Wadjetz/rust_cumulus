@@ -1,18 +1,22 @@
 import * as React from "react"
-import { Source } from "../../sources/Source"
+import { Source, SourceStat } from "../../sources/Source"
 import SourcesCard from "../components/SourceCard"
 
 interface Props {
     sources: Source[]
+    mySourcesStats?: SourceStat[]
     fallowSource?: (source: Source) => void
 }
 
 export default class SourcesList extends React.Component<Props, {}> {
     render() {
-        const { sources, fallowSource } = this.props
+        const { sources, fallowSource, mySourcesStats } = this.props
         return (
             <div>
-                {sources.map(source => <SourcesCard key={source.uuid} source={source} fallowSource={fallowSource}/>)}
+                {sources.map(source => {
+                    const stats = mySourcesStats && mySourcesStats.find(s => s.uuid === source.uuid)
+                    return <SourcesCard count={stats && stats.count} key={source.uuid} source={source} fallowSource={fallowSource}/>
+                })}
             </div>
         )
     }

@@ -3,12 +3,13 @@ import { connect, Dispatch } from "react-redux"
 
 import { GlobalState } from "../app/AppState"
 import * as SourcesActions from "./SourcesActions"
+import { SourcesState } from "./SourcesReducer"
 import { Source } from "./Source"
 import SourcesList from "./components/SourcesList"
 import AddSourceForm from "./components/AddSourceForm"
 import HeaderContainer from "../app/HeaderContainer"
 
-interface Props extends GlobalState {
+interface DispatchProps {
     onLoadUnfollowedSources: () => void
     onLoadMySources: () => void
     addSourceOnChange: (field: "newSourceUrl") => (value: any) => void
@@ -16,18 +17,20 @@ interface Props extends GlobalState {
     fallowSource: (source: Source) => void
 }
 
-class FeedsContainer extends React.Component<Props, {}> {
+type Props = SourcesState & DispatchProps
+
+class SourcesContainer extends React.Component<Props, {}> {
     componentWillMount() {
         this.props.onLoadUnfollowedSources()
         this.props.onLoadMySources()
     }
     render() {
-        const { sources, addSourceOnChange, addSourceOnSubmit } = this.props
+        const { newSourceUrl, addSourceOnChange, addSourceOnSubmit } = this.props
         return (
             <div style={{ flex: 1 }}>
                 <HeaderContainer />
                 <AddSourceForm
-                    newSourceUrl={sources.newSourceUrl}
+                    newSourceUrl={newSourceUrl}
                     loading={false}
                     onChange={addSourceOnChange}
                     onSubmit={addSourceOnSubmit}
@@ -42,10 +45,10 @@ class FeedsContainer extends React.Component<Props, {}> {
 
     renderSourcesList = () => {
         const { fallowSource, sources } = this.props
-        if (sources.sources.length > 0) {
+        if (sources.length > 0) {
             return (
                 <SourcesList
-                    sources={sources.sources}
+                    sources={sources}
                     fallowSource={fallowSource}
                 />
             )
@@ -55,11 +58,12 @@ class FeedsContainer extends React.Component<Props, {}> {
     }
 
     renderMySourcesList = () => {
-        const { sources } = this.props
-        if (sources.mySources.length > 0) {
+        const { mySources, mySourcesStats } = this.props
+        if (mySources.length > 0) {
             return (
                 <SourcesList
-                    sources={sources.mySources}
+                    sources={mySources}
+                    mySourcesStats={mySourcesStats}
                 />
             )
         } else {
@@ -68,24 +72,16 @@ class FeedsContainer extends React.Component<Props, {}> {
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<GlobalState>, state: any) => {
+const mapDispatchToProps = (dispatch: Dispatch<GlobalState>): DispatchProps => {
     return {
-        addSourceOnChange: (field: string, value: string) => {
-            dispatch(SourcesActions.addSourceOnChange(field, value))
-        },
-        addSourceOnSubmit: (sourceUrl: string) => {
-            dispatch(SourcesActions.addSource(sourceUrl))
-        },
-        onLoadUnfollowedSources: () => {
-            dispatch(SourcesActions.loadUnfollowedSources())
-        },
-        onLoadMySources: () => {
-            dispatch(SourcesActions.loadMySources())
-        },
-        fallowSource: (source: Source) => {
-            dispatch(SourcesActions.fallowSources(source))
-        }
+        onLoadUnfollowedSources: () => dispatch(SourcesActions.loadUnfollowedSources()),
+        onLoadMySources: () => dispatch(SourcesActions.loadMySources()),
+        addSourceOnChange: field => value => dispatch(SourcesActions.addSourceOnChange(field, value)),
+        addSourceOnSubmit: (sourceUrl) => dispatch(SourcesActions.addSource(sourceUrl)),
+        fallowSource: (source) => dispatch(SourcesActions.fallowSources(source)),
     }
 }
 
-export default connect((state: GlobalState) => state, mapDispatchToProps)(FeedsContainer)
+const mapStateToProps = (state: GlobalState): SourcesState => state.sources
+
+export default connect(mapStateToProps, mapDispatchToProps)(SourcesContainer)

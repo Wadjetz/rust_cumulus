@@ -1,5 +1,5 @@
 import { Feed, Reaction } from "./feeds/Feed"
-import { Source } from "./sources/Source"
+import { Source, SourceStat } from "./sources/Source"
 import * as router from "./router"
 
 const BASE_URI = document.location.origin
@@ -78,7 +78,7 @@ export function loadUnfollowedSources(): Promise<Source[]> {
     .then(result => result.auth.unfollowedSources)
 }
 
-export function loadMySources(): Promise<Source[]> {
+export function loadMySources(): Promise<{ mySources: Source[], sourcesStats: SourceStat[] }> {
     return withToken().then(token => query(`
         query {
             auth(token: "${token}") {
@@ -92,10 +92,14 @@ export function loadMySources(): Promise<Source[]> {
                     }
                     error
                 }
+                sourcesStats {
+                    uuid
+                    count
+                }
             }
         }
     `))
-    .then(result => result.auth.mySources)
+    .then(result => result.auth)
 }
 
 export function loadUnreadedFeeds(): Promise<Feed[]> {
