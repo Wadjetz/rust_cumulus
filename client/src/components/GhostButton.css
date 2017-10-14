@@ -1,4 +1,4 @@
-.container {
+.ghostButton {
     display: flex;
     border: 1px solid #4A90E2;
     height: 40px;
@@ -7,9 +7,13 @@
     cursor: pointer;
 }
 
-.container:hover {
+.ghostButton:hover {
     background-color: #F5F9FD;
     animation-delay: .3s;
+}
+
+.loaderSvg {
+    padding-top: 3px;
 }
 
 .label {

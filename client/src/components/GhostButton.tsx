@@ -1,5 +1,6 @@
 import * as React from "react"
 import * as styles from "./GhostButton.css"
+import LoaderIcon from "./icons/LoaderIcon"
 
 interface Props {
     label: string
@@ -9,7 +10,7 @@ interface Props {
 }
 
 export default class GhostButton extends React.Component<Props, {}> {
-    defaultProps = {
+    static defaultProps = {
         loading: false,
         disable: false,
     }
@@ -17,9 +18,9 @@ export default class GhostButton extends React.Component<Props, {}> {
     render() {
         const { label, loading } = this.props
         return (
-            <div className={styles.container} onClick={this.onClickHandler}>
+            <div className={styles.ghostButton} onClick={this.onClickHandler}>
                 {loading
-                    ? <div className={styles.loading}>Loading</div>
+                    ? <LoaderIcon className={styles.loaderSvg} width={34} height={34} color={"#4A90E2"} />
                     : <div className={styles.label}>{label}</div>}
             </div>
         )
