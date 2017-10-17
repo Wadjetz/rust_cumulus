@@ -10,7 +10,7 @@ export interface ApiError {
 }
 
 function withToken(): Promise<string> {
-    return new Promise((resolve: any, reject: any) => {
+    return new Promise((resolve, reject) => {
         const token = localStorage.getItem(AUTH_TOKEN_STORAGE_KEY) || sessionStorage.getItem(AUTH_TOKEN_STORAGE_KEY)
         if (!token) {
             router.replace("/login")
@@ -30,7 +30,7 @@ function query(query: string): Promise<any> {
         .then(log)
 }
 
-function fetchOptions(query: string) {
+function fetchOptions(query: string): RequestInit {
     return {
         method: "POST",
         body: JSON.stringify({
