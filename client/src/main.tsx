@@ -1,3 +1,5 @@
+import "es6-promise/auto"
+import "es6-shim"
 import * as React from "react"
 import * as ReactDOM from "react-dom"
 import { Route } from "react-router"

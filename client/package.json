@@ -26,6 +26,8 @@
   },
   "homepage": "https://github.com/Wadjetz/rust_cumulus#readme",
   "dependencies": {
+    "es6-promise": "4.1.1",
+    "es6-shim": "0.35.3",
     "history": "4.7.2",
     "normalize.css": "7.0.0",
     "react": "16.0.0",
@@ -40,6 +42,7 @@
     "rxjs": "5.4.3"
   },
   "devDependencies": {
+    "@types/es6-shim": "0.31.35",
     "@types/history": "4.6.0",
     "@types/react": "15.0.38",
     "@types/react-addons-css-transition-group": "15.0.3",

@@ -1,9 +1,7 @@
 {
     "compilerOptions": {
         "jsx": "react",
-        "target": "es6",
-        "module": "es6",
-        "moduleResolution": "node",
+        "target": "es5",
         "strict": true,
         "noUnusedLocals": true,
         "sourceMap": true,
