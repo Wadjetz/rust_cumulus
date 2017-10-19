@@ -1,9 +1,9 @@
 import * as React from "react"
-import { Feed } from "../Feed"
+import { FeedSimple } from "../Feed"
 import FeedCard from "./FeedCard"
 
 interface Props {
-    feeds: Feed[]
+    feeds: FeedSimple[]
 }
 
 export default class FeedsList extends React.Component<Props, {}> {

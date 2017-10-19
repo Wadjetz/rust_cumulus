@@ -1,4 +1,4 @@
-import { Feed, Reaction } from "./feeds/Feed"
+import { Feed, FeedSimple, Reaction } from "./feeds/Feed"
 import { Source, SourceStat } from "./sources/Source"
 import * as router from "./router"
 
@@ -154,24 +154,18 @@ export function loadUnreadedFeedsBySource(sourceUuid: string): Promise<Feed[]> {
     .then(result => result.auth.unreadedFeedsBySource)
 }
 
-export function feedsByReaction(reaction: Reaction): Promise<Feed[]> {
+export function feedsByReaction(reaction: Reaction): Promise<FeedSimple[]> {
     return withToken().then(token => query(`
         query {
             auth(token: "${token}") {
-                feedsByReaction(reaction: "${reaction}") {
+                feedsByReaction(reaction: "${reaction}", limit: 10000) {
                     uuid
                     url
                     readable {
-                        url
                         title
-                        content
-                        excerpt
-                        leadImageUrl
                     }
                     rss {
                         title
-                        content
-                        summary
                     }
                 }
             }

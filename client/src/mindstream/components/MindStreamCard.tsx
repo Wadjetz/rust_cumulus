@@ -20,7 +20,8 @@ export default class MindStreamCard extends React.Component<Props, {}> {
         const { readable, rss } = feed
         if (readable) {
             const { title, url, content } = readable
-            return <FeedReadable title={title} url={url} leadImageUrl={this.isImageAlreadyShow()} content={content} />
+            const composedTitle = title || rss && rss.title || "No Title"
+            return <FeedReadable title={composedTitle} url={url} leadImageUrl={this.isImageAlreadyShow()} content={content} />
         } else if (rss) {
             return <FeedReadable title={rss.title || "No title"} url={feed.url} content={getRssContent(rss)} />
         }

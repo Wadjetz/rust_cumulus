@@ -1,12 +1,10 @@
 import { Epic } from "redux-observable"
 
-import {
-    LOAD_FEEDS, loadfeedsError, loadfeedsSuccess
-} from "./FeedsActions"
+import { loadfeedsError, loadfeedsSuccess } from "./FeedsActions"
 import { GlobalState } from "../app/AppState"
 import * as Api from "../Api"
 
-export const loadfeedsEpic: Epic<any, GlobalState> = (action$) => action$.ofType(LOAD_FEEDS)
+export const loadfeedsEpic: Epic<any, GlobalState> = (action$) => action$.ofType("LOAD_FEEDS")
     .mergeMap(action =>
         Api.feedsByReaction("Liked")
             .then(loadfeedsSuccess)

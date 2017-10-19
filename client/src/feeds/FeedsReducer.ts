@@ -1,9 +1,9 @@
-import { LOAD_FEEDS, LOAD_FEEDS_ERROR, LOAD_FEEDS_SUCCESS } from "./FeedsActions"
+import { Action } from "./FeedsActions"
 
-import { Feed } from "./Feed"
+import { FeedSimple } from "./Feed"
 
 export interface FeedsState {
-    feeds: Feed[]
+    feeds: FeedSimple[]
     loading: boolean
     error?: any
 }
@@ -14,11 +14,11 @@ const initState: FeedsState = {
     error: undefined,
 }
 
-const FeedsReducer = (state: FeedsState = initState, action: any) => {
+const FeedsReducer = (state: FeedsState = initState, action: Action) => {
     switch (action.type) {
-        case LOAD_FEEDS: return { ...state, loading: true }
-        case LOAD_FEEDS_SUCCESS: return { ...state, feeds: action.feeds, loading: false }
-        case LOAD_FEEDS_ERROR: return { ...state, loading: false, error: action.error }
+        case "LOAD_FEEDS": return { ...state, loading: true }
+        case "LOAD_FEEDS_SUCCESS": return { ...state, feeds: action.feeds, loading: false }
+        case "LOAD_FEEDS_ERROR": return { ...state, loading: false, error: action.error }
 
         default: return state
     }

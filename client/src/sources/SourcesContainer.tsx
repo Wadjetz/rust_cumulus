@@ -13,7 +13,7 @@ import HeaderContainer from "../app/HeaderContainer"
 interface DispatchProps {
     onLoadUnfollowedSources: () => void
     onLoadMySources: () => void
-    addSourceOnChange: (field: "newSourceUrl") => (value: any) => void
+    addSourceOnChange: (field: "newSourceUrl", value: string) => void
     addSourceOnSubmit: (sourceUrl: string) => void,
     fallowSource: (source: Source) => void
 }
@@ -77,7 +77,7 @@ const mapDispatchToProps = (dispatch: Dispatch<GlobalState>): DispatchProps => {
     return {
         onLoadUnfollowedSources: () => dispatch(SourcesActions.loadUnfollowedSources()),
         onLoadMySources: () => dispatch(SourcesActions.loadMySources()),
-        addSourceOnChange: field => value => dispatch(SourcesActions.addSourceOnChange(field, value)),
+        addSourceOnChange: (field, value) => dispatch(SourcesActions.addSourceOnChange(field, value)),
         addSourceOnSubmit: (sourceUrl) => dispatch(SourcesActions.addSource(sourceUrl)),
         fallowSource: (source) => dispatch(SourcesActions.fallowSources(source)),
     }

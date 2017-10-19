@@ -1,10 +1,26 @@
-import { Feed } from "./Feed"
+import { FeedSimple } from "./Feed"
 
-export const LOAD_FEEDS = "LOAD_FEEDS"
-export const loadfeeds = () => ({ type: LOAD_FEEDS })
+export type Action = LOAD_FEEDS | LOAD_FEEDS_SUCCESS | LOAD_FEEDS_ERROR
 
-export const LOAD_FEEDS_SUCCESS = "LOAD_FEEDS_SUCCESS"
-export const loadfeedsSuccess = (feeds: Feed[]) => ({ type: LOAD_FEEDS_SUCCESS, feeds })
+export type LOAD_FEEDS = {
+    type: "LOAD_FEEDS"
+}
+export function loadfeeds(): LOAD_FEEDS {
+    return { type: "LOAD_FEEDS" }
+}
 
-export const LOAD_FEEDS_ERROR = "LOAD_FEEDS_ERROR"
-export const loadfeedsError = (error: any) => ({ type: LOAD_FEEDS_ERROR, error })
+export type LOAD_FEEDS_SUCCESS = {
+    type: "LOAD_FEEDS_SUCCESS"
+    feeds: FeedSimple[]
+}
+export function loadfeedsSuccess(feeds: FeedSimple[]): LOAD_FEEDS_SUCCESS {
+    return { type: "LOAD_FEEDS_SUCCESS", feeds }
+}
+
+export type LOAD_FEEDS_ERROR = {
+    type: "LOAD_FEEDS_ERROR"
+    error: any
+}
+export function loadfeedsError(error: any): LOAD_FEEDS_ERROR {
+    return { type: "LOAD_FEEDS_ERROR", error }
+}
