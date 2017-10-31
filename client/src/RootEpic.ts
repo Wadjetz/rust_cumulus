@@ -7,7 +7,7 @@ import {
     fallowSourcesSuccessEpic
 } from "./sources/SourcesEpics"
 import { signupEpic, signupSuccessEpic } from "./signup/SignupEpics"
-import { loadUnreadedFeedsEpic, readFeedEpic, reloadUnreadedFeedsEpic, loadUnreadedFeedsBySourceEpic } from "./mindstream/MindStreamEpics"
+import { loadUnreadedFeedsEpic, readFeedEpic, reloadUnreadedFeedsEpic, loadUnreadedFeedsBySourceEpic, nextFeedEpic } from "./mindstream/MindStreamEpics"
 import { loadfeedsEpic } from "./feeds/FeedsEpics"
 import { loginEpic, loginSuccessEpic, loginErrorEpic } from "./login/LoginEpics"
 
@@ -22,6 +22,7 @@ const RootEpic = combineEpics(
     reloadUnreadedFeedsEpic,
     loadUnreadedFeedsBySourceEpic,
     readFeedEpic,
+    nextFeedEpic,
 
     loadfeedsEpic,
 
