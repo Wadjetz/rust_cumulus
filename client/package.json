@@ -35,11 +35,11 @@
     "react-dom": "16.0.0",
     "react-redux": "5.0.6",
     "react-router": "4.2.0",
-    "react-router-redux": "next",
+    "react-router-redux": "5.0.0-alpha.8",
     "redux": "3.7.2",
-    "redux-observable": "0.16.0",
+    "redux-observable": "0.17.0",
     "redux-persist": "4.10.1",
-    "rxjs": "5.4.3"
+    "rxjs": "5.5.2"
   },
   "devDependencies": {
     "@types/es6-shim": "0.31.35",
@@ -47,8 +47,8 @@
     "@types/react": "15.0.38",
     "@types/react-addons-css-transition-group": "15.0.3",
     "@types/react-dom": "15.5.5",
-    "@types/react-redux": "5.0.10",
-    "@types/react-router": "4.0.15",
+    "@types/react-redux": "5.0.12",
+    "@types/react-router": "4.0.16",
     "@types/react-router-redux": "5.0.8",
     "autoprefixer": "7.1.6",
     "awesome-typescript-loader": "3.3.0",
