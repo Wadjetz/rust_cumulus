@@ -18,7 +18,7 @@ export default class SourcesCard extends React.Component<Props, {}> {
                 <a className={styles.title} href={`#/stream/${source.uuid}`}>
                     {source.rssSource!.title}
                 </a>
-                {!fallowSource ? this.renderFallow() : null }
+                {fallowSource ? this.renderFallow() : null }
             </div>
         )
     }
