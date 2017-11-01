@@ -1,7 +1,7 @@
 import { Epic } from "redux-observable"
 
 import {
-    MindStreamAction, READ_FEED, LOAD_UNREADED_FEEDS_BY_SOURCE, READ_FEED_SUCCESS, loadUnreadedFeedsSuccess, loadUnreadedFeedsError,
+    MindStreamAction, READ_FEED, LOAD_UNREADED_FEEDS_BY_SOURCE, NEXT_FEED, loadUnreadedFeedsSuccess, loadUnreadedFeedsError,
     readFeedSuccess, readFeedError, loadUnreadedFeeds, loadUnreadedFeedsBySource
 } from "./MindStreamActions"
 import { GlobalState } from "../app/AppState"
@@ -21,9 +21,16 @@ export const loadUnreadedFeedsBySourceEpic: Epic<MindStreamAction, GlobalState> 
             .catch(loadUnreadedFeedsError)
     )
 
+export const nextFeedEpic: Epic<MindStreamAction, GlobalState> = (action$, state) => action$.ofType("NEXT_FEED")
+    .mergeMap((action: NEXT_FEED) =>
+        Api.feedReaction(action.feed, "Readed")
+            .then(readFeedSuccess)
+            .catch(readFeedError)
+    )
+
 export const reloadUnreadedFeedsEpic: Epic<MindStreamAction, GlobalState> = (action$, state) => action$
-    .filter(action => action.type === "READ_FEED_SUCCESS" && state.getState().mindStream.feeds.length === 0)
-    .map((action: READ_FEED_SUCCESS) => {
+    .filter(action => action.type === "NEXT_FEED" && state.getState().mindStream.feeds.length === 0)
+    .map((action: NEXT_FEED) => {
         if (action.sourceUuid) {
             return loadUnreadedFeedsBySource(action.sourceUuid)
         } else {

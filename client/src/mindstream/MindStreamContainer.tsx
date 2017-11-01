@@ -15,6 +15,9 @@ interface DispatchProps {
     onReaction: (feed: Feed, reaction: Reaction, sourceUuid?: string) => () => void
     loadUnreadedFeeds: () => void
     loadUnreadedFeedsBySource: (sourceUuid: string) => void
+
+    onNextFeed: (feed: Feed, sourceUuid: string | undefined) => void
+    onPreviousFeed: (sourceUuid: string | undefined) => void
 }
 
 interface StateProps {
@@ -40,7 +43,7 @@ class MindStreamContainer extends React.PureComponent<Props> {
     }
 
     componentWillUnmount() {
-        document.removeEventListener("keydown", this.onKeyPressHandler, false)
+        document.removeEventListener("keydown")
     }
 
     render() {
@@ -53,12 +56,19 @@ class MindStreamContainer extends React.PureComponent<Props> {
     }
 
     renderStream = () => {
-        const { feeds, loading, onReaction, sourceUuid } = this.props
+        const { feeds, loading, sourceUuid, onReaction, onNextFeed, onPreviousFeed } = this.props
         if (feeds.length > 0) {
             const feed = feeds[0]
             return (
                 <div>
-                    <FeedActions feed={feed} loading={loading} onReaction={onReaction} sourceUuid={sourceUuid} />
+                    <FeedActions
+                        feed={feed}
+                        loading={loading}
+                        sourceUuid={sourceUuid}
+                        onNextFeed={onNextFeed}
+                        onPreviousFeed={onPreviousFeed}
+                        onReaction={onReaction}
+                    />
                     <ReactCSSTransitionGroup
                         transitionName={{
                             enter: styles.transitionEnter,
@@ -83,10 +93,13 @@ class MindStreamContainer extends React.PureComponent<Props> {
         }
     }
 
-    onKeyPressHandler = (event: any) => {
-        const { feeds, onReaction, sourceUuid } = this.props
+    onKeyPressHandler = (event: KeyboardEvent) => {
+        const { feeds, onNextFeed, onPreviousFeed, sourceUuid } = this.props
+        console.log(event.code)
         if (feeds.length > 0 && event.code === "ArrowRight" || event.code === "KeyD") {
-            onReaction(feeds[0], "Viewed", sourceUuid)()
+            onNextFeed(feeds[0], sourceUuid)
+        } else if (feeds.length > 0 && event.code === "ArrowLeft" || event.code === "KeyQ" || event.code === "KeyA") {
+            onPreviousFeed(sourceUuid)
         }
     }
 }
@@ -107,6 +120,8 @@ const mapDispatchToProps = (dispatch: Dispatch<GlobalState>): DispatchProps => {
             dispatch(MindStreamActions.loadUnreadedFeedsBySource(sourceUuid))
         },
         onReaction: (feed, reaction, sourceUuid?: string) => () => dispatch(MindStreamActions.readFeed(feed, reaction, sourceUuid)),
+        onNextFeed: (feed, sourceUuid: string | undefined) => dispatch(MindStreamActions.nextFeed(feed, sourceUuid)),
+        onPreviousFeed: (sourceUuid: string | undefined) => dispatch(MindStreamActions.previousFeed(sourceUuid)),
     }
 }
 

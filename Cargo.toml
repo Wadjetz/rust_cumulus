@@ -21,9 +21,9 @@ postgres-derive = "0.3.1"
 strum = "0.8.0"
 strum_macros = "0.8.0"
 
-serde = "1.0.15"
-serde_derive = "1.0.15"
-serde_json = "1.0.3"
+serde = "1.0.16"
+serde_derive = "1.0.16"
+serde_json = "1.0.5"
 
 uuid = { version = "0.5.1", features = ["serde", "v4"] }
 chrono = "0.4.0"

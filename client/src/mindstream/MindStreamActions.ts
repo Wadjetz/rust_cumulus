@@ -1,5 +1,24 @@
 import { Feed, Reaction } from "../feeds/Feed"
 
+export type MindStreamAction =
+    LOAD_UNREADED_FEEDS |
+    LOAD_UNREADED_FEEDS_SUCCESS |
+    LOAD_UNREADED_FEEDS_ERROR |
+    READ_FEED |
+    READ_FEED_SUCCESS |
+    READ_FEED_ERROR |
+    LOAD_UNREADED_FEEDS_BY_SOURCE |
+    LOAD_UNREADED_FEEDS_BY_SOURCE_SUCCESS |
+    LOAD_UNREADED_FEEDS_BY_SOURCE_ERROR |
+    NEXT_FEED |
+    PREVIOUS_FEED
+
+export type NEXT_FEED = { type: "NEXT_FEED", feed: Feed, sourceUuid?: string }
+export const nextFeed = (feed: Feed, sourceUuid: string | undefined): NEXT_FEED => ({ type: "NEXT_FEED", feed, sourceUuid })
+
+export type PREVIOUS_FEED = { type: "PREVIOUS_FEED", sourceUuid?: string }
+export const previousFeed = (sourceUuid: string | undefined): PREVIOUS_FEED => ({ type: "PREVIOUS_FEED", sourceUuid })
+
 export type LOAD_UNREADED_FEEDS = {
     type: "LOAD_UNREADED_FEEDS"
 }
@@ -73,14 +92,3 @@ export type LOAD_UNREADED_FEEDS_BY_SOURCE_ERROR = {
 export function loadUnreadedFeedsBySourceError(error: any): LOAD_UNREADED_FEEDS_BY_SOURCE_ERROR {
     return { type: "LOAD_UNREADED_FEEDS_BY_SOURCE_ERROR", error }
 }
-
-export type MindStreamAction =
-    LOAD_UNREADED_FEEDS |
-    LOAD_UNREADED_FEEDS_SUCCESS |
-    LOAD_UNREADED_FEEDS_ERROR |
-    READ_FEED |
-    READ_FEED_SUCCESS |
-    READ_FEED_ERROR |
-    LOAD_UNREADED_FEEDS_BY_SOURCE |
-    LOAD_UNREADED_FEEDS_BY_SOURCE_SUCCESS |
-    LOAD_UNREADED_FEEDS_BY_SOURCE_ERROR
