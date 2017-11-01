@@ -15,7 +15,7 @@ interface PropsState {
     feeds: FeedSimple[]
 }
 
-type Props = GlobalState & PropsState & DispatchProps
+type Props = PropsState & DispatchProps
 
 class FeedsContainer extends React.Component<Props, {}> {
     componentWillMount() {
