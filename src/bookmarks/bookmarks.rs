@@ -7,11 +7,10 @@ use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 
 use errors::*;
-use graphql::query::Query;
 use users::User;
 use pg::{Insertable, PgDatabase};
 
-#[derive(Debug)]
+#[derive(GraphQLObject, Debug)]
 pub struct Bookmark {
     pub uuid: Uuid,
     pub url: String,
@@ -36,42 +35,6 @@ impl Bookmark {
         }
     }
 }
-
-graphql_object!(Bookmark: Query as "Bookmark" |&self| {
-    description: "Bookmark"
-
-    field uuid() -> Uuid as "uuid" {
-        self.uuid
-    }
-
-    field url() -> &String as "url" {
-        &self.url
-    }
-
-    field title() -> &String as "title" {
-        &self.title
-    }
-
-    field description() -> &Option<String> as "description" {
-        &self.description
-    }
-
-    field path() -> &String as "path" {
-        &self.path
-    }
-
-    field created() -> String as "created" {
-        format!("{}", self.created)
-    }
-
-    field updated() -> String as "updated" {
-        format!("{}", self.updated)
-    }
-
-    field user_uuid() -> String as "user_uuid" {
-        self.user_uuid.hyphenated().to_string()
-    }
-});
 
 impl<'a> From<Row<'a>> for Bookmark {
     fn from(row: Row) -> Self {

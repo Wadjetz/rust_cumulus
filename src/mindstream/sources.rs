@@ -28,7 +28,7 @@ pub enum SourceOption {
     Twitter(TwitterSource)
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(GraphQLObject, Debug, Serialize, Deserialize)]
 pub struct RssSource {
     pub title: String,
     pub xml_url: String,
@@ -45,7 +45,7 @@ impl RssSource {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(GraphQLObject, Debug, Serialize, Deserialize)]
 pub struct TwitterSource {
     pub hashtag: Option<String>,
 }
@@ -132,22 +132,6 @@ graphql_object!(Source: Query as "Source" |&self| {
 
     field updated() -> String as "updated" {
         format!("{}", self.updated)
-    }
-});
-
-graphql_object!(RssSource: Query as "RssSource" |&self| {
-    description: "RssSource"
-
-    field title() -> &String as "title" {
-        &self.title
-    }
-
-    field xml_url() -> &String as "xml_url" {
-        &self.xml_url
-    }
-
-    field html_url() -> &String as "html_url" {
-        &self.html_url
     }
 });
 

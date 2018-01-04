@@ -15,7 +15,7 @@ use mindstream::sources::Source;
 use mindstream::mercury::ReadableData;
 use pg::{Insertable, PgDatabase};
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(GraphQLObject, Serialize, Deserialize, Debug, Clone)]
 pub struct Rss {
     pub id:          String,
     pub title:       Option<String>,
@@ -74,110 +74,6 @@ impl Feed {
         }
     }
 }
-
-graphql_object!(Rss: Query as "Rss" |&self| {
-    description: "Rss"
-
-    field id() -> &String as "id" {
-        &self.id
-    }
-
-    field title() -> &Option<String> as "title" {
-        &self.title
-    }
-
-    field content() -> &Option<String> as "content" {
-        &self.content
-    }
-
-    field summary() -> &Option<String> as "summary" {
-        &self.summary
-    }
-
-    field author() -> &Option<String> as "author" {
-        &self.author
-    }
-
-    field published() -> &String as "published" {
-        &self.published
-    }
-
-    field updated() -> &Option<String> as "updated" {
-        &self.updated
-    }
-
-    field url() -> &Option<String> as "url" {
-        &self.alternate
-    }
-
-    field keywords() -> &Vec<String> as "keywords" {
-        &self.keywords
-    }
-
-    field enclosure() -> &Option<String> as "enclosure" {
-        &self.enclosure
-    }
-
-    field fingerprint() -> &String as "fingerprint" {
-        &self.fingerprint
-    }
-});
-
-graphql_object!(ReadableData: Query as "ReadableData" |&self| {
-    description: "ReadableData"
-
-    field url() -> &String as "url" {
-        &self.url
-    }
-
-    field domain() -> &Option<String> as "domain" {
-        &self.domain
-    }
-
-    field title() -> &Option<String> as "title" {
-        &self.title
-    }
-
-    field content() -> &Option<String> as "content" {
-        &self.content
-    }
-
-    field date_published() -> &Option<String> as "date_published" {
-        &self.date_published
-    }
-
-    field lead_image_url() -> &Option<String> as "lead_image_url" {
-        &self.lead_image_url
-    }
-
-    field dek() -> &Option<String> as "dek" {
-        &self.dek
-    }
-
-    field excerpt() -> &Option<String> as "excerpt" {
-        &self.excerpt
-    }
-
-    field word_count() -> &Option<i32> as "word_count" {
-        &self.word_count
-    }
-
-    field direction() -> &Option<String> as "direction" {
-        &self.direction
-    }
-
-    field total_pages() -> &Option<i32> as "total_pages" {
-        &self.total_pages
-    }
-
-    field rendered_pages() -> &Option<i32> as "rendered_pages" {
-        &self.rendered_pages
-    }
-
-    field next_page_url() -> &Option<String> as "next_page_url" {
-        &self.next_page_url
-    }
-});
 
 graphql_object!(Feed: Query as "Feed" |&self| {
     description: "Feed"

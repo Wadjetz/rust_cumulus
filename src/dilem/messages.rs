@@ -7,12 +7,11 @@ use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 
 use errors::*;
-use graphql::query::Query;
 use users::User;
 use dilem::conversations::{Conversation, find_conversation, is_user_belong_to_conversation};
 use pg::{Insertable, PgDatabase};
 
-#[derive(Debug)]
+#[derive(GraphQLObject, Debug)]
 pub struct Message {
     pub uuid: Uuid,
     pub content: String,
@@ -34,34 +33,6 @@ impl Message {
         }
     }
 }
-
-graphql_object!(Message: Query as "Message" |&self| {
-    description: "Message"
-
-    field uuid() -> Uuid as "uuid" {
-        self.uuid
-    }
-
-    field content() -> &String as "content" {
-        &self.content
-    }
-
-    field created() -> String as "created" {
-        format!("{}", self.created)
-    }
-
-    field updated() -> String as "updated" {
-        format!("{}", self.updated)
-    }
-
-    field conversation_uuid() -> Uuid as "Conversation uuid" {
-        self.conversation_uuid
-    }
-
-    field user_uuid() -> Uuid as "user_uuid" {
-        self.user_uuid
-    }
-});
 
 impl<'a> From<Row<'a>> for Message {
     fn from(row: Row) -> Self {

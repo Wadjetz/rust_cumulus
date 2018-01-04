@@ -8,12 +8,11 @@ use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 
 use errors::*;
-use graphql::query::Query;
 use users::{User, find_user_by_uuid};
 use dilem::conversations_users::ConversationUser;
 use pg::{Insertable, PgDatabase};
 
-#[derive(Debug)]
+#[derive(GraphQLObject, Debug)]
 pub struct Conversation {
     pub uuid: Uuid,
     pub level: i32,
@@ -31,26 +30,6 @@ impl Conversation {
         }
     }
 }
-
-graphql_object!(Conversation: Query as "Conversation" |&self| {
-    description: "Conversation"
-
-    field uuid() -> Uuid as "uuid" {
-        self.uuid
-    }
-
-    field level() -> i32 as "level" {
-        self.level
-    }
-
-    field created() -> String as "created" {
-        format!("{}", self.created)
-    }
-
-    field updated() -> String as "updated" {
-        format!("{}", self.updated)
-    }
-});
 
 impl<'a> From<Row<'a>> for Conversation {
     fn from(row: Row) -> Self {

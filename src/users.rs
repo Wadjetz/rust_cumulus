@@ -11,12 +11,11 @@ use validator::Validate;
 use config;
 use errors::*;
 use token;
-use graphql::query::Query;
 use graphql::auth_query::AuthQuery;
 use graphql::auth_mutation::AuthMutation;
 use pg::{Insertable, PgDatabase};
 
-#[derive(Debug, Validate)]
+#[derive(GraphQLObject, Debug, Validate)]
 pub struct User {
     pub uuid: Uuid,
     #[validate(length(min = "1"))]
@@ -51,30 +50,6 @@ pub fn hash_password(password: &str) -> Result<String> {
 pub fn verify_password(password: &str, hashed_password: &str) -> Result<bool> {
     Ok(verify(password, hashed_password)?)
 }
-
-graphql_object!(User: Query as "User" |&self| {
-    description: "User"
-
-    field uuid() -> Uuid as "uuid" {
-        self.uuid
-    }
-
-    field email() -> &String as "email" {
-        &self.email
-    }
-
-    field login() -> &String as "login" {
-        &self.login
-    }
-
-    field created() -> String as "created" {
-        format!("{}", self.created)
-    }
-
-    field updated() -> String as "updated" {
-        format!("{}", self.updated)
-    }
-});
 
 impl<'a> From<Row<'a>> for User {
     fn from(row: Row) -> Self {
