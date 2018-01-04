@@ -26,7 +26,7 @@ pub struct File {
     pub user_uuid: Uuid,
 }
 
-#[derive(Debug, ToSql, FromSql)]
+#[derive(Debug, ToSql, FromSql, GraphQLEnum)]
 #[postgres(name = "filetype")]
 pub enum FileType {
     File,
@@ -70,11 +70,6 @@ fn path_learning_test() {
     assert_eq!(path2.file_name().and_then(|n| n.to_str()), Some("test.txt"));
     assert_eq!(path3.file_name().and_then(|n| n.to_str()), Some("toto"));
 }
-
-graphql_enum!(FileType {
-    FileType::File => "File",
-    FileType::Directory => "Directory",
-});
 
 graphql_object!(File: Query as "File" |&self| {
     description: "A file"

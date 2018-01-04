@@ -7,10 +7,11 @@ authors = ["Wadjetz <egor.neon@gmail.com>"]
 #lto = true # Binary size optiomisation, but realy longuer compile time
 
 [dependencies]
-rocket = "0.3.3"
-rocket_codegen = "0.3.3"
-juniper = { git = "https://github.com/graphql-rust/juniper", features = ["uuid"] }
-juniper_rocket = { git = "https://github.com/graphql-rust/juniper_rocket" }
+rocket = "0.3.5"
+rocket_codegen = "0.3.5"
+juniper = { version = "0.9.1", features = ["uuid"] }
+juniper_codegen = "0.9.1"
+juniper_rocket = { version = "0.1.1" }
 
 geo = "0.6.3"
 

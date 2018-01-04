@@ -15,7 +15,7 @@ use mindstream::rss::fetch_feeds_channel;
 use graphql::query::Query;
 use pg::{Insertable, PgDatabase};
 
-#[derive(Debug, ToSql, FromSql)]
+#[derive(Debug, ToSql, FromSql, GraphQLEnum)]
 #[postgres(name = "sourcetype")]
 pub enum SourceType {
     Rss,
@@ -103,11 +103,6 @@ impl Source {
         }
     }
 }
-
-graphql_enum!(SourceType {
-    SourceType::Rss => "Rss",
-    SourceType::Twitter => "Twitter",
-});
 
 graphql_object!(Source: Query as "Source" |&self| {
     description: "Source"

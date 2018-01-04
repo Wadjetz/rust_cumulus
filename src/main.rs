@@ -35,6 +35,8 @@ extern crate rocket;
 extern crate url;
 #[macro_use]
 extern crate juniper;
+#[macro_use]
+extern crate juniper_codegen;
 extern crate juniper_rocket;
 extern crate geo;
 #[macro_use] 
