@@ -13,7 +13,7 @@ use url::Url;
 use errors::*;
 use mindstream::rss::fetch_feeds_channel;
 use graphql::query::Query;
-use pg::{Insertable, PgDatabase};
+use pg::{PgInsertable, PgDatabase};
 
 #[derive(Debug, ToSql, FromSql, GraphQLEnum)]
 #[postgres(name = "sourcetype")]
@@ -148,7 +148,7 @@ impl<'a> From<Row<'a>> for Source {
     }
 }
 
-impl Insertable for Source {
+impl PgInsertable for Source {
     fn insert_query(&self) -> String {
         r#"
             INSERT INTO sources (uuid, source_type, data, error, created, updated)

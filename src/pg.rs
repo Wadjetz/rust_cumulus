@@ -1,4 +1,4 @@
-use r2d2::{ Pool, Config };
+use r2d2::Pool;
 use r2d2_postgres::{TlsMode, PostgresConnectionManager};
 use r2d2::PooledConnection;
 use postgres::rows::Row;
@@ -12,16 +12,51 @@ use std::ops::Deref;
 use config;
 use errors::*;
 
+use diesel::PgConnection;
+use r2d2_diesel::ConnectionManager;
+
+type DieselPool = Pool<ConnectionManager<PgConnection>>;
+
+pub struct Diesel(pub PooledConnection<ConnectionManager<PgConnection>>);
+
+pub fn create_diesel_pool(app_config: &config::Config) -> DieselPool {
+    let database_url = app_config.database_url.clone();
+    let manager = ConnectionManager::<PgConnection>::new(database_url);
+    Pool::builder().build(manager).expect("Failed to create pool")
+}
+
+impl<'a, 'r> FromRequest<'a, 'r> for Diesel {
+    type Error = ();
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<Diesel, ()> {
+        let pool = request.guard::<State<DieselPool>>()?;
+        match pool.get() {
+            Ok(conn) => Outcome::Success(Diesel(conn)),
+            Err(_) => Outcome::Failure((Status::ServiceUnavailable, ()))
+        }
+    }
+}
+
+impl Deref for Diesel {
+    type Target = PgConnection;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+
+
+
 pub struct DbConn(pub PooledConnection<PostgresConnectionManager>);
 
 pub fn create_db_pool(app_config: &config::Config) -> Pool<PostgresConnectionManager> {
     let database_url = app_config.database_url.clone();
-    let config = Config::default();
     let manager = PostgresConnectionManager::new(database_url, TlsMode::None).expect("Create PostgresConnectionManager error");
-    Pool::new(config, manager).expect("Failed to create pool")
+    Pool::builder().build(manager).expect("Failed to create pool")
 }
 
-pub trait Insertable {
+pub trait PgInsertable {
     fn insert_query(&self) -> String;
     fn insert_params(&self) -> Box<[&ToSql]>;
 }
@@ -40,7 +75,7 @@ impl PgDatabase {
         Ok(PgDatabase::new(connection))
     }
 
-    pub fn insert<E>(&self, entity: &E) -> Result<u64> where E: Insertable {
+    pub fn insert<E>(&self, entity: &E) -> Result<u64> where E: PgInsertable {
         match self.connection.execute(&entity.insert_query(), &entity.insert_params()) {
             Ok(0) => Err(ErrorKind::NotInserted.into()),
             Ok(i) => Ok(i),

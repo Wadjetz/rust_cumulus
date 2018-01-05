@@ -13,7 +13,7 @@ use errors::*;
 use graphql::query::Query;
 use mindstream::sources::Source;
 use mindstream::mercury::ReadableData;
-use pg::{Insertable, PgDatabase};
+use pg::{PgInsertable, PgDatabase};
 
 #[derive(GraphQLObject, Serialize, Deserialize, Debug, Clone)]
 pub struct Rss {
@@ -127,7 +127,7 @@ impl<'a> From<Row<'a>> for Feed {
     }
 }
 
-impl Insertable for Feed {
+impl PgInsertable for Feed {
     fn insert_query(&self) -> String {
         r#"
             INSERT INTO feeds (uuid, url, rss, readable, twitter, created, updated, source_uuid)

@@ -11,7 +11,7 @@ use rocket::Data;
 use errors::*;
 use token::AuthData;
 use graphql::query::Query;
-use pg::{Insertable, PgDatabase};
+use pg::{PgInsertable, PgDatabase};
 use users::User;
 use cloud::file_system;
 
@@ -117,7 +117,7 @@ impl<'a> From<Row<'a>> for File {
     }
 }
 
-impl Insertable for File {
+impl PgInsertable for File {
     fn insert_query(&self) -> String {
         r#"
             INSERT INTO files (uuid, hash, name, location, file_type, size, user_uuid)

@@ -9,7 +9,7 @@ use graphql::query::Query;
 use users::User;
 use mindstream::sources::Source;
 use mindstream::users_feeds::Reaction;
-use pg::{Insertable, PgDatabase};
+use pg::{PgInsertable, PgDatabase};
 
 #[derive(Debug)]
 pub struct UserSource {
@@ -39,7 +39,7 @@ impl<'a> From<Row<'a>> for UserSource {
     }
 }
 
-impl Insertable for UserSource {
+impl PgInsertable for UserSource {
     fn insert_query(&self) -> String {
         r#"
             INSERT INTO users_sources (uuid, user_uuid, source_uuid) VALUES ($1::uuid, $2::uuid, $3::uuid)

@@ -8,14 +8,17 @@ use graphql::auth_query::AuthQuery;
 use graphql::mutation::Mutation;
 use mindstream::sources::{Source, find_sources_resolver};
 use users::{auth_resolver, login_resolver};
+use diesel::PgConnection;
+use r2d2_diesel::ConnectionManager;
 
 pub struct Query {
     pub connection: Pool<PostgresConnectionManager>,
+    pub diesel_pool: Pool<ConnectionManager<PgConnection>>,
 }
 
 impl Query {
-    pub fn new(connection: Pool<PostgresConnectionManager>) -> Self {
-        Query { connection }
+    pub fn new(connection: Pool<PostgresConnectionManager>, diesel_pool: Pool<ConnectionManager<PgConnection>>) -> Self {
+        Query { connection, diesel_pool }
     }
 }
 

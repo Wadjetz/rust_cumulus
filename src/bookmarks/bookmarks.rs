@@ -5,22 +5,41 @@ use postgres::rows::Row;
 use postgres::types::ToSql;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
+use diesel::PgConnection;
 
 use errors::*;
 use users::User;
-use pg::{Insertable, PgDatabase};
+use pg::{PgInsertable, PgDatabase};
 
-#[derive(GraphQLObject, Debug)]
+use diesel;
+use diesel::prelude::*;
+use schema::diesel_bookmarks;
+
+#[derive(Debug, GraphQLObject, Deserialize, Queryable, Insertable)]
+#[table_name="diesel_bookmarks"]
 pub struct Bookmark {
     pub uuid: Uuid,
     pub url: String,
     pub title: String,
     pub description: Option<String>,
-    pub path: String,
+    pub path: Option<String>,
     pub created: NaiveDateTime,
     pub updated: NaiveDateTime,
     pub user_uuid: Uuid,
 }
+pub fn diesel_find_bookmarks(connection: &PgConnection) -> Result<Vec<Bookmark>> {
+    use schema::diesel_bookmarks::dsl::*;
+    Ok(diesel_bookmarks.filter(url.eq("lol"))
+        .limit(5)
+        .load::<Bookmark>(&*connection)?)
+}
+pub fn diesel_insert_bookmark(connection: &PgConnection, bookmark: &Bookmark) -> Result<Bookmark> {
+    Ok(diesel::insert_into(diesel_bookmarks::table)
+        .values(bookmark)
+        .get_result(&*connection)?)
+}
+
+
 impl Bookmark {
     pub fn new(url: String, title: String, description: Option<String>, path: String, user_uuid: Uuid) -> Self {
         Bookmark {
@@ -28,7 +47,7 @@ impl Bookmark {
             url,
             title,
             description,
-            path,
+            path: Some(path),
             created: Utc::now().naive_utc(),
             updated: Utc::now().naive_utc(),
             user_uuid
@@ -51,7 +70,7 @@ impl<'a> From<Row<'a>> for Bookmark {
     }
 }
 
-impl Insertable for Bookmark {
+impl PgInsertable for Bookmark {
     fn insert_query(&self) -> String {
         r#"
             INSERT INTO bookmarks (uuid, title, url, description, path, created, updated, user_uuid)

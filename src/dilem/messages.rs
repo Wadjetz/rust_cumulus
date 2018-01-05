@@ -9,7 +9,7 @@ use r2d2_postgres::PostgresConnectionManager;
 use errors::*;
 use users::User;
 use dilem::conversations::{Conversation, find_conversation, is_user_belong_to_conversation};
-use pg::{Insertable, PgDatabase};
+use pg::{PgInsertable, PgDatabase};
 
 #[derive(GraphQLObject, Debug)]
 pub struct Message {
@@ -47,7 +47,7 @@ impl<'a> From<Row<'a>> for Message {
     }
 }
 
-impl Insertable for Message {
+impl PgInsertable for Message {
     fn insert_query(&self) -> String {
         r#"
             INSERT INTO messages (uuid, content, created, updated, conversation_uuid, user_uuid)

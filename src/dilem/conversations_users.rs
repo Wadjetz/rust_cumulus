@@ -2,7 +2,7 @@ use uuid::Uuid;
 use postgres::rows::Row;
 use postgres::types::ToSql;
 
-use pg::Insertable;
+use pg::PgInsertable;
 
 #[derive(Debug)]
 pub struct ConversationUser {
@@ -31,7 +31,7 @@ impl<'a> From<Row<'a>> for ConversationUser {
     }
 }
 
-impl Insertable for ConversationUser {
+impl PgInsertable for ConversationUser {
     fn insert_query(&self) -> String {
         r#"
             INSERT INTO conversations_users (uuid, user_uuid, conversation_uuid) VALUES ($1::uuid, $2::uuid, $3::uuid)

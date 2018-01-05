@@ -7,7 +7,7 @@ use postgres::types::ToSql;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 
-use pg::{Insertable, PgDatabase};
+use pg::{PgInsertable, PgDatabase};
 use users::User;
 use mindstream::feeds::Feed;
 use mindstream::sources::{Source, find_source_by_uuid};
@@ -61,7 +61,7 @@ impl<'a> From<Row<'a>> for UserFeed {
     }
 }
 
-impl Insertable for UserFeed {
+impl PgInsertable for UserFeed {
     fn insert_query(&self) -> String {
         r#"
             INSERT INTO users_feeds (uuid, reaction, user_uuid, feed_uuid, created, updated) VALUES ($1::uuid, $2, $3::uuid, $4::uuid, $5, $6)

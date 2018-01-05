@@ -24,6 +24,9 @@ extern crate postgres;
 extern crate postgres_derive;
 extern crate r2d2;
 extern crate r2d2_postgres;
+#[macro_use]
+extern crate diesel;
+extern crate r2d2_diesel;
 extern crate strum;
 #[macro_use]
 extern crate strum_macros;
@@ -32,6 +35,7 @@ extern crate feed_rs;
 extern crate hyper;
 extern crate reqwest;
 extern crate rocket;
+extern crate rocket_contrib;
 extern crate url;
 #[macro_use]
 extern crate juniper;
@@ -57,6 +61,7 @@ mod server;
 mod routes;
 mod cloud;
 mod dilem;
+pub mod schema;
 
 fn main() {
     server::run();

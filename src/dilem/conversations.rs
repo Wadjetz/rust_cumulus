@@ -10,7 +10,7 @@ use r2d2_postgres::PostgresConnectionManager;
 use errors::*;
 use users::{User, find_user_by_uuid};
 use dilem::conversations_users::ConversationUser;
-use pg::{Insertable, PgDatabase};
+use pg::{PgInsertable, PgDatabase};
 
 #[derive(GraphQLObject, Debug)]
 pub struct Conversation {
@@ -42,7 +42,7 @@ impl<'a> From<Row<'a>> for Conversation {
     }
 }
 
-impl Insertable for Conversation {
+impl PgInsertable for Conversation {
     fn insert_query(&self) -> String {
         r#"
             INSERT INTO conversations (uuid, level, created, updated)

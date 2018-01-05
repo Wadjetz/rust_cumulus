@@ -13,7 +13,7 @@ use errors::*;
 use token;
 use graphql::auth_query::AuthQuery;
 use graphql::auth_mutation::AuthMutation;
-use pg::{Insertable, PgDatabase};
+use pg::{PgInsertable, PgDatabase};
 
 #[derive(GraphQLObject, Debug, Validate)]
 pub struct User {
@@ -64,7 +64,7 @@ impl<'a> From<Row<'a>> for User {
     }
 }
 
-impl Insertable for User {
+impl PgInsertable for User {
     fn insert_query(&self) -> String {
         r#"
             INSERT INTO users (uuid, login, email, password, created, updated)
