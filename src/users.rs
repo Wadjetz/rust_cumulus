@@ -15,7 +15,7 @@ use graphql::auth_query::AuthQuery;
 use graphql::auth_mutation::AuthMutation;
 use pg::{Insertable, PgDatabase};
 
-#[derive(GraphQLObject, Debug, Validate)]
+#[derive(Debug, Serialize, Deserialize, GraphQLObject, Validate)]
 pub struct User {
     pub uuid: Uuid,
     #[validate(length(min = "1"))]
@@ -92,6 +92,11 @@ fn find_user_by_email(pg: &PgDatabase, email: &str) -> Result<Option<User>> {
 pub fn find_user_by_uuid(pg: &PgDatabase, uuid: &Uuid) -> Result<Option<User>> {
     let query = r#"SELECT * FROM users WHERE uuid = $1::uuid;"#;
     Ok(pg.find_one::<User>(query, &[&uuid])?)
+}
+
+pub fn find_all(pg: &PgDatabase) -> Result<Vec<User>> {
+    let find_query = r#"SELECT * FROM users;"#;
+    Ok(pg.find(find_query, &[])?)
 }
 
 pub fn login_resolver(pool: Pool<PostgresConnectionManager>, email: String, password: String) -> Result<String> {

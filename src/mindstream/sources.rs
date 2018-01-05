@@ -15,14 +15,14 @@ use mindstream::rss::fetch_feeds_channel;
 use graphql::query::Query;
 use pg::{Insertable, PgDatabase};
 
-#[derive(Debug, ToSql, FromSql, GraphQLEnum)]
+#[derive(Debug, Serialize, Deserialize, ToSql, FromSql, GraphQLEnum)]
 #[postgres(name = "sourcetype")]
 pub enum SourceType {
     Rss,
     Twitter,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum SourceOption {
     Rss(RssSource),
     Twitter(TwitterSource)
@@ -58,7 +58,7 @@ impl TwitterSource {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Source {
     pub uuid: Uuid,
     pub source_type: SourceType,
@@ -200,6 +200,12 @@ pub fn find_sources_resolver(pool: Pool<PostgresConnectionManager>, limit: i32, 
     let pg = PgDatabase::from_pool(pool)?;
     let find_query = r#"SELECT * FROM sources LIMIT $1::int OFFSET $2::int;"#;
     let sources = pg.find(find_query, &[&limit, &offset])?;
+    Ok(sources)
+}
+
+pub fn find_all(pg: &PgDatabase) -> Result<Vec<Source>> {
+    let find_query = r#"SELECT * FROM sources;"#;
+    let sources = pg.find(find_query, &[])?;
     Ok(sources)
 }
 

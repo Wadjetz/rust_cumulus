@@ -13,7 +13,7 @@ use mindstream::feeds::Feed;
 use mindstream::sources::{Source, find_source_by_uuid};
 use errors::*;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct UserFeed {
     pub uuid: Uuid,
     pub reaction: Reaction,
@@ -23,7 +23,7 @@ pub struct UserFeed {
     pub updated: NaiveDateTime,
 }
 
-#[derive(Debug, EnumString, ToString, ToSql, FromSql)]
+#[derive(Debug, Serialize, Deserialize, EnumString, ToString, ToSql, FromSql)]
 #[postgres(name = "reaction")]
 pub enum Reaction {
     Unreaded,
@@ -151,4 +151,9 @@ pub fn feeds_by_reaction_resolver(pool: Pool<PostgresConnectionManager>, reactio
         LIMIT $3::int OFFSET $4::int;
     "#;
     Ok(pg.find(query, &[&reaction, &user.uuid, &limit, &offset])?)
+}
+
+pub fn find_all(pg: &PgDatabase) -> Result<Vec<UserFeed>> {
+    let query = r#"SELECT * FROM users_feeds;"#;
+    Ok(pg.find(query, &[])?) 
 }

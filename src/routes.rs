@@ -48,3 +48,18 @@ pub fn download(_auth_data: AuthData, conn: DbConn, file_uuid: &RawStr) -> Resul
     download_resolver(conn.into(), file_uuid)
         .map_err(|e| e.description().to_string())
 }
+
+use rocket_contrib::Json;
+use mindstream;
+
+#[get("/export")]
+pub fn export(auth_data: AuthData, conn: DbConn) -> Result<Json, String> {
+    mindstream::export_resolver(conn, auth_data.uuid)
+        .map_err(|e| e.description().to_string())
+}
+
+#[post("/import", data = "<import>")]
+pub fn import(_auth_data: AuthData, conn: DbConn, import: Json<mindstream::Import>) -> Result<String, String> {
+    mindstream::import_resolver(conn, import.0)
+        .map_err(|e| e.description().to_string())
+}

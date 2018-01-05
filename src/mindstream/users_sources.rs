@@ -11,7 +11,7 @@ use mindstream::sources::Source;
 use mindstream::users_feeds::Reaction;
 use pg::{Insertable, PgDatabase};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct UserSource {
     pub uuid: Uuid,
     pub user_uuid: Uuid,
@@ -116,6 +116,11 @@ pub fn total_my_rss_sources_resolver(pool: Pool<PostgresConnectionManager>, user
     "#;
     let total = pg.total(find_rss_query, &[&user.uuid])? as i32;
     Ok(total)
+}
+
+pub fn find_all(pg: &PgDatabase) -> Result<Vec<UserSource>> {
+    let query = r#"SELECT * FROM users_sources;"#;
+    Ok(pg.find(query, &[])?) 
 }
 
 pub fn find_users_by_source(pg: &PgDatabase, source: &Source) -> Result<Vec<User>> {

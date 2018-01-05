@@ -48,7 +48,7 @@ impl From<Entry> for Rss {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Feed {
     pub uuid: Uuid,
     pub url: String,
@@ -167,4 +167,9 @@ pub fn find_resolver(pool: Pool<PostgresConnectionManager>, limit: i32, offset: 
     let pg = PgDatabase::from_pool(pool)?;
     let feeds = find_feed(&pg, limit, offset)?;
     Ok(feeds)
+}
+
+pub fn find_all(pg: &PgDatabase) -> Result<Vec<Feed>> {
+    let find_query = r#"SELECT * FROM feeds;"#;
+    Ok(pg.find(find_query, &[])?)
 }
