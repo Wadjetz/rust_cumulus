@@ -5,7 +5,7 @@ use juniper::{FieldError, FieldResult};
 
 use graphql::query::Query;
 use users::User;
-use bookmarks::bookmarks::{Bookmark, add_bookmark_resolver, diesel_insert_bookmark};
+use bookmarks::bookmarks::{Bookmark, add_bookmark_resolver};
 use cloud::files::File;
 use mindstream::sources::Source;
 use mindstream::users_sources;
@@ -52,10 +52,7 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
        description: Option<String> as "Description",
     ) -> FieldResult<Bookmark> as "Bookmark" {
         let bookmark = Bookmark::new(url, title, description, path, self.user.uuid);
-        diesel_insert_bookmark(&executor.context().diesel_pool.get().unwrap(), &bookmark)
-            .map_err(|e| FieldError::from(&e.description().to_string()))
-        // add_bookmark_resolver(executor.context().connection.clone(), bookmark, &self.user)
-        //     .map_err(|e| FieldError::from(&e.description().to_string()))
+        add_bookmark_resolver(&executor.context().diesel_pool, bookmark, &self.user).map_err(|e| FieldError::from(&e.description().to_string()))
     }
 
     field fallow_source(

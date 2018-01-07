@@ -35,7 +35,7 @@ graphql_object!(Query: Query as "Query" |&self| {
         &executor,
         token: String as "Auth token"
     ) -> FieldResult<AuthQuery> as "Auth" {
-        auth_resolver(executor.context().connection.clone(), token)
+        auth_resolver(&executor.context().diesel_pool, token)
             .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 
@@ -44,7 +44,7 @@ graphql_object!(Query: Query as "Query" |&self| {
         email: String as "Email",
         password: String as "Password"
     ) -> FieldResult<String> as "Token" {
-        login_resolver(executor.context().connection.clone(), email, password)
+        login_resolver(&executor.context().diesel_pool, email, password)
             .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 

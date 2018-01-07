@@ -1,3 +1,4 @@
+/*
 use r2d2_postgres::PostgresConnectionManager;
 use r2d2::PooledConnection;
 
@@ -112,3 +113,4 @@ pub fn run(connection: PooledConnection<PostgresConnectionManager>) -> Result<()
 
     sync(connection, migrations)
 }
+*/

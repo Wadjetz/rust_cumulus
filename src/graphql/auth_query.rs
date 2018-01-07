@@ -38,7 +38,7 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset"
     ) -> FieldResult<Vec<Bookmark>> {
-        bookmarks_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
+        bookmarks_resolver(&executor.context().diesel_pool, limit.unwrap_or(DEFAULT_LIMIT) as i64, offset.unwrap_or(0) as i64, &self.user)
             .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 

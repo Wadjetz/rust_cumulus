@@ -49,8 +49,6 @@ extern crate validator;
 
 mod errors;
 mod pg;
-mod migration;
-mod migrations;
 mod token;
 mod graphql;
 mod config;

@@ -19,5 +19,6 @@ error_chain! {
         Bcrypt(::bcrypt::BcryptError);
         Url(::url::ParseError);
         Diesel(::diesel::result::Error);
+        Validator(::validator::ValidationErrors);
     }
 }

@@ -3,9 +3,7 @@ use bcrypt::{DEFAULT_COST, hash, verify};
 use chrono::NaiveDateTime;
 use chrono::prelude::*;
 use postgres::rows::Row;
-use postgres::types::ToSql;
 use r2d2::Pool;
-use r2d2_postgres::PostgresConnectionManager;
 use validator::Validate;
 
 use config;
@@ -13,9 +11,15 @@ use errors::*;
 use token;
 use graphql::auth_query::AuthQuery;
 use graphql::auth_mutation::AuthMutation;
-use pg::{PgInsertable, PgDatabase};
+use pg::PgDatabase;
+use diesel::PgConnection;
+use r2d2_diesel::ConnectionManager;
+use diesel;
+use schema::users;
+use diesel::prelude::*;
 
-#[derive(GraphQLObject, Debug, Validate)]
+#[derive(Debug, Queryable, Insertable, GraphQLObject, Validate)]
+#[table_name="users"]
 pub struct User {
     pub uuid: Uuid,
     #[validate(length(min = "1"))]
@@ -41,6 +45,20 @@ impl User {
         };
         Ok(user)
     }
+
+    pub fn insert(connection: &PgConnection, user: &User) -> Result<User> {
+        Ok(diesel::insert_into(users::table).values(user).get_result(connection)?)
+    }
+
+    pub fn find_by_email(connection: &PgConnection, searched_email: &str) -> Result<User> {
+        use schema::users::dsl::*;
+        Ok(users.filter(email.eq(searched_email)).first::<User>(&*connection)?)
+    }
+
+    pub fn find_by_uuid(connection: &PgConnection, searched_uuid: &Uuid) -> Result<User> {
+        use schema::users::dsl::*;
+        Ok(users.filter(uuid.eq(searched_uuid)).first::<User>(&*connection)?)
+    }
 }
 
 pub fn hash_password(password: &str) -> Result<String> {
@@ -64,47 +82,29 @@ impl<'a> From<Row<'a>> for User {
     }
 }
 
-impl PgInsertable for User {
-    fn insert_query(&self) -> String {
-        r#"
-            INSERT INTO users (uuid, login, email, password, created, updated)
-            VALUES ($1, $2, $3, $4, $5, $6);
-        "#.to_owned()
-    }
-
-    fn insert_params(&self) -> Box<[&ToSql]> {
-        Box::new([&self.uuid, &self.login, &self.email, &self.password, &self.created, &self.updated])
-    }
-}
-
-pub fn signup_resolver(pool: Pool<PostgresConnectionManager>, user: User) -> Result<String> {
-    let pg = PgDatabase::from_pool(pool)?;
-    pg.insert(&user)?;
+pub fn signup_resolver(pool: &Pool<ConnectionManager<PgConnection>>, user: User) -> Result<String> {
+    let connection = pool.get()?;
+    let _ = user.validate()?;
+    let _ = User::insert(&connection, &user)?;
     let token = token::create_token(user.uuid, user.email, config::CONFIG.secret_key.as_ref())?;
     Ok(token)
 }
 
-fn find_user_by_email(pg: &PgDatabase, email: &str) -> Result<Option<User>> {
-    let query = r#"SELECT * FROM users WHERE email = $1;"#;
-    Ok(pg.find_one::<User>(query, &[&email])?)
-}
-
-pub fn find_user_by_uuid(pg: &PgDatabase, uuid: &Uuid) -> Result<Option<User>> {
-    let query = r#"SELECT * FROM users WHERE uuid = $1::uuid;"#;
-    Ok(pg.find_one::<User>(query, &[&uuid])?)
-}
-
-pub fn login_resolver(pool: Pool<PostgresConnectionManager>, email: String, password: String) -> Result<String> {
-    let pg = PgDatabase::from_pool(pool)?;
-    if let Some(user) = find_user_by_email(&pg, &email)? {
-        if let Ok(true) = verify_password(&password, &user.password) {
-            Ok(token::create_token(user.uuid, email, config::CONFIG.secret_key.as_ref())?)
-        } else {
-            Err(ErrorKind::WrongCredentials.into())
-        }
+pub fn login_resolver(pool: &Pool<ConnectionManager<PgConnection>>, email: String, password: String) -> Result<String> {
+    let connection = pool.get()?;
+    let user = User::find_by_email(&connection, &email)?;
+    if let Ok(true) = verify_password(&password, &user.password) {
+        Ok(token::create_token(user.uuid, email, config::CONFIG.secret_key.as_ref())?)
     } else {
         Err(ErrorKind::WrongCredentials.into())
     }
+}
+
+pub fn auth_resolver<E>(pool: &Pool<ConnectionManager<PgConnection>>, token: String) -> Result<E> where E: From<User> {
+    let connection = pool.get()?;
+    let auth_data = token::decode_auth(&token, config::CONFIG.secret_key.as_ref())?;
+    let user = User::find_by_email(&connection, &auth_data.email)?;
+    Ok(user.into())
 }
 
 impl From<User> for AuthQuery {
@@ -119,12 +119,8 @@ impl From<User> for AuthMutation {
     }
 }
 
-pub fn auth_resolver<E>(pool: Pool<PostgresConnectionManager>, token: String) -> Result<E> where E: From<User> {
-    let pg = PgDatabase::from_pool(pool)?;
-    let auth_data = token::decode_auth(&token, config::CONFIG.secret_key.as_ref())?;
-    if let Some(user) = find_user_by_email(&pg, &auth_data.email)? {
-        Ok(user.into())
-    } else {
-        Err(ErrorKind::WrongCredentials.into())
-    }
+// TODO delete
+pub fn find_user_by_uuid(pg: &PgDatabase, uuid: &Uuid) -> Result<Option<User>> {
+    let query = r#"SELECT * FROM users WHERE uuid = $1::uuid;"#;
+    Ok(pg.find_one::<User>(query, &[&uuid])?)
 }

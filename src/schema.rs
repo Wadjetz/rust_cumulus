@@ -1,5 +1,5 @@
 table! {
-    diesel_bookmarks (uuid) {
+    bookmarks (uuid) {
         uuid -> Uuid,
         url -> Text,
         title -> Text,
@@ -10,3 +10,21 @@ table! {
         user_uuid -> Uuid,
     }
 }
+
+table! {
+    users (uuid) {
+        uuid -> Uuid,
+        login -> Text,
+        email -> Text,
+        password -> Text,
+        created -> Timestamp,
+        updated -> Timestamp,
+    }
+}
+
+joinable!(bookmarks -> users (user_uuid));
+
+allow_tables_to_appear_in_same_query!(
+    bookmarks,
+    users,
+);

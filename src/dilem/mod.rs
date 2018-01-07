@@ -1,7 +1,7 @@
 pub mod messages;
 pub mod conversations;
 pub mod conversations_users;
-
+/*
 pub const CHAT_EVOLUTIONS_UP: &'static str = r#"
     CREATE TABLE conversations (
         uuid UUID PRIMARY KEY,
@@ -64,3 +64,4 @@ pub const PROFILE_EVOLUTION_DOWN: &'static str = r#"
     DROP TYPE "gender";
     DROP TYPE "sexuality";
 "#;
+*/
