@@ -1,17 +1,17 @@
-use std::error::Error;
-use std::path::Path;
+// use std::error::Error;
+// use std::path::Path;
 
 use juniper::{FieldError, FieldResult};
 
 use graphql::query::Query;
 use users::User;
-use bookmarks::bookmarks::{Bookmark, add_bookmark_resolver};
-use cloud::files::File;
+// use bookmarks::bookmarks::{Bookmark, add_bookmark_resolver};
+// use cloud::files::File;
 use mindstream::sources::Source;
 use mindstream::users_sources;
 use mindstream::users_feeds;
-use dilem::conversations;
-use dilem::messages::{Message, send_message_resolver};
+// use dilem::conversations;
+// use dilem::messages::{Message, send_message_resolver};
 
 #[derive(Debug)]
 pub struct AuthMutation {
@@ -30,7 +30,7 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
     field me() -> &User as "User" {
         &self.user
     }
-
+    /*
     field create_directory(
         &executor,
         name: String as "name",
@@ -54,7 +54,7 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
         let bookmark = Bookmark::new(url, title, description, path, self.user.uuid);
         add_bookmark_resolver(&executor.context().diesel_pool, bookmark, &self.user).map_err(|e| FieldError::from(&e.description().to_string()))
     }
-
+    */
     field fallow_source(
         &executor,
         source_uuid: String as "source_uuid",
@@ -73,6 +73,7 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
             .map_err(|e| FieldError::from(e.to_string()))
     }
 
+    /*
     field send_message(
         &executor,
         content: String as "Message content",
@@ -91,4 +92,5 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
             .map(|_| String::from("ok"))
             .map_err(|e| FieldError::from(e.to_string()))
     }
+    */
 });

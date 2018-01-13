@@ -11,7 +11,6 @@ use errors::*;
 use token;
 use graphql::auth_query::AuthQuery;
 use graphql::auth_mutation::AuthMutation;
-use pg::PgDatabase;
 use diesel::PgConnection;
 use r2d2_diesel::ConnectionManager;
 use diesel;
@@ -117,10 +116,4 @@ impl From<User> for AuthMutation {
     fn from(user: User) -> Self {
         AuthMutation::new(user)
     }
-}
-
-// TODO delete
-pub fn find_user_by_uuid(pg: &PgDatabase, uuid: &Uuid) -> Result<Option<User>> {
-    let query = r#"SELECT * FROM users WHERE uuid = $1::uuid;"#;
-    Ok(pg.find_one::<User>(query, &[&uuid])?)
 }

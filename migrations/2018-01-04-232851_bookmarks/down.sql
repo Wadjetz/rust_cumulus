@@ -2,3 +2,6 @@
 
 DROP TABLE bookmarks;
 DROP TABLE users;
+DROP TABLE conversations;
+
+DROP TYPE "sourcetype";

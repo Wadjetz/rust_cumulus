@@ -8,7 +8,7 @@ use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 
 use errors::*;
-use users::{User, find_user_by_uuid};
+use users::User;
 use dilem::conversations_users::ConversationUser;
 use pg::{PgInsertable, PgDatabase};
 

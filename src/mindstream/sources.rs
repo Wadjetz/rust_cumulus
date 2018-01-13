@@ -10,23 +10,14 @@ use serde_json::Value;
 use serde_json;
 use url::Url;
 
+use mindstream::models::sourcetype::SourceType;
+use mindstream::models::source_option::SourceOption;
+use schema::sources;
+
 use errors::*;
 use mindstream::rss::fetch_feeds_channel;
 use graphql::query::Query;
 use pg::{PgInsertable, PgDatabase};
-
-#[derive(Debug, ToSql, FromSql, GraphQLEnum)]
-#[postgres(name = "sourcetype")]
-pub enum SourceType {
-    Rss,
-    Twitter,
-}
-
-#[derive(Debug)]
-pub enum SourceOption {
-    Rss(RssSource),
-    Twitter(TwitterSource)
-}
 
 #[derive(GraphQLObject, Debug, Serialize, Deserialize)]
 pub struct RssSource {
@@ -58,7 +49,8 @@ impl TwitterSource {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
+#[table_name="sources"]
 pub struct Source {
     pub uuid: Uuid,
     pub source_type: SourceType,

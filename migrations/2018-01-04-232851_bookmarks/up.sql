@@ -9,6 +9,19 @@ CREATE TABLE users (
     updated TIMESTAMP NOT NULL
 );
 
+CREATE TYPE SourceType AS ENUM (
+    'Rss', 'Twitter'
+);
+
+CREATE TABLE sources (
+    uuid UUID PRIMARY KEY,
+    source_type SourceType NOT NULL,
+    data JSONB,
+    error TEXT,
+    created TIMESTAMP,
+    updated TIMESTAMP
+);
+
 CREATE TABLE bookmarks (
     uuid UUID PRIMARY KEY,
     url TEXT NOT NULL,
@@ -18,4 +31,11 @@ CREATE TABLE bookmarks (
     created TIMESTAMP NOT NULL,
     updated TIMESTAMP NOT NULL,
     user_uuid UUID NOT NULL REFERENCES users(uuid)
+);
+
+CREATE TABLE conversations (
+    uuid UUID PRIMARY KEY,
+    level INT NOT NULL,
+    created TIMESTAMP NOT NULL,
+    updated TIMESTAMP NOT NULL
 );

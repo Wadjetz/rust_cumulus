@@ -34,8 +34,8 @@ pub fn run() {
             routes::files,
             routes::graphiql,
             routes::post_graphql_handler,
-            routes::upload,
-            routes::download,
+            // routes::upload,
+            // routes::download,
         ])
         .launch();
 }

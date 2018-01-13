@@ -1,3 +1,4 @@
+pub mod models;
 pub mod feeds;
 pub mod sources;
 pub mod users_feeds;

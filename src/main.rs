@@ -54,11 +54,11 @@ mod graphql;
 mod config;
 mod mindstream;
 mod users;
-mod bookmarks;
+// mod bookmarks;
 mod server;
 mod routes;
-mod cloud;
-mod dilem;
+// mod cloud;
+// mod dilem;
 pub mod schema;
 
 fn main() {
