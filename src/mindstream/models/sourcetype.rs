@@ -68,4 +68,3 @@ mod impls_for_insert_and_query {
         }
     }
 }
-

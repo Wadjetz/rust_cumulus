@@ -6,7 +6,8 @@ use r2d2::Pool;
 
 use graphql::auth_query::AuthQuery;
 use graphql::mutation::Mutation;
-use mindstream::sources::{Source, find_sources_resolver};
+use mindstream::sources::find_sources_resolver;
+use mindstream::models::source::Source;
 use users::{auth_resolver, login_resolver};
 use diesel::PgConnection;
 use r2d2_diesel::ConnectionManager;

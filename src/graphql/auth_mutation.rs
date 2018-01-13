@@ -7,7 +7,7 @@ use graphql::query::Query;
 use users::User;
 // use bookmarks::bookmarks::{Bookmark, add_bookmark_resolver};
 // use cloud::files::File;
-use mindstream::sources::Source;
+use mindstream::models::source::Source;
 use mindstream::users_sources;
 use mindstream::users_feeds;
 // use dilem::conversations;

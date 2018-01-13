@@ -3,7 +3,8 @@ use juniper::{FieldError, FieldResult};
 
 use graphql::query::Query;
 use graphql::auth_mutation::AuthMutation;
-use mindstream::sources::{Source, add_rss_source_resolver};
+use mindstream::sources::add_rss_source_resolver;
+use mindstream::models::source::Source;
 use users::{User, signup_resolver, auth_resolver};
 
 #[derive(Debug)]

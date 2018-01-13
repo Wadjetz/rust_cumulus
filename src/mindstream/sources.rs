@@ -4,128 +4,14 @@ use postgres::types::ToSql;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 use uuid::Uuid;
-use chrono::NaiveDateTime;
-use chrono::prelude::*;
-use serde_json::Value;
-use serde_json;
 use url::Url;
 
-use mindstream::models::sourcetype::SourceType;
-use mindstream::models::source_option::SourceOption;
-use schema::sources;
+use mindstream::models::rss_source::RssSource;
+use mindstream::models::source::Source;
 
 use errors::*;
 use mindstream::rss::fetch_feeds_channel;
-use graphql::query::Query;
 use pg::{PgInsertable, PgDatabase};
-
-#[derive(GraphQLObject, Debug, Serialize, Deserialize)]
-pub struct RssSource {
-    pub title: String,
-    pub xml_url: String,
-    pub html_url: String,
-}
-
-impl RssSource {
-    pub fn new(title: &str, xml_url: &str, html_url: &str) -> Self {
-        RssSource {
-            title: title.to_owned(),
-            xml_url: xml_url.to_owned(),
-            html_url: html_url.to_owned(),
-        }
-    }
-}
-
-#[derive(GraphQLObject, Debug, Serialize, Deserialize)]
-pub struct TwitterSource {
-    pub hashtag: Option<String>,
-}
-
-impl TwitterSource {
-    pub fn new(hashtag: Option<String>) -> Self {
-        TwitterSource {
-            hashtag
-        }
-    }
-}
-
-#[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
-#[table_name="sources"]
-pub struct Source {
-    pub uuid: Uuid,
-    pub source_type: SourceType,
-    pub data: Value,
-    pub error: Option<String>,
-    pub created: NaiveDateTime,
-    pub updated: NaiveDateTime,
-}
-
-impl Source {
-    pub fn options(&self) -> Result<SourceOption> {
-        match self.source_type {
-            SourceType::Rss => {
-                let rss_source = serde_json::from_value::<RssSource>(self.data.clone())?;
-                Ok(SourceOption::Rss(rss_source))
-            },
-            SourceType::Twitter => {
-                let twitter_source = serde_json::from_value::<TwitterSource>(self.data.clone())?;
-                Ok(SourceOption::Twitter(twitter_source))
-            }
-        }
-    }
-
-    pub fn new_rss(rss_source: RssSource) -> Result<Self> {
-        let data = serde_json::to_value(rss_source)?;
-        Ok(Source::new(SourceType::Rss, data))
-    }
-
-    pub fn new_twitter(twitter_source: TwitterSource) -> Result<Self> {
-        let data = serde_json::to_value(twitter_source)?;
-        Ok(Source::new(SourceType::Twitter, data))
-    }
-
-    fn new(source_type: SourceType, data: Value) -> Self {
-        Source {
-            uuid: Uuid::new_v4(),
-            source_type,
-            data,
-            error: None,
-            created: Utc::now().naive_utc(),
-            updated: Utc::now().naive_utc(),
-        }
-    }
-}
-
-graphql_object!(Source: Query as "Source" |&self| {
-    description: "Source"
-
-    field uuid() -> Uuid as "uuid" {
-        self.uuid
-    }
-
-    field source_type() -> &SourceType as "source_type" {
-        &self.source_type
-    }
-
-    field rss_source() -> Option<RssSource> as "rss_source" {
-        match self.source_type {
-            SourceType::Rss => serde_json::from_value::<RssSource>(self.data.clone()).ok(),
-            _ => None
-        }
-    }
-
-    field error() -> &Option<String> as "error" {
-        &self.error
-    }
-
-    field created() -> String as "created" {
-        format!("{}", self.created)
-    }
-
-    field updated() -> String as "updated" {
-        format!("{}", self.updated)
-    }
-});
 
 impl<'a> From<Row<'a>> for Source {
     fn from(row: Row) -> Self {

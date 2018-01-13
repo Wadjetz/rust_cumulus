@@ -10,7 +10,8 @@ use r2d2_postgres::PostgresConnectionManager;
 use pg::{PgInsertable, PgDatabase};
 use users::User;
 use mindstream::feeds::Feed;
-use mindstream::sources::{Source, find_source_by_uuid};
+use mindstream::models::source::Source;
+use mindstream::sources::find_source_by_uuid;
 use errors::*;
 
 #[derive(Debug)]

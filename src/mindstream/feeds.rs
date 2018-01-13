@@ -11,7 +11,7 @@ use feed_rs::entry::Entry;
 
 use errors::*;
 use graphql::query::Query;
-use mindstream::sources::Source;
+use mindstream::models::source::Source;
 use mindstream::mercury::ReadableData;
 use pg::{PgInsertable, PgDatabase};
 
