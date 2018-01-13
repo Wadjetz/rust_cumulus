@@ -16,10 +16,10 @@ CREATE TYPE SourceType AS ENUM (
 CREATE TABLE sources (
     uuid UUID PRIMARY KEY,
     source_type SourceType NOT NULL,
-    data JSONB,
+    data JSONB NOT NULL,
     error TEXT,
-    created TIMESTAMP,
-    updated TIMESTAMP
+    created TIMESTAMP NOT NULL,
+    updated TIMESTAMP NOT NULL
 );
 
 CREATE TABLE bookmarks (

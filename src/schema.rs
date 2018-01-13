@@ -26,10 +26,10 @@ table! {
     sources (uuid) {
         uuid -> Uuid,
         source_type -> SourceTypeMapper,
-        data -> Nullable<Jsonb>,
+        data -> Jsonb,
         error -> Nullable<Text>,
-        created -> Nullable<Timestamp>,
-        updated -> Nullable<Timestamp>,
+        created -> Timestamp,
+        updated -> Timestamp,
     }
 }
 

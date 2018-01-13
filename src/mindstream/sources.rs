@@ -1,17 +1,20 @@
-#![allow(dead_code)]
 use postgres::rows::Row;
-use postgres::types::ToSql;
-use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 use uuid::Uuid;
 use url::Url;
 
 use mindstream::models::rss_source::RssSource;
 use mindstream::models::source::Source;
+use diesel;
+use diesel::prelude::*;
+use diesel::PgConnection;
+use r2d2::Pool;
+use r2d2_diesel::ConnectionManager;
+use schema::sources;
 
 use errors::*;
 use mindstream::rss::fetch_feeds_channel;
-use pg::{PgInsertable, PgDatabase};
+use pg::PgDatabase;
 
 impl<'a> From<Row<'a>> for Source {
     fn from(row: Row) -> Self {
@@ -26,25 +29,19 @@ impl<'a> From<Row<'a>> for Source {
     }
 }
 
-impl PgInsertable for Source {
-    fn insert_query(&self) -> String {
-        r#"
-            INSERT INTO sources (uuid, source_type, data, error, created, updated)
-            VALUES ($1, $2, $3, $4, $5, $6);
-        "#.to_owned()
-    }
-
-    fn insert_params(&self) -> Box<[&ToSql]> {
-        Box::new([&self.uuid, &self.source_type, &self.data, &self.error, &self.created, &self.updated])
-    }
+pub fn insert(connection: &PgConnection, source: &Source) -> Result<Source> {
+    Ok(diesel::insert_into(sources::table)
+            .values(source)
+            .get_result(&*connection)?)
 }
 
-pub fn add_source_resolver(pool: Pool<PostgresConnectionManager>, title: String, xml_url: String, html_url: String) -> Result<Source> {
+pub fn _add_source_resolver(pool: Pool<PostgresConnectionManager>, diesel_pool: &Pool<ConnectionManager<PgConnection>>, title: String, xml_url: String, html_url: String) -> Result<Source> {
     let pg = PgDatabase::from_pool(pool)?;
+    let connection = diesel_pool.get()?;
     let rss_source = RssSource::new(&title, &xml_url, &html_url);
     let source = Source::new_rss(rss_source)?;
     if !source_existe(&pg, &xml_url)? {
-        pg.insert(&source)?;
+        let source = insert(&connection, &source)?;
         Ok(source)
     } else {
         Err(ErrorKind::AlreadyExist.into())
@@ -57,8 +54,9 @@ fn source_existe(pg: &PgDatabase, xml_url: &str) -> Result<bool> {
     Ok(pg.exist(exist_query, &[&json_param])?)
 }
 
-pub fn add_rss_source_resolver(pool: Pool<PostgresConnectionManager>, xml_url: &str) -> Result<Source> {
+pub fn add_rss_source_resolver(pool: Pool<PostgresConnectionManager>, diesel_pool: &Pool<ConnectionManager<PgConnection>>, xml_url: &str) -> Result<Source> {
     Url::parse(xml_url)?;
+    let connection = diesel_pool.get()?;
     let pg = PgDatabase::from_pool(pool)?;
     let maybe_feed = fetch_feeds_channel(xml_url)?;
     let feed = maybe_feed.ok_or_else(|| ErrorKind::NotFound)?;
@@ -67,7 +65,7 @@ pub fn add_rss_source_resolver(pool: Pool<PostgresConnectionManager>, xml_url: &
     let rss_source = RssSource::new(&source_title, xml_url, &html_url);
     let source = Source::new_rss(rss_source)?;
     if !source_existe(&pg, xml_url)? {
-        pg.insert(&source)?;
+        let source = insert(&connection, &source)?;
         Ok(source)
     } else {
         Err(ErrorKind::AlreadyExist.into())

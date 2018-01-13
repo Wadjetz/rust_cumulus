@@ -35,7 +35,7 @@ graphql_object!(Mutation: Query as "Mutation" |&self| {
         &executor,
         xml_url: String as "xml_url",
     ) -> FieldResult<Source> {
-        add_rss_source_resolver(executor.context().connection.clone(), &xml_url)
+        add_rss_source_resolver(executor.context().connection.clone(), &executor.context().diesel_pool, &xml_url)
             .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 });
