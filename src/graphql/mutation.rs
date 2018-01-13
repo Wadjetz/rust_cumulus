@@ -3,7 +3,7 @@ use juniper::{FieldError, FieldResult};
 
 use graphql::query::Query;
 use graphql::auth_mutation::AuthMutation;
-use mindstream::sources::add_rss_source_resolver;
+use mindstream::sources_resolvers;
 use mindstream::models::source::Source;
 use users::{User, signup_resolver, auth_resolver};
 
@@ -35,7 +35,7 @@ graphql_object!(Mutation: Query as "Mutation" |&self| {
         &executor,
         xml_url: String as "xml_url",
     ) -> FieldResult<Source> {
-        add_rss_source_resolver(executor.context().connection.clone(), &executor.context().diesel_pool, &xml_url)
+        sources_resolvers::add_rss_source_resolver(executor.context().connection.clone(), &executor.context().diesel_pool, &xml_url)
             .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 });
