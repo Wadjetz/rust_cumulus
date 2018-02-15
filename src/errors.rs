@@ -4,7 +4,7 @@ error_chain! {
         NotFound
         NotInserted
         WrongCredentials
-        Unauthorized
+        //Unauthorized
     }
 
     foreign_links {

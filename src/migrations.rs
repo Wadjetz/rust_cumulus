@@ -3,7 +3,6 @@ use r2d2::PooledConnection;
 
 use errors::*;
 use migration::{Evolution, sync};
-use dilem;
 
 pub fn run(connection: PooledConnection<PostgresConnectionManager>) -> Result<()> {
     let cumulus_evolutions = Evolution::new("1", r#"
@@ -64,51 +63,17 @@ pub fn run(connection: PooledConnection<PostgresConnectionManager>) -> Result<()
             created TIMESTAMP,
             updated TIMESTAMP
         );
-
-        CREATE TABLE bookmarks (
-            uuid UUID PRIMARY KEY,
-            url TEXT NOT NULL,
-            title TEXT NOT NULL,
-            description TEXT,
-            path TEXT,
-            created TIMESTAMP,
-            updated TIMESTAMP,
-            user_uuid UUID NOT NULL REFERENCES users(uuid)
-        );
-
-        CREATE TYPE FileType AS ENUM (
-            'File', 'Directory'
-        );
-
-        CREATE TABLE files (
-            uuid UUID PRIMARY KEY,
-            hash TEXT,
-            name TEXT NOT NULL,
-            location TEXT NOT NULL,
-            file_type FileType NOT NULL,
-            size BIGINT,
-            user_uuid UUID NOT NULL REFERENCES users(uuid)
-        );
     "#, r#"
         DROP TABLE users_feeds;
         DROP TABLE users_sources;
         DROP TABLE feeds;
         DROP TABLE sources;
-
-        DROP TABLE bookmarks;
-        DROP TABLE files;
-
         DROP TABLE users;
-
-        DROP TYPE "filetype";
         DROP TYPE "sourcetype";
         DROP TYPE "reaction";
     "#);
 
-    let chat_evolutions = Evolution::new("2", dilem::CHAT_EVOLUTIONS_UP, dilem::CHAT_EVOLUTIONS_DOWN);
-
-    let _profile_evolutions = Evolution::new("5", dilem::PROFILE_EVOLUTION_UP, dilem::PROFILE_EVOLUTION_DOWN);
-    let migrations = vec![cumulus_evolutions, chat_evolutions];
+    let migrations = vec![cumulus_evolutions];
 
     sync(connection, migrations)
 }

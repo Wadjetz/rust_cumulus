@@ -52,11 +52,8 @@ mod graphql;
 mod config;
 mod mindstream;
 mod users;
-mod bookmarks;
 mod server;
 mod routes;
-mod cloud;
-mod dilem;
 
 fn main() {
     server::run();

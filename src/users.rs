@@ -89,6 +89,7 @@ fn find_user_by_email(pg: &PgDatabase, email: &str) -> Result<Option<User>> {
     Ok(pg.find_one::<User>(query, &[&email])?)
 }
 
+#[allow(dead_code)]
 pub fn find_user_by_uuid(pg: &PgDatabase, uuid: &Uuid) -> Result<Option<User>> {
     let query = r#"SELECT * FROM users WHERE uuid = $1::uuid;"#;
     Ok(pg.find_one::<User>(query, &[&uuid])?)
