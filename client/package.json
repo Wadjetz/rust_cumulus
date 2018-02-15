@@ -1,7 +1,7 @@
 {
-  "name": "cumulus",
+  "name": "mindstream",
   "version": "0.1.0",
-  "description": "Cumulus Cloud",
+  "description": "Mindstream Rss Reader",
   "main": "main.js",
   "directories": {
     "test": "test"

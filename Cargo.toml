@@ -1,5 +1,5 @@
 [package]
-name = "rust_cumulus"
+name = "mindstream"
 version = "0.1.0"
 authors = ["Wadjetz <egor.neon@gmail.com>"]
 
