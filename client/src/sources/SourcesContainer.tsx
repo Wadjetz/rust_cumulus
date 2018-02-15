@@ -20,7 +20,7 @@ interface DispatchProps {
 
 type Props = SourcesState & DispatchProps
 
-class SourcesContainer extends React.Component<Props, {}> {
+class SourcesContainer extends React.PureComponent<Props> {
     componentWillMount() {
         this.props.onLoadUnfollowedSources()
         this.props.onLoadMySources()

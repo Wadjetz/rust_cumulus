@@ -12,12 +12,11 @@ import HeaderContainer from "../app/HeaderContainer"
 import FeedActions from "./components/FeedActions"
 
 interface DispatchProps {
-    onReaction: (feed: Feed, reaction: Reaction, sourceUuid?: string) => () => void
-    loadUnreadedFeeds: () => void
-    loadUnreadedFeedsBySource: (sourceUuid: string) => void
-
-    onNextFeed: (feed: Feed, sourceUuid: string | undefined) => void
-    onPreviousFeed: (sourceUuid: string | undefined) => void
+    onReaction(feed: Feed, reaction: Reaction, sourceUuid?: string): () => void
+    loadUnreadedFeeds(): void
+    loadUnreadedFeedsBySource(sourceUuid: string): void
+    onNextFeed(feed: Feed, sourceUuid: string | undefined): void
+    onPreviousFeed(sourceUuid: string | undefined): void
 }
 
 interface StateProps {

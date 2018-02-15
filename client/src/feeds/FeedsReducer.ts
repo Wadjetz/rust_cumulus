@@ -1,4 +1,4 @@
-import { Action } from "./FeedsActions"
+import { FeedsAction } from "./FeedsActions"
 
 import { FeedSimple } from "./Feed"
 
@@ -14,7 +14,7 @@ const initState: FeedsState = {
     error: undefined,
 }
 
-const FeedsReducer = (state: FeedsState = initState, action: Action) => {
+const FeedsReducer = (state: FeedsState = initState, action: FeedsAction) => {
     switch (action.type) {
         case "LOAD_FEEDS": return { ...state, loading: true }
         case "LOAD_FEEDS_SUCCESS": return { ...state, feeds: action.feeds, loading: false }

@@ -6,10 +6,10 @@ interface Props {
     value: string
     error?: string
     type: string
-    onChange: (value: string) => void
+    onChange(value: string): void
 }
 
-export default class Input extends React.Component<Props, {}> {
+export default class Input extends React.PureComponent<Props> {
     render() {
         const { label, type, error, value } = this.props
         return (
@@ -21,7 +21,5 @@ export default class Input extends React.Component<Props, {}> {
         )
     }
 
-    onChangeHandler = (value: React.FormEvent<HTMLInputElement>) => {
-        this.props.onChange((value.target as any).value)
-    }
+    onChangeHandler = (event: React.FormEvent<HTMLInputElement>) => this.props.onChange(event.currentTarget.value)
 }

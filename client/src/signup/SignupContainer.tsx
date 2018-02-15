@@ -11,8 +11,8 @@ interface State {
 }
 
 interface DispatchProps {
-    onChange: (field: string, value: string) => void
-    onSubmit: (login: string, email: string, password: string) => void
+    onChange(field: string, value: string): void
+    onSubmit(login: string, email: string, password: string): void
 }
 
 type Props = State & DispatchProps

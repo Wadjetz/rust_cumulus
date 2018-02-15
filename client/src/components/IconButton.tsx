@@ -9,10 +9,10 @@ interface Props {
     loading?: boolean
     disable?: boolean
     type: IconButtonType
-    onClick: () => void
+    onClick(): void
 }
 
-export default class IconButton extends React.Component<Props, {}> {
+export default class IconButton extends React.PureComponent<Props> {
     static defaultProps = {
         loading: false,
         disable: false,
@@ -32,6 +32,7 @@ export default class IconButton extends React.Component<Props, {}> {
     renderIcon = () => {
         switch (this.props.type) {
             case "Add": return <AddIcon className={styles.icon} />
+            default: return <AddIcon className={styles.icon} />
         }
     }
 

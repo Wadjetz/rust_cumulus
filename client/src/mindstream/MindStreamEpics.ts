@@ -14,7 +14,7 @@ export const loadUnreadedFeedsEpic: Epic<MindStreamAction, GlobalState> = (actio
             .catch(loadUnreadedFeedsError)
     )
 
-export const loadUnreadedFeedsBySourceEpic: Epic<any, GlobalState> = (action$, state) => action$.ofType("LOAD_UNREADED_FEEDS_BY_SOURCE")
+export const loadUnreadedFeedsBySourceEpic: Epic<MindStreamAction, GlobalState> = (action$, state) => action$.ofType("LOAD_UNREADED_FEEDS_BY_SOURCE")
     .mergeMap((action: LOAD_UNREADED_FEEDS_BY_SOURCE) =>
         Api.loadUnreadedFeedsBySource(action.sourceUuid)
             .then(loadUnreadedFeedsSuccess)

@@ -6,7 +6,7 @@ interface Props {
     feed: Feed
 }
 
-export default class MindStreamCard extends React.Component<Props, {}> {
+export default class MindStreamCard extends React.PureComponent<Props> {
     render() {
         return (
             <div>

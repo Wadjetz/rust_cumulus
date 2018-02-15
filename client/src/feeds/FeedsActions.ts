@@ -1,6 +1,6 @@
 import { FeedSimple } from "./Feed"
 
-export type Action = LOAD_FEEDS | LOAD_FEEDS_SUCCESS | LOAD_FEEDS_ERROR
+export type FeedsAction = LOAD_FEEDS | LOAD_FEEDS_SUCCESS | LOAD_FEEDS_ERROR
 
 export type LOAD_FEEDS = {
     type: "LOAD_FEEDS"

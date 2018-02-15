@@ -6,7 +6,7 @@ interface Props {
     feed: FeedSimple
 }
 
-export default class FeedCard extends React.Component<Props, {}> {
+export default class FeedCard extends React.PureComponent<Props> {
     render() {
         const { feed } = this.props
         const readable = feed.readable

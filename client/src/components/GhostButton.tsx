@@ -6,10 +6,10 @@ interface Props {
     label: string
     loading?: boolean
     disable?: boolean
-    onClick: () => void
+    onClick(): void
 }
 
-export default class GhostButton extends React.Component<Props, {}> {
+export default class GhostButton extends React.PureComponent<Props> {
     static defaultProps = {
         loading: false,
         disable: false,

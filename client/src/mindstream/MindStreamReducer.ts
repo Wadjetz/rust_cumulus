@@ -45,4 +45,3 @@ const MindStreamReducer = (state: MindStreamState = initState, action: MindStrea
 }
 
 export default MindStreamReducer
-

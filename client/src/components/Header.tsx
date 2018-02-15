@@ -4,7 +4,7 @@ import * as Api from "../Api"
 import MenuIcon from "./icons/MenuIcon"
 
 interface Props {
-    onMenuToggle: (isMenuOpen: boolean) => void
+    onMenuToggle(isMenuOpen: boolean): void
     isMenuOpen?: boolean
 }
 

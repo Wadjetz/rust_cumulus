@@ -6,10 +6,10 @@ import SourcesCard from "../components/SourceCard"
 interface Props {
     sources: Source[]
     mySourcesStats?: SourceStat[]
-    fallowSource?: (source: Source) => void
+    fallowSource?(source: Source): void
 }
 
-export default class SourcesList extends React.Component<Props, {}> {
+export default class SourcesList extends React.PureComponent<Props> {
     render() {
         const { sources, fallowSource, mySourcesStats } = this.props
         return (

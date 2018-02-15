@@ -9,11 +9,11 @@ interface Props {
     password: string
     loading: boolean
     error?: ApiError
-    onChange: (field: string, value: string) => void
-    onSubmit: (email: string, password: string) => void
+    onChange(field: string, value: string): void
+    onSubmit(email: string, password: string): void
 }
 
-export default class LoginForm extends React.Component<Props, {}> {
+export default class LoginForm extends React.PureComponent<Props> {
     render() {
         const { email, password, loading } = this.props
         return (

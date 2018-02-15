@@ -1,6 +1,4 @@
-
 export type Reaction = "Readed" | "ReadLater" | "Viewed" | "Liked" | "Disliked" | "Archived"
-
 
 export interface FeedSimple {
     uuid: string

@@ -3,11 +3,11 @@ import * as React from "react"
 interface Props {
     loading: boolean
     newSourceUrl: string
-    onChange: (field: string, value: string) => void
-    onSubmit: (sourceUrl: string) => void
+    onChange(field: string, value: string): void
+    onSubmit(sourceUrl: string): void
 }
 
-export default class AddSourceForm extends React.Component<Props, {}> {
+export default class AddSourceForm extends React.PureComponent<Props> {
     render() {
         const { newSourceUrl } = this.props
         return (
@@ -35,7 +35,3 @@ export default class AddSourceForm extends React.Component<Props, {}> {
         }
     }
 }
-
-
-
-

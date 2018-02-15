@@ -6,12 +6,12 @@ interface Props {
     feed: Feed
     sourceUuid?: string
     loading: boolean
-    onNextFeed: (feed: Feed, sourceUuid: string | undefined) => void
-    onPreviousFeed: (sourceUuid: string | undefined) => void
-    onReaction: (feed: Feed, reaction: Reaction, sourceUuid?: string) => () => void
+    onNextFeed(feed: Feed, sourceUuid: string | undefined): void
+    onPreviousFeed(sourceUuid: string | undefined): void
+    onReaction(feed: Feed, reaction: Reaction, sourceUuid?: string): () => void
 }
 
-export default class FeedActions extends React.Component<Props, {}> {
+export default class FeedActions extends React.PureComponent<Props> {
     render() {
         const { feed, loading, sourceUuid, onReaction, onNextFeed, onPreviousFeed } = this.props
         return (

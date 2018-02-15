@@ -8,7 +8,7 @@ import FeedsList from "./components/FeedsList"
 import HeaderContainer from "../app/HeaderContainer"
 
 interface DispatchProps {
-    onLoad: () => void
+    onLoad(): void
 }
 
 interface PropsState {
@@ -17,7 +17,7 @@ interface PropsState {
 
 type Props = PropsState & DispatchProps
 
-class FeedsContainer extends React.Component<Props, {}> {
+class FeedsContainer extends React.PureComponent<Props> {
     componentWillMount() {
         this.props.onLoad()
     }

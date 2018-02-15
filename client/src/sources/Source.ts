@@ -1,4 +1,3 @@
-
 export type SourceType = "Rss"
 
 export interface RssSource {
