@@ -14,21 +14,21 @@ export const loadUnreadedFeedsEpic: Epic<MindStreamAction, GlobalState> = (actio
             .catch(loadUnreadedFeedsError)
     )
 
-export const loadUnreadedFeedsBySourceEpic: Epic<MindStreamAction, GlobalState> = (action$, state) => action$.ofType("LOAD_UNREADED_FEEDS_BY_SOURCE")
+export const loadUnreadedFeedsBySourceEpic: Epic<any, GlobalState> = (action$, state) => action$.ofType("LOAD_UNREADED_FEEDS_BY_SOURCE")
     .mergeMap((action: LOAD_UNREADED_FEEDS_BY_SOURCE) =>
         Api.loadUnreadedFeedsBySource(action.sourceUuid)
             .then(loadUnreadedFeedsSuccess)
             .catch(loadUnreadedFeedsError)
     )
 
-export const nextFeedEpic: Epic<MindStreamAction, GlobalState> = (action$, state) => action$.ofType("NEXT_FEED")
+export const nextFeedEpic: Epic<any, GlobalState> = (action$, state) => action$.ofType("NEXT_FEED")
     .mergeMap((action: NEXT_FEED) =>
         Api.feedReaction(action.feed, "Readed")
             .then(readFeedSuccess)
             .catch(readFeedError)
     )
 
-export const reloadUnreadedFeedsEpic: Epic<MindStreamAction, GlobalState> = (action$, state) => action$
+export const reloadUnreadedFeedsEpic: Epic<any, GlobalState> = (action$, state) => action$
     .filter(action => action.type === "READ_FEED_SUCCESS" && state.getState().mindStream.feeds.length === 0)
     .map((action: READ_FEED_SUCCESS) => {
         if (action.sourceUuid) {
@@ -38,7 +38,7 @@ export const reloadUnreadedFeedsEpic: Epic<MindStreamAction, GlobalState> = (act
         }
     })
 
-export const readFeedEpic: Epic<MindStreamAction, GlobalState> = (action$, state) => action$.ofType("READ_FEED")
+export const readFeedEpic: Epic<any, GlobalState> = (action$, state) => action$.ofType("READ_FEED")
     .mergeMap((action: READ_FEED) =>
         Api.feedReaction(action.feed, action.reaction)
             .then(feed => readFeedSuccess(feed, action.sourceUuid))

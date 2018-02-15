@@ -1,14 +1,13 @@
 import * as React from "react"
 import { connect, Dispatch } from "react-redux"
-import { LoginState } from "./LoginReducer"
 import * as LoginActions from "./LoginActions"
 import { GlobalState } from "../app/AppState"
 import LoginForm from "./components/LoginForm"
 import * as styles from "./components/Login.css"
 
 interface Props extends GlobalState {
-    onChange: (field: keyof LoginState) => (value: any) => void
-    onSubmit: (email: string, password: string) => () => void
+    onChange(field: string): (value: string) => void
+    onSubmit(email: string, password: string): () => void
 }
 const LoginContainer = (props: Props) => {
     const { login, onChange, onSubmit } = props

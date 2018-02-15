@@ -34,7 +34,7 @@ const epicMiddleware = createEpicMiddleware(RootEpic)
 const middleware = routerMiddleware(history)
 
 const reducers = combineReducers({
-    app: AppReducer,
+    app: AppReducer as any,
     login: LoginReducer,
     signup: SignupReducer,
     feeds: FeedsReducer,

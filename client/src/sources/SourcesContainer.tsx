@@ -11,11 +11,11 @@ import AddSourceForm from "./components/AddSourceForm"
 import HeaderContainer from "../app/HeaderContainer"
 
 interface DispatchProps {
-    onLoadUnfollowedSources: () => void
-    onLoadMySources: () => void
-    addSourceOnChange: (field: "newSourceUrl", value: string) => void
-    addSourceOnSubmit: (sourceUrl: string) => void,
-    fallowSource: (source: Source) => void
+    onLoadUnfollowedSources(): void
+    onLoadMySources(): void
+    addSourceOnChange(field: string, value: string): void
+    addSourceOnSubmit(sourceUrl: string): void,
+    fallowSource(source: Source): void
 }
 
 type Props = SourcesState & DispatchProps

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-cd client && yarn build && cd ../ && ROCKET_ENV=prod cargo run --release
+cd client && npm run build && cd ../ && ROCKET_ENV=prod cargo run --release
