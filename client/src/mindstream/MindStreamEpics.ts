@@ -24,7 +24,7 @@ export const loadUnreadedFeedsBySourceEpic: Epic<any, GlobalState> = (action$, s
 export const nextFeedEpic: Epic<any, GlobalState> = (action$, state) => action$.ofType("NEXT_FEED")
     .mergeMap((action: NEXT_FEED) =>
         Api.feedReaction(action.feed, "Readed")
-            .then(readFeedSuccess)
+            .then(feed => readFeedSuccess(feed, action.sourceUuid))
             .catch(readFeedError)
     )
 
