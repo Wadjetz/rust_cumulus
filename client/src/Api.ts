@@ -4,9 +4,11 @@ import * as router from "./router"
 
 const BASE_URI = document.location.origin
 const AUTH_TOKEN_STORAGE_KEY = "AUTH_TOKEN_STORAGE_KEY"
+const FEEDS_LIMIT = 15
+const SOURCES_LIMIT = 1000
 
 export interface ApiError {
-    errors: { message: string }[]
+    errors: Array<{ message: string }>
 }
 
 function withToken(): Promise<string> {
@@ -82,7 +84,7 @@ export function loadMySources(): Promise<Source[]> {
     return withToken().then(token => query(`
         query {
             auth(token: "${token}") {
-                mySources(limit: 10000) {
+                mySources(limit: ${SOURCES_LIMIT}) {
                     uuid
                     sourceType
                     rssSource {
@@ -116,7 +118,7 @@ export function loadUnreadedFeeds(): Promise<Feed[]> {
     return withToken().then(token => query(`
         query {
             auth(token: "${token}") {
-                unreadedFeeds(limit: 30) {
+                unreadedFeeds(limit: ${FEEDS_LIMIT}) {
                     uuid
                     url
                     readable {
@@ -142,7 +144,7 @@ export function loadUnreadedFeedsBySource(sourceUuid: string): Promise<Feed[]> {
     return withToken().then(token => query(`
         query {
             auth(token: "${token}") {
-                unreadedFeedsBySource(sourceUuid: "${sourceUuid}", limit: 30) {
+                unreadedFeedsBySource(sourceUuid: "${sourceUuid}", limit: ${FEEDS_LIMIT}) {
                     uuid
                     url
                     readable {

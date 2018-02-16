@@ -21,18 +21,17 @@ const MindStreamReducer = (state: MindStreamState = initState, action: MindStrea
         case "LOAD_UNREADED_FEEDS_SUCCESS": return { ...state, feeds: action.feeds, loading: false }
         case "LOAD_UNREADED_FEEDS_ERROR": return { ...state, loading: false, error: action.error }
         case "READ_FEED": return { ...state, loading: true }
-        case "READ_FEED_SUCCESS": return nextFeedReduce(state, action)
         case "READ_FEED_ERROR": return { ...state, loading: false, error: action.error }
         case "LOAD_UNREADED_FEEDS_BY_SOURCE": return { ...state, loading: true }
         case "LOAD_UNREADED_FEEDS_BY_SOURCE_SUCCESS": return { ...state, feeds: action.feeds, loading: false }
         case "LOAD_UNREADED_FEEDS_BY_SOURCE_ERROR": return { ...state, loading: false, error: action.error }
-        case "NEXT_FEED": return nextFeedReduce(state, action)
+        case "GO_TO_NEXT_FEED": return goToNextFeedReduce(state, action)
         case "PREVIOUS_FEED": return previousFeedReduce(state, action)
         default: return state
     }
 }
 
-function nextFeedReduce(state: MindStreamState, action: MindStreamAction): MindStreamState {
+function goToNextFeedReduce(state: MindStreamState, action: MindStreamAction): MindStreamState {
     const [first, ...rest] = state.feeds
     return { ...state, feeds: rest, previusFeeds: [first, ...state.previusFeeds] }
 }

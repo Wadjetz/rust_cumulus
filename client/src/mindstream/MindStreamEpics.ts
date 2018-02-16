@@ -1,46 +1,62 @@
 import { Epic } from "redux-observable"
+import { Observable } from "rxjs/Observable"
 
-import {
-    MindStreamAction, READ_FEED, READ_FEED_SUCCESS, LOAD_UNREADED_FEEDS_BY_SOURCE, NEXT_FEED, loadUnreadedFeedsSuccess, loadUnreadedFeedsError,
-    readFeedSuccess, readFeedError, loadUnreadedFeeds, loadUnreadedFeedsBySource
-} from "./MindStreamActions"
+import * as MindStreamActions from "./MindStreamActions"
 import { GlobalState } from "../app/AppState"
 import * as Api from "../Api"
 
-export const loadUnreadedFeedsEpic: Epic<MindStreamAction, GlobalState> = (action$, state) => action$.ofType("LOAD_UNREADED_FEEDS")
+export const loadUnreadedFeedsEpic: Epic<MindStreamActions.MindStreamAction, GlobalState> = (action$, state) => action$.ofType("LOAD_UNREADED_FEEDS")
     .mergeMap(action =>
         Api.loadUnreadedFeeds()
-            .then(loadUnreadedFeedsSuccess)
-            .catch(loadUnreadedFeedsError)
+            .then(MindStreamActions.loadUnreadedFeedsSuccess)
+            .catch(MindStreamActions.loadUnreadedFeedsError)
     )
 
-export const loadUnreadedFeedsBySourceEpic: Epic<any, GlobalState> = (action$, state) => action$.ofType("LOAD_UNREADED_FEEDS_BY_SOURCE")
-    .mergeMap((action: LOAD_UNREADED_FEEDS_BY_SOURCE) =>
-        Api.loadUnreadedFeedsBySource(action.sourceUuid)
-            .then(loadUnreadedFeedsSuccess)
-            .catch(loadUnreadedFeedsError)
-    )
+export const loadUnreadedFeedsBySourceEpic: Epic<MindStreamActions.MindStreamAction, GlobalState> = (action$, state) => {
+    return action$
+        .ofType<MindStreamActions.LOAD_UNREADED_FEEDS_BY_SOURCE>("LOAD_UNREADED_FEEDS_BY_SOURCE")
+        .mergeMap(action =>
+            Api.loadUnreadedFeedsBySource(action.sourceUuid)
+                .then(MindStreamActions.loadUnreadedFeedsSuccess)
+                .catch(MindStreamActions.loadUnreadedFeedsError)
+        )
+}
 
-export const nextFeedEpic: Epic<any, GlobalState> = (action$, state) => action$.ofType("NEXT_FEED")
-    .mergeMap((action: NEXT_FEED) =>
-        Api.feedReaction(action.feed, "Readed")
-            .then(feed => readFeedSuccess(feed, action.sourceUuid))
-            .catch(readFeedError)
-    )
+export const nextFeedEpic: Epic<MindStreamActions.MindStreamAction, GlobalState> = (action$, state) => {
+    return action$
+        .ofType<MindStreamActions.NEXT_FEED>("NEXT_FEED")
+        .mergeMap(action =>
+            Api.feedReaction(action.feed, "Readed")
+                .then(feed => MindStreamActions.readFeedSuccess(feed, action.sourceUuid))
+                .catch(MindStreamActions.readFeedError)
+        )
+}
 
-export const reloadUnreadedFeedsEpic: Epic<any, GlobalState> = (action$, state) => action$
-    .filter(action => action.type === "READ_FEED_SUCCESS" && state.getState().mindStream.feeds.length === 0)
-    .map((action: READ_FEED_SUCCESS) => {
-        if (action.sourceUuid) {
-            return loadUnreadedFeedsBySource(action.sourceUuid)
-        } else {
-            return loadUnreadedFeeds()
-        }
-    })
+export const reloadUnreadedFeedsEpic: Epic<MindStreamActions.MindStreamAction, GlobalState> = (action$, state) => {
+    return action$
+        .ofType<MindStreamActions.READ_FEED_SUCCESS>("READ_FEED_SUCCESS")
+        .mergeMap(action => {
+            if (state.getState().mindStream.feeds.length === 0) {
+                return Observable.of<MindStreamActions.MindStreamAction>(
+                    (action.sourceUuid)
+                    ? MindStreamActions.loadUnreadedFeedsBySource(action.sourceUuid)
+                    : MindStreamActions.loadUnreadedFeeds(),
+                    MindStreamActions.goToNextFeed()
+                )
+            } else {
+                return Observable.of<MindStreamActions.MindStreamAction>(
+                    MindStreamActions.goToNextFeed()
+                )
+            }
+        })
+}
 
-export const readFeedEpic: Epic<any, GlobalState> = (action$, state) => action$.ofType("READ_FEED")
-    .mergeMap((action: READ_FEED) =>
-        Api.feedReaction(action.feed, action.reaction)
-            .then(feed => readFeedSuccess(feed, action.sourceUuid))
-            .catch(readFeedError)
-    )
+export const readFeedEpic: Epic<MindStreamActions.MindStreamAction, GlobalState> = (action$, state) => {
+    return action$
+        .ofType<MindStreamActions.READ_FEED>("READ_FEED")
+        .mergeMap(action =>
+            Api.feedReaction(action.feed, action.reaction)
+                .then(feed => MindStreamActions.readFeedSuccess(feed, action.sourceUuid))
+                .catch(MindStreamActions.readFeedError)
+        )
+}

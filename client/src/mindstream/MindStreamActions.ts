@@ -11,7 +11,11 @@ export type MindStreamAction =
     LOAD_UNREADED_FEEDS_BY_SOURCE_SUCCESS |
     LOAD_UNREADED_FEEDS_BY_SOURCE_ERROR |
     NEXT_FEED |
-    PREVIOUS_FEED
+    PREVIOUS_FEED |
+    GO_TO_NEXT_FEED
+
+export type GO_TO_NEXT_FEED = { type: "GO_TO_NEXT_FEED" }
+export const goToNextFeed = (): GO_TO_NEXT_FEED => ({ type: "GO_TO_NEXT_FEED" })
 
 export type NEXT_FEED = { type: "NEXT_FEED", feed: Feed, sourceUuid?: string }
 export const nextFeed = (feed: Feed, sourceUuid: string | undefined): NEXT_FEED => ({ type: "NEXT_FEED", feed, sourceUuid })
