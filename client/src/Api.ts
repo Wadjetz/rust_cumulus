@@ -78,7 +78,7 @@ export function loadUnfollowedSources(): Promise<Source[]> {
     .then(result => result.auth.unfollowedSources)
 }
 
-export function loadMySources(): Promise<{ mySources: Source[], sourcesStats: SourceStat[] }> {
+export function loadMySources(): Promise<Source[]> {
     return withToken().then(token => query(`
         query {
             auth(token: "${token}") {
@@ -92,6 +92,16 @@ export function loadMySources(): Promise<{ mySources: Source[], sourcesStats: So
                     }
                     error
                 }
+            }
+        }
+    `))
+    .then(result => result.auth.mySources)
+}
+
+export function loadMySourcesStats(): Promise<SourceStat[]> {
+    return withToken().then(token => query(`
+        query {
+            auth(token: "${token}") {
                 sourcesStats {
                     uuid
                     count
@@ -99,7 +109,7 @@ export function loadMySources(): Promise<{ mySources: Source[], sourcesStats: So
             }
         }
     `))
-    .then(result => result.auth)
+    .then(result => result.auth.sourcesStats)
 }
 
 export function loadUnreadedFeeds(): Promise<Feed[]> {

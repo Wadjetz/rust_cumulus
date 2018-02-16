@@ -1,30 +1,22 @@
 import { combineEpics } from "redux-observable"
-import {
-    addSourceEpic,
-    loadUnfollowedSourcesEpic,
-    fallowSourceEpic,
-    loadMySourcesEpic,
-    fallowSourcesSuccessEpic
-} from "./sources/SourcesEpics"
+import * as SourcesEpics from "./sources/SourcesEpics"
 import { signupEpic, signupSuccessEpic } from "./signup/SignupEpics"
-import {
-    loadUnreadedFeedsEpic, readFeedEpic, reloadUnreadedFeedsEpic, loadUnreadedFeedsBySourceEpic, nextFeedEpic
-} from "./mindstream/MindStreamEpics"
+import * as MindStreamEpics from "./mindstream/MindStreamEpics"
 import { loadfeedsEpic } from "./feeds/FeedsEpics"
 import { loginEpic, loginSuccessEpic, loginErrorEpic } from "./login/LoginEpics"
 
 const RootEpic = combineEpics(
-    addSourceEpic,
-    loadUnfollowedSourcesEpic,
-    loadMySourcesEpic,
-    fallowSourceEpic,
-    fallowSourcesSuccessEpic,
-
-    loadUnreadedFeedsEpic,
-    reloadUnreadedFeedsEpic,
-    loadUnreadedFeedsBySourceEpic,
-    readFeedEpic,
-    nextFeedEpic,
+    SourcesEpics.addSourceEpic,
+    SourcesEpics.loadUnfollowedSourcesEpic,
+    SourcesEpics.loadMySourcesEpic,
+    SourcesEpics.loadMySourcesStatsEpic,
+    SourcesEpics.fallowSourceEpic,
+    SourcesEpics.fallowSourcesSuccessEpic,
+    MindStreamEpics.loadUnreadedFeedsEpic,
+    MindStreamEpics.reloadUnreadedFeedsEpic,
+    MindStreamEpics.loadUnreadedFeedsBySourceEpic,
+    MindStreamEpics.readFeedEpic,
+    MindStreamEpics.nextFeedEpic,
 
     loadfeedsEpic,
 

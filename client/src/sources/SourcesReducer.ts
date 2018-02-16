@@ -5,6 +5,7 @@ export interface SourcesState {
     sources: Source[]
     mySources: Source[]
     mySourcesStats: SourceStat[]
+    mySourcesStatsLoader: boolean
     loading: boolean
     error?: any
     newSourceUrl: string
@@ -15,6 +16,7 @@ const initState: SourcesState = {
     sources: [],
     mySources: [],
     mySourcesStats: [],
+    mySourcesStatsLoader: false,
     loading: false,
     error: undefined,
     newSourceUrl: "",
@@ -39,8 +41,12 @@ const SourcesReducer = (state: SourcesState = initState, action: SourceAction) =
         case "LOAD_UNFOLLOWED_SOURCES_ERROR": return { ...state, loading: false, error: action.error }
 
         case "LOAD_MY_SOURCES": return { ...state, loading: true }
-        case "LOAD_MY_SOURCES_SUCCESS": return { ...state, mySources: action.sources, mySourcesStats: action.stats, loading: false }
+        case "LOAD_MY_SOURCES_SUCCESS": return { ...state, mySources: action.sources, loading: false }
         case "LOAD_MY_SOURCES_ERROR": return { ...state, loading: false, error: action.error }
+
+        case "LOAD_MY_SOURCES_STATS": return { ...state, mySourcesStatsLoader: true }
+        case "LOAD_MY_SOURCES_STATS_SUCCESS": return { ...state, mySourcesStats: action.stats, mySourcesStatsLoader: false }
+        case "LOAD_MY_SOURCES_STATS_ERROR": return { ...state, error: action.error, mySourcesStatsLoader: false }
 
         case "ADD_MY_SOURCE": return { ...state, mySources: [...state.mySources, action.source] }
 

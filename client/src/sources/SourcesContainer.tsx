@@ -13,6 +13,7 @@ import HeaderContainer from "../app/HeaderContainer"
 interface DispatchProps {
     onLoadUnfollowedSources(): void
     onLoadMySources(): void
+    onLoadMySourcesStats(): void
     addSourceOnChange(field: string, value: string): void
     addSourceOnSubmit(sourceUrl: string): void,
     fallowSource(source: Source): void
@@ -24,6 +25,7 @@ class SourcesContainer extends React.PureComponent<Props> {
     componentWillMount() {
         this.props.onLoadUnfollowedSources()
         this.props.onLoadMySources()
+        this.props.onLoadMySourcesStats()
     }
     render() {
         const { newSourceUrl, addSourceOnChange, addSourceOnSubmit } = this.props
@@ -77,6 +79,7 @@ const mapDispatchToProps = (dispatch: Dispatch<GlobalState>): DispatchProps => {
     return {
         onLoadUnfollowedSources: () => dispatch(SourcesActions.loadUnfollowedSources()),
         onLoadMySources: () => dispatch(SourcesActions.loadMySources()),
+        onLoadMySourcesStats: () => dispatch(SourcesActions.loadMySourcesStats()),
         addSourceOnChange: (field, value) => dispatch(SourcesActions.addSourceOnChange(field, value)),
         addSourceOnSubmit: (sourceUrl) => dispatch(SourcesActions.addSource(sourceUrl)),
         fallowSource: (source) => dispatch(SourcesActions.fallowSources(source)),

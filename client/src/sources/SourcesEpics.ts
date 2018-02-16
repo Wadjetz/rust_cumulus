@@ -4,24 +4,31 @@ import { GlobalState } from "../app/AppState"
 import * as Api from "../Api"
 
 export const addSourceEpic: Epic<any, GlobalState> = (action$) => action$.ofType("ADD_SOURCE")
-    .mergeMap(action =>
+    .mergeMap((action: SourcesActions.ADD_SOURCE) =>
         Api.addSource(action.sourceUrl)
             .then(SourcesActions.addSourceSuccess)
             .catch(SourcesActions.addSourceError)
     )
 
-export const loadUnfollowedSourcesEpic: Epic<any, GlobalState> = (action$, state) => action$.ofType("LOAD_UNFOLLOWED_SOURCES")
-    .mergeMap(action =>
+export const loadUnfollowedSourcesEpic: Epic<SourcesActions.SourceAction, GlobalState> = (action$, state) => action$.ofType("LOAD_UNFOLLOWED_SOURCES")
+    .mergeMap(() =>
         Api.loadUnfollowedSources()
             .then(SourcesActions.loadUnfollowedSourcesSuccess)
             .catch(SourcesActions.loadUnfollowedSourcesError)
     )
 
-export const loadMySourcesEpic: Epic<any, GlobalState> = (action$, state) => action$.ofType("LOAD_MY_SOURCES")
-    .mergeMap((action: SourcesActions.LOAD_MY_SOURCES) =>
+export const loadMySourcesEpic: Epic<SourcesActions.SourceAction, GlobalState> = (action$, state) => action$.ofType("LOAD_MY_SOURCES")
+    .mergeMap(() =>
         Api.loadMySources()
-            .then(result => SourcesActions.loadMySourcesSuccess(result.mySources, result.sourcesStats))
+            .then(SourcesActions.loadMySourcesSuccess)
             .catch(SourcesActions.loadMySourcesError)
+    )
+
+export const loadMySourcesStatsEpic: Epic<SourcesActions.SourceAction, GlobalState> = (action$, state) => action$.ofType("LOAD_MY_SOURCES_STATS")
+    .mergeMap(() =>
+        Api.loadMySourcesStats()
+            .then(SourcesActions.loadMySourcesStatsSuccess)
+            .catch(SourcesActions.loadMySourcesStatsError)
     )
 
 export const fallowSourceEpic: Epic<any, GlobalState> = (action$, state) => action$.ofType("FALLOW_SOURCE")
