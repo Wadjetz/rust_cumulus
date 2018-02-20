@@ -1,6 +1,7 @@
 import * as React from "react"
 import * as styles from "./GhostButton.css"
 import LoaderIcon from "./icons/LoaderIcon"
+import BaseButton from "./BaseButton"
 
 interface Props {
     label: string
@@ -16,20 +17,19 @@ export default class GhostButton extends React.PureComponent<Props> {
     }
 
     render() {
-        const { label, loading } = this.props
+        const { label, loading, disable, onClick } = this.props
         return (
-            <div className={styles.ghostButton} onClick={this.onClickHandler}>
-                {loading
-                    ? <LoaderIcon className={styles.loaderSvg} width={34} height={34} color={"#4A90E2"} />
-                    : <div className={styles.label}>{label}</div>}
-            </div>
+            <BaseButton
+                className={styles.ghostButton}
+                loading={loading}
+                disable={disable}
+                onClick={onClick}
+                renderLoader={this.renderLoader}
+            >
+                <div className={styles.label}>{label}</div>
+            </BaseButton>
         )
     }
 
-    onClickHandler = () => {
-        const { loading, disable, onClick } = this.props
-        if (!loading || !disable) {
-            onClick()
-        }
-    }
+    renderLoader = () => <LoaderIcon width={34} height={34} color={"#4A90E2"} />
 }

@@ -14,7 +14,7 @@ const LoginContainer = (props: Props) => {
     const { email, password, loading, error } = login
     return (
         <div className={styles.container}>
-            <h2 className={styles.appName}>Cumulus</h2>
+            <h2 className={styles.appName}>Mindstream</h2>
             <LoginForm
                 email={email}
                 password={password}

@@ -22,7 +22,7 @@ const SignupContainer = (props: Props) => {
     const { login, email, password, loading, error } = signup
     return (
         <div className={styles.container}>
-            <h2 className={styles.appName}>Cumulus</h2>
+            <h2 className={styles.appName}>Mindstream</h2>
             <SignupForm
                 login={login}
                 email={email}

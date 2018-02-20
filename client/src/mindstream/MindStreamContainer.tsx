@@ -22,6 +22,7 @@ interface DispatchProps {
 interface StateProps {
     feeds: Feed[]
     loading: boolean
+    nextFeedLoader: boolean
 }
 
 interface Params {
@@ -55,7 +56,7 @@ class MindStreamContainer extends React.PureComponent<Props> {
     }
 
     renderStream = () => {
-        const { feeds, loading, sourceUuid, onReaction, onNextFeed, onPreviousFeed } = this.props
+        const { feeds, loading, nextFeedLoader, sourceUuid, onReaction, onNextFeed, onPreviousFeed } = this.props
         if (feeds.length > 0) {
             const feed = feeds[0]
             return (
@@ -63,6 +64,7 @@ class MindStreamContainer extends React.PureComponent<Props> {
                     <FeedActions
                         feed={feed}
                         loading={loading}
+                        nextFeedLoader={nextFeedLoader}
                         sourceUuid={sourceUuid}
                         onNextFeed={onNextFeed}
                         onPreviousFeed={onPreviousFeed}
@@ -93,8 +95,8 @@ class MindStreamContainer extends React.PureComponent<Props> {
     }
 
     onKeyPressHandler = (event: KeyboardEvent) => {
-        const { feeds, onNextFeed, onPreviousFeed, sourceUuid } = this.props
-        if (feeds.length > 0 && event.code === "ArrowRight" || event.code === "KeyD") {
+        const { feeds, onNextFeed, onPreviousFeed, sourceUuid, nextFeedLoader } = this.props
+        if (!nextFeedLoader && feeds.length > 0 && event.code === "ArrowRight" || event.code === "KeyD") {
             onNextFeed(feeds[0], sourceUuid)
         } else if (feeds.length > 0 && event.code === "ArrowLeft" || event.code === "KeyQ" || event.code === "KeyA") {
             onPreviousFeed(sourceUuid)
@@ -108,6 +110,7 @@ const mapStateToProps = (state: GlobalState, props?: { match?: RouterMatch<Param
         sourceUuid,
         feeds: state.mindStream.feeds,
         loading: state.mindStream.loading,
+        nextFeedLoader: state.mindStream.nextFeedLoader
     }
 }
 
