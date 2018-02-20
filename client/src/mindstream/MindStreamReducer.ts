@@ -5,26 +5,22 @@ export interface MindStreamState {
     previusFeeds: Feed[],
     feeds: Feed[],
     loading: boolean
-    error?: any
 }
 
 const initState: MindStreamState = {
     previusFeeds: [],
     feeds: [],
     loading: false,
-    error: undefined,
 }
 
 const MindStreamReducer = (state: MindStreamState = initState, action: MindStreamAction) => {
     switch (action.type) {
+        case "MIND_STREAM_API_ERROR": return { ...state, loading: false }
         case "LOAD_UNREADED_FEEDS": return { ...state, loading: true }
         case "LOAD_UNREADED_FEEDS_SUCCESS": return { ...state, feeds: action.feeds, loading: false }
-        case "LOAD_UNREADED_FEEDS_ERROR": return { ...state, loading: false, error: action.error }
-        case "READ_FEED": return { ...state, loading: true }
-        case "READ_FEED_ERROR": return { ...state, loading: false, error: action.error }
         case "LOAD_UNREADED_FEEDS_BY_SOURCE": return { ...state, loading: true }
         case "LOAD_UNREADED_FEEDS_BY_SOURCE_SUCCESS": return { ...state, feeds: action.feeds, loading: false }
-        case "LOAD_UNREADED_FEEDS_BY_SOURCE_ERROR": return { ...state, loading: false, error: action.error }
+        case "NEXT_FEED_SUCCESS": return { ...state, loading: false }
         case "GO_TO_NEXT_FEED": return goToNextFeedReduce(state, action)
         case "PREVIOUS_FEED": return previousFeedReduce(state, action)
         default: return state
@@ -33,7 +29,7 @@ const MindStreamReducer = (state: MindStreamState = initState, action: MindStrea
 
 function goToNextFeedReduce(state: MindStreamState, action: MindStreamAction): MindStreamState {
     const [first, ...rest] = state.feeds
-    return { ...state, feeds: rest, previusFeeds: [first, ...state.previusFeeds] }
+    return { ...state, feeds: rest, previusFeeds: [first, ...state.previusFeeds.slice(0, 10)] }
 }
 
 function previousFeedReduce(state: MindStreamState, action: MindStreamAction): MindStreamState {

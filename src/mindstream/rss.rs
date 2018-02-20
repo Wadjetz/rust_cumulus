@@ -55,12 +55,7 @@ fn process_rss_source(subscribers: &Vec<User>, source: &Source, rss_source: &Rss
         for rss_feed in &feeds_channel.entries {
             for link in &rss_feed.alternate {
                 if !is_feed_exist(&pg, &link.href, source)? {
-                    let readable = {
-                        match fetch_readable(client, &link.href) {
-                            Ok(r) => r,
-                            Err(_) => None,
-                        }
-                    };
+                    let readable = fetch_readable(client, &link.href).ok().and_then(|readable| readable);
                     let feed = Feed::new(&link.href, Some(rss_feed.clone().into()), readable, None, source.uuid);
                     if insert_feed(&pg, &feed).is_ok() {
                         insert_subscribers_feeds(subscribers, &feed, pg)?;

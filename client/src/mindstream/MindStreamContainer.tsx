@@ -94,7 +94,6 @@ class MindStreamContainer extends React.PureComponent<Props> {
 
     onKeyPressHandler = (event: KeyboardEvent) => {
         const { feeds, onNextFeed, onPreviousFeed, sourceUuid } = this.props
-        console.log(event.code)
         if (feeds.length > 0 && event.code === "ArrowRight" || event.code === "KeyD") {
             onNextFeed(feeds[0], sourceUuid)
         } else if (feeds.length > 0 && event.code === "ArrowLeft" || event.code === "KeyQ" || event.code === "KeyA") {
@@ -115,9 +114,7 @@ const mapStateToProps = (state: GlobalState, props?: { match?: RouterMatch<Param
 const mapDispatchToProps = (dispatch: Dispatch<GlobalState>): DispatchProps => {
     return {
         loadUnreadedFeeds: () => dispatch(MindStreamActions.loadUnreadedFeeds()),
-        loadUnreadedFeedsBySource: (sourceUuid: string) => {
-            dispatch(MindStreamActions.loadUnreadedFeedsBySource(sourceUuid))
-        },
+        loadUnreadedFeedsBySource: (sourceUuid: string) => dispatch(MindStreamActions.loadUnreadedFeedsBySource(sourceUuid)),
         onReaction: (feed, reaction, sourceUuid?: string) => () => dispatch(MindStreamActions.readFeed(feed, reaction, sourceUuid)),
         onNextFeed: (feed, sourceUuid: string | undefined) => dispatch(MindStreamActions.nextFeed(feed, sourceUuid)),
         onPreviousFeed: (sourceUuid: string | undefined) => dispatch(MindStreamActions.previousFeed(sourceUuid)),
