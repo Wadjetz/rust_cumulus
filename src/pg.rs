@@ -1,4 +1,4 @@
-use r2d2::{ Pool, Config };
+use r2d2::Pool;
 use r2d2_postgres::{TlsMode, PostgresConnectionManager};
 use r2d2::PooledConnection;
 use postgres::rows::Row;
@@ -16,9 +16,8 @@ pub struct DbConn(pub PooledConnection<PostgresConnectionManager>);
 
 pub fn create_db_pool(app_config: &config::Config) -> Pool<PostgresConnectionManager> {
     let database_url = app_config.database_url.clone();
-    let config = Config::default();
     let manager = PostgresConnectionManager::new(database_url, TlsMode::None).expect("Create PostgresConnectionManager error");
-    Pool::new(config, manager).expect("Failed to create pool")
+    Pool::new(manager).expect("Failed to create pool")
 }
 
 pub trait Insertable {
