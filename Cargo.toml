@@ -15,8 +15,8 @@ juniper_rocket = { version = "0.1.2" }
 
 r2d2 = "0.8.2"
 r2d2_postgres = "0.14.0"
-postgres =  { version = "0.15.1", features = ["with-serde_json", "with-uuid", "with-chrono"] }
-postgres-derive = "0.3.1"
+postgres =  { version = "0.15.2", features = ["with-serde_json", "with-uuid", "with-chrono"] }
+postgres-derive = "0.3.2"
 strum = "0.8.0"
 strum_macros = "0.8.0"
 
