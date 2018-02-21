@@ -25,9 +25,10 @@ extern crate postgres_derive;
 extern crate r2d2;
 extern crate r2d2_postgres;
 extern crate strum;
+// #[macro_use]
 extern crate diesel;
-#[macro_use]
-extern crate diesel_migrations;
+// #[macro_use]
+// extern crate diesel_migrations;
 extern crate r2d2_diesel;
 #[macro_use]
 extern crate strum_macros;
@@ -42,7 +43,6 @@ extern crate juniper;
 #[macro_use]
 extern crate juniper_codegen;
 extern crate juniper_rocket;
-extern crate geo;
 #[macro_use] 
 extern crate validator_derive;
 extern crate validator;
@@ -53,11 +53,12 @@ mod token;
 mod graphql;
 mod config;
 mod mindstream;
+mod user;
 mod users;
 mod server;
 mod routes;
 
-embed_migrations!("migrations");
+// embed_migrations!("migrations");
 
 fn main() {
     server::run();

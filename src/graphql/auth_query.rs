@@ -3,7 +3,7 @@ use std::error::Error;
 use juniper::{FieldError, FieldResult};
 
 use graphql::query::Query;
-use users::User;
+use user::User;
 use mindstream::feeds;
 use mindstream::feeds::Feed;
 use mindstream::users_feeds::{unreaded_feeds, users_feeds_resolver, feeds_by_reaction_resolver, unreaded_feeds_by_source_resolver};

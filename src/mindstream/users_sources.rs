@@ -6,7 +6,7 @@ use r2d2_postgres::PostgresConnectionManager;
 
 use errors::*;
 use graphql::query::Query;
-use users::User;
+use user::User;
 use mindstream::sources::Source;
 use mindstream::users_feeds::Reaction;
 use pg::{Insertable, PgDatabase};

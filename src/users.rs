@@ -1,12 +1,9 @@
 use uuid::Uuid;
-use bcrypt::{DEFAULT_COST, hash, verify};
-use chrono::NaiveDateTime;
-use chrono::prelude::*;
+use bcrypt::verify;
 use postgres::rows::Row;
 use postgres::types::ToSql;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
-use validator::Validate;
 
 use config;
 use errors::*;
@@ -14,38 +11,7 @@ use token;
 use graphql::auth_query::AuthQuery;
 use graphql::auth_mutation::AuthMutation;
 use pg::{Insertable, PgDatabase};
-
-#[derive(GraphQLObject, Debug, Validate)]
-pub struct User {
-    pub uuid: Uuid,
-    #[validate(length(min = "1"))]
-    pub login: String,
-    #[validate(email)]
-    pub email: String,
-    #[validate(length(min = "6"))]
-    pub password: String,
-    pub created: NaiveDateTime,
-    pub updated: NaiveDateTime,
-}
-
-impl User {
-    pub fn new_secure(login: String, email: String, password: String) -> Result<User> {
-        let hashed_password = hash_password(&password)?;
-        let user = User {
-            uuid: Uuid::new_v4(),
-            login,
-            email,
-            password: hashed_password,
-            created: Utc::now().naive_utc(),
-            updated: Utc::now().naive_utc(),
-        };
-        Ok(user)
-    }
-}
-
-pub fn hash_password(password: &str) -> Result<String> {
-    Ok(hash(password, DEFAULT_COST)?)
-}
+use user::User;
 
 pub fn verify_password(password: &str, hashed_password: &str) -> Result<bool> {
     Ok(verify(password, hashed_password)?)
