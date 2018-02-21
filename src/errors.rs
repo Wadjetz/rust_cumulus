@@ -4,7 +4,6 @@ error_chain! {
         NotFound
         NotInserted
         WrongCredentials
-        //Unauthorized
     }
 
     foreign_links {
@@ -12,7 +11,7 @@ error_chain! {
         Jwt(::jsonwebtoken::errors::Error);
         Uuid(::uuid::ParseError);
         Db(::postgres::error::Error);
-        R2D2(::r2d2::GetTimeout);
+        R2D2(::r2d2::Error);
         WS(::reqwest::Error);
         Json(::serde_json::Error);
         Strum(::strum::ParseError);
