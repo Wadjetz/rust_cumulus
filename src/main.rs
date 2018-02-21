@@ -24,6 +24,8 @@ extern crate postgres;
 extern crate postgres_derive;
 extern crate r2d2;
 extern crate r2d2_postgres;
+// extern crate r2d2_diesel;
+extern crate diesel;
 extern crate strum;
 #[macro_use]
 extern crate strum_macros;
