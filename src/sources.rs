@@ -4,8 +4,6 @@ use postgres::types::ToSql;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 use uuid::Uuid;
-use chrono::prelude::*;
-use serde_json::Value;
 use serde_json;
 use url::Url;
 
@@ -14,44 +12,8 @@ use rss::fetch_feeds_channel;
 use graphql::query::Query;
 use pg::{Insertable, PgDatabase};
 use source_type::SourceType;
-use source_option::{SourceOption, RssSource, TwitterSource };
+use source_option::RssSource;
 use source::Source;
-
-impl Source {
-    pub fn options(&self) -> Result<SourceOption> {
-        match self.source_type {
-            SourceType::Rss => {
-                let rss_source = serde_json::from_value::<RssSource>(self.data.clone())?;
-                Ok(SourceOption::Rss(rss_source))
-            },
-            SourceType::Twitter => {
-                let twitter_source = serde_json::from_value::<TwitterSource>(self.data.clone())?;
-                Ok(SourceOption::Twitter(twitter_source))
-            }
-        }
-    }
-
-    pub fn new_rss(rss_source: RssSource) -> Result<Self> {
-        let data = serde_json::to_value(rss_source)?;
-        Ok(Source::new(SourceType::Rss, data))
-    }
-
-    pub fn new_twitter(twitter_source: TwitterSource) -> Result<Self> {
-        let data = serde_json::to_value(twitter_source)?;
-        Ok(Source::new(SourceType::Twitter, data))
-    }
-
-    fn new(source_type: SourceType, data: Value) -> Self {
-        Source {
-            uuid: Uuid::new_v4(),
-            source_type,
-            data,
-            error: None,
-            created: Utc::now().naive_utc(),
-            updated: Utc::now().naive_utc(),
-        }
-    }
-}
 
 graphql_object!(Source: Query as "Source" |&self| {
     description: "Source"
