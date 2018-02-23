@@ -14,7 +14,7 @@ use mindstream::sources::{Source, SourceOption, RssSource, find_rss_sources};
 use mindstream::users_sources::find_users_by_source;
 use mindstream::users_feeds::{UserFeed, Reaction, is_user_feed_already_inserted};
 use mindstream::mercury::{fetch_readable};
-use users::User;
+use user::User;
 use pg::PgDatabase;
 
 pub fn fetch_feeds_channel(url: &str) -> Result<Option<RssFeed>> {

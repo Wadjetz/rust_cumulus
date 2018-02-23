@@ -8,7 +8,7 @@ use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 
 use pg::{Insertable, PgDatabase};
-use users::User;
+use user::User;
 use mindstream::feeds::Feed;
 use mindstream::sources::{Source, find_source_by_uuid};
 use errors::*;

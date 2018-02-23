@@ -1,7 +1,7 @@
 use juniper::{FieldError, FieldResult};
 
 use graphql::query::Query;
-use users::User;
+use user::User;
 use mindstream::sources::Source;
 use mindstream::users_sources;
 use mindstream::users_feeds;
@@ -14,6 +14,12 @@ pub struct AuthMutation {
 impl AuthMutation {
     pub fn new(user: User) -> Self {
         AuthMutation { user }
+    }
+}
+
+impl From<User> for AuthMutation {
+    fn from(user: User) -> Self {
+        AuthMutation::new(user)
     }
 }
 

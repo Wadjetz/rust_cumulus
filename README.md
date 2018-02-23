@@ -9,7 +9,7 @@ RSS_JOB_INTERVAL=10
 ```
 
 ## Dev docker-compose.yml
-```
+```yaml
 version: '3'
 services:
     postgres:
@@ -29,5 +29,29 @@ services:
             - 5555:8080
 ```
 
+```sql
+INSERT INTO users_feeds (uuid, reaction, user_uuid, feed_uuid, created, updated)
+    SELECT uuid_generate_v4() as uuid, 'Unreaded', users_sources.user_uuid, feeds.uuid as feed_uuid, now(), now()
+    FROM feeds
+    JOIN users_sources ON users_sources.source_uuid = feeds.source_uuid
+    WHERE 0 = (
+        SELECT COUNT(*)
+        FROM users_feeds
+        WHERE users_feeds.feed_uuid = feeds.uuid
+    )
+;
+```
+
+```sql
+CREATE EXTENSION "uuid-ossp";
+```
+
+```sql
 ALTER TABLE "users_sources"
 ADD "unreaded_count" bigint NOT NULL DEFAULT '0';
+```
+
+## Linux build requirements
+```bash
+sudo apt-get install libpq-dev
+```
