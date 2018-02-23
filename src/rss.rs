@@ -10,7 +10,8 @@ use feed_rs::feed::{Feed as RssFeed};
 
 use errors::*;
 use feeds::{is_feed_exist, insert_feed, Feed};
-use sources::{Source, SourceOption, RssSource, find_rss_sources};
+use source::Source;
+use sources::{SourceOption, RssSource, find_rss_sources};
 use users_sources::find_users_by_source;
 use users_feeds::{UserFeed, Reaction, is_user_feed_already_inserted};
 use mercury::{fetch_readable};

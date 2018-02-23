@@ -10,7 +10,8 @@ use r2d2_postgres::PostgresConnectionManager;
 use pg::{Insertable, PgDatabase};
 use user::User;
 use feeds::Feed;
-use sources::{Source, find_source_by_uuid};
+use source::Source;
+use sources::find_source_by_uuid;
 use errors::*;
 
 #[derive(Debug)]

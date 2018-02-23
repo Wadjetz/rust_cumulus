@@ -4,7 +4,6 @@ use postgres::types::ToSql;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 use uuid::Uuid;
-use chrono::NaiveDateTime;
 use chrono::prelude::*;
 use serde_json::Value;
 use serde_json;
@@ -14,13 +13,8 @@ use errors::*;
 use rss::fetch_feeds_channel;
 use graphql::query::Query;
 use pg::{Insertable, PgDatabase};
-
-#[derive(Debug, ToSql, FromSql, GraphQLEnum)]
-#[postgres(name = "sourcetype")]
-pub enum SourceType {
-    Rss,
-    Twitter,
-}
+use source_type::SourceType;
+use source::Source;
 
 #[derive(Debug)]
 pub enum SourceOption {
@@ -56,16 +50,6 @@ impl TwitterSource {
             hashtag
         }
     }
-}
-
-#[derive(Debug)]
-pub struct Source {
-    pub uuid: Uuid,
-    pub source_type: SourceType,
-    pub data: Value,
-    pub error: Option<String>,
-    pub created: NaiveDateTime,
-    pub updated: NaiveDateTime,
 }
 
 impl Source {

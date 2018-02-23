@@ -10,7 +10,8 @@ use errors;
 use config;
 use graphql::auth_query::AuthQuery;
 use graphql::mutation::Mutation;
-use sources::{Source, find_sources_resolver};
+use source::Source;
+use sources::find_sources_resolver;
 use users_resolvers;
 
 pub struct Query {

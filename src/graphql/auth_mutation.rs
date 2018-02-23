@@ -2,7 +2,7 @@ use juniper::{FieldError, FieldResult};
 
 use graphql::query::Query;
 use user::User;
-use sources::Source;
+use source::Source;
 use users_sources;
 use users_feeds;
 

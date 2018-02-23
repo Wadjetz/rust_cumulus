@@ -11,7 +11,7 @@ use feed_rs::entry::Entry;
 
 use errors::*;
 use graphql::query::Query;
-use sources::Source;
+use source::Source;
 use mercury::ReadableData;
 use pg::{Insertable, PgDatabase};
 

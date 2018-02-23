@@ -60,7 +60,9 @@ mod server;
 mod routes;
 
 mod feeds; 
-mod sources; 
+mod source;
+mod source_type;
+mod sources;
 mod users_feeds; 
 mod users_sources; 
 mod mercury; 
