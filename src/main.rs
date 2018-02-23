@@ -53,6 +53,7 @@ mod token;
 mod graphql;
 mod config;
 mod mindstream;
+mod schema;
 mod user;
 mod users;
 mod server;

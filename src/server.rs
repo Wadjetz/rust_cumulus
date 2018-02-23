@@ -37,11 +37,11 @@ pub fn run() {
     let client = reqwest::Client::new();
     rss::run_rss_job(conf.rss_job_interval.clone(), client, connection.clone());
     rocket::ignite()
-        .manage(Query::new(connection.clone()))
+        .manage(Query::new(connection.clone(), diesel_pool.clone()))
         .manage(create_db_pool(&conf))
         .manage(conf)
         .manage(Schema::new(
-            Query::new(connection),
+            Query::new(connection, diesel_pool),
             Mutation,
         ))
         .mount("/", routes![

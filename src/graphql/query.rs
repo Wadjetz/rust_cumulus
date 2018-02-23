@@ -3,6 +3,8 @@ use std::error::Error;
 use juniper::{FieldResult, Context, RootNode, FieldError};
 use r2d2_postgres::PostgresConnectionManager;
 use r2d2::Pool;
+use r2d2_diesel::ConnectionManager;
+use diesel::PgConnection;
 
 use graphql::auth_query::AuthQuery;
 use graphql::mutation::Mutation;
@@ -11,11 +13,12 @@ use users::{auth_resolver, login_resolver};
 
 pub struct Query {
     pub connection: Pool<PostgresConnectionManager>,
+    pub diesel_pool: Pool<ConnectionManager<PgConnection>>,
 }
 
 impl Query {
-    pub fn new(connection: Pool<PostgresConnectionManager>) -> Self {
-        Query { connection }
+    pub fn new(connection: Pool<PostgresConnectionManager>, diesel_pool: Pool<ConnectionManager<PgConnection>>) -> Self {
+        Query { connection, diesel_pool }
     }
 }
 
