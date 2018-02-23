@@ -5,8 +5,11 @@ use validator::Validate;
 use bcrypt::{DEFAULT_COST, hash};
 
 use errors::*;
+use schema::users;
 
-#[derive(Debug, PartialEq, GraphQLObject, Validate)]
+#[derive(Debug, PartialEq, GraphQLObject, Identifiable, Queryable, Insertable, Validate)]
+#[primary_key(uuid)]
+#[table_name="users"]
 pub struct User {
     pub uuid: Uuid,
     #[validate(length(min = "1"))]

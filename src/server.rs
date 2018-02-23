@@ -29,7 +29,7 @@ pub fn run() {
     dotenv().ok();
     let conf = Config::from_env();
     let connection = create_db_pool(&conf);
-    let _diesel_pool = create_diesel_pool(&conf);
+    let diesel_pool = create_diesel_pool(&conf);
     use embedded_migrations;
     let diesel_connection = establish_connection(&conf);
     embedded_migrations::run(&diesel_connection).expect("Migration Error");
