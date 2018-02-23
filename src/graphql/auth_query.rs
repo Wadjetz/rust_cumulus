@@ -1,14 +1,18 @@
-// use std::error::Error;
+use std::error::Error;
 
-// use juniper::{FieldError, FieldResult};
+use juniper::{FieldError, FieldResult};
 
 use graphql::query::Query;
 use user::User;
+use source::Source;
+use users_sources_resolvers;
 // use feeds;
 // use feeds::Feed;
 // use users_feeds::{unreaded_feeds, users_feeds_resolver, feeds_by_reaction_resolver, unreaded_feeds_by_source_resolver};
 // use source::Source;
 // use users_sources::{SourceStat, unfollowed_sources_resolver, users_sources_resolver, total_my_rss_sources_resolver, sources_stats_resolver};
+
+const DEFAULT_LIMIT: i32 = 10;
 
 #[derive(Debug)]
 pub struct AuthQuery {
@@ -27,13 +31,20 @@ impl From<User> for AuthQuery {
     }
 }
 
-// const DEFAULT_LIMIT: i32 = 10;
-
 graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
     description: "AuthQuery"
 
     field me() -> Option<&User> as "User" {
         Some(&self.user)
+    }
+
+    field my_sources(
+        &executor,
+        limit: Option<i32> as "Limit",
+        offset: Option<i32> as "Offset",
+    ) -> FieldResult<Vec<Source>> {
+        users_sources_resolvers::my_sources_resolver(&executor.context().diesel_pool.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
+            .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 
     /*
@@ -53,15 +64,6 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         offset: Option<i32> as "Offset"
     ) -> FieldResult<Vec<Feed>> {
         users_feeds_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
-            .map_err(|e| FieldError::from(&e.description().to_string()))
-    }
-
-    field my_sources(
-        &executor,
-        limit: Option<i32> as "Limit",
-        offset: Option<i32> as "Offset",
-    ) -> FieldResult<Vec<Source>> {
-        users_sources_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
             .map_err(|e| FieldError::from(&e.description().to_string()))
     }
     

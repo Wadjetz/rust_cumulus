@@ -22,6 +22,7 @@ WHERE sources.uuid = s2.uuid;
 
 ALTER TABLE sources DROP COLUMN source_type;
 ALTER TABLE sources DROP COLUMN data;
+DROP TYPE "sourcetype";
 
 ALTER TABLE sources ALTER COLUMN created SET NOT NULL;
 ALTER TABLE sources ALTER COLUMN updated SET NOT NULL;

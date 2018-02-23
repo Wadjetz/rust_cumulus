@@ -22,3 +22,8 @@ pub fn fallow_source_resolver(pool: &Pool<ConnectionManager<PgConnection>>, sour
         Err(ErrorKind::AlreadyExist.into())
     }
 }
+
+pub fn my_sources_resolver(pool: &Pool<ConnectionManager<PgConnection>>, limit: i32, offset: i32, user: &User) -> Result<Vec<Source>> {
+    let connection = pool.get()?;
+    Ok(users_sources_repository::my_sources(&connection, limit as i64, offset as i64, user)?)
+}
