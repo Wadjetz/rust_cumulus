@@ -50,3 +50,8 @@ CREATE EXTENSION "uuid-ossp";
 ALTER TABLE "users_sources"
 ADD "unreaded_count" bigint NOT NULL DEFAULT '0';
 ```
+
+## Linux build requirements
+```bash
+sudo apt-get install libpq-dev
+```
