@@ -5,7 +5,7 @@ use config;
 use graphql::query::Query;
 use graphql::auth_mutation::AuthMutation;
 use source::Source;
-use sources::add_rss_source_resolver;
+use sources_resolvers::add_rss_source_resolver;
 use user::User;
 use users_resolvers;
 use errors;

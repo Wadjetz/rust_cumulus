@@ -3,7 +3,7 @@ use diesel::deserialize::{self, FromSql};
 use std::io::Write;
 use diesel::pg::Pg;
 
-#[derive(Debug, ToSql, FromSql, AsExpression, FromSqlRow, GraphQLEnum)]
+#[derive(Debug, PartialEq, ToSql, FromSql, AsExpression, FromSqlRow, GraphQLEnum)]
 #[postgres(name = "sourcetype")]
 #[sql_type = "SqlSourceType"]
 pub enum SourceType {
@@ -11,7 +11,7 @@ pub enum SourceType {
     Twitter,
 }
 
-#[derive(SqlType)]
+#[derive(SqlType, PartialEq)]
 #[postgres(type_name = "sourcetype")]
 pub struct SqlSourceType;
 

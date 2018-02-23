@@ -8,25 +8,31 @@ use source_type::SourceType;
 use source_option::{SourceOption, RssSource, TwitterSource };
 use serde_json;
 
-#[derive(Debug)]
+use schema::sources;
+
+#[derive(Debug, PartialEq, Identifiable, Queryable, Insertable)]
+#[primary_key(uuid)]
+#[table_name="sources"]
 pub struct Source {
     pub uuid: Uuid,
     pub source_type: SourceType,
-    pub data: Value,
+    pub data: Option<Value>,
     pub error: Option<String>,
-    pub created: NaiveDateTime,
-    pub updated: NaiveDateTime,
+    pub created: Option<NaiveDateTime>,
+    pub updated: Option<NaiveDateTime>,
 }
 
 impl Source {
     pub fn options(&self) -> Result<SourceOption> {
         match self.source_type {
             SourceType::Rss => {
-                let rss_source = serde_json::from_value::<RssSource>(self.data.clone())?;
+                // TODO remove unwrap
+                let rss_source = serde_json::from_value::<RssSource>(self.data.clone().unwrap())?;
                 Ok(SourceOption::Rss(rss_source))
             },
             SourceType::Twitter => {
-                let twitter_source = serde_json::from_value::<TwitterSource>(self.data.clone())?;
+                // TODO remove unwrap
+                let twitter_source = serde_json::from_value::<TwitterSource>(self.data.clone().unwrap())?;
                 Ok(SourceOption::Twitter(twitter_source))
             }
         }
@@ -47,10 +53,10 @@ impl Source {
         Source {
             uuid: Uuid::new_v4(),
             source_type,
-            data,
+            data: Some(data),
             error: None,
-            created: Utc::now().naive_utc(),
-            updated: Utc::now().naive_utc(),
+            created: Some(Utc::now().naive_utc()),
+            updated: Some(Utc::now().naive_utc()),
         }
     }
 }
@@ -68,7 +74,7 @@ graphql_object!(Source: () as "Source" |&self| {
 
     field rss_source() -> Option<RssSource> as "rss_source" {
         match self.source_type {
-            SourceType::Rss => serde_json::from_value::<RssSource>(self.data.clone()).ok(),
+            SourceType::Rss => self.data.clone().and_then(|data| serde_json::from_value::<RssSource>(data.clone()).ok()),
             _ => None
         }
     }
@@ -77,11 +83,11 @@ graphql_object!(Source: () as "Source" |&self| {
         &self.error
     }
 
-    field created() -> String as "created" {
-        format!("{}", self.created)
+    field created() -> &Option<NaiveDateTime> {
+        &self.created
     }
 
-    field updated() -> String as "updated" {
-        format!("{}", self.updated)
+    field updated() -> &Option<NaiveDateTime> {
+        &self.updated
     }
 });
