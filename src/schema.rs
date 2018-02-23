@@ -1,13 +1,12 @@
 table! {
-    use source_type::SqlSourceType;
-    use diesel::sql_types::{Nullable, Text, Timestamp, Jsonb, Uuid};
     sources (uuid) {
         uuid -> Uuid,
-        source_type -> SqlSourceType,
-        data -> Nullable<Jsonb>,
         error -> Nullable<Text>,
-        created -> Nullable<Timestamp>,
-        updated -> Nullable<Timestamp>,
+        created -> Timestamp,
+        updated -> Timestamp,
+        url -> Text,
+        title -> Text,
+        website -> Text,
     }
 }
 
@@ -17,7 +16,16 @@ table! {
         login -> Text,
         email -> Text,
         password -> Text,
-        created -> Nullable<Timestamp>,
-        updated -> Nullable<Timestamp>,
+        created -> Timestamp,
+        updated -> Timestamp,
+    }
+}
+
+
+table! {
+    users_sources (uuid) {
+        uuid -> Uuid,
+        user_uuid -> Uuid,
+        source_uuid -> Uuid,
     }
 }

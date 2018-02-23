@@ -59,17 +59,18 @@ mod users_resolvers;
 mod server;
 mod routes;
 
-mod feeds; 
+// mod feeds;
 mod source;
-mod source_type;
-mod source_option;
-mod sources;
 mod sources_repository;
 mod sources_resolvers;
-mod users_feeds; 
-mod users_sources; 
-mod mercury; 
-mod rss; 
+// mod users_feeds; 
+// mod users_sources; 
+mod user_source;
+mod users_sources_repository;
+mod users_sources_resolvers;
+mod mercury;
+mod rss_service;
+// mod rss;
 
 embed_migrations!("migrations");
 

@@ -1,14 +1,14 @@
-use std::error::Error;
+// use std::error::Error;
 
-use juniper::{FieldError, FieldResult};
+// use juniper::{FieldError, FieldResult};
 
 use graphql::query::Query;
 use user::User;
-use feeds;
-use feeds::Feed;
-use users_feeds::{unreaded_feeds, users_feeds_resolver, feeds_by_reaction_resolver, unreaded_feeds_by_source_resolver};
-use source::Source;
-use users_sources::{SourceStat, unfollowed_sources_resolver, users_sources_resolver, total_my_rss_sources_resolver, sources_stats_resolver};
+// use feeds;
+// use feeds::Feed;
+// use users_feeds::{unreaded_feeds, users_feeds_resolver, feeds_by_reaction_resolver, unreaded_feeds_by_source_resolver};
+// use source::Source;
+// use users_sources::{SourceStat, unfollowed_sources_resolver, users_sources_resolver, total_my_rss_sources_resolver, sources_stats_resolver};
 
 #[derive(Debug)]
 pub struct AuthQuery {
@@ -27,7 +27,7 @@ impl From<User> for AuthQuery {
     }
 }
 
-const DEFAULT_LIMIT: i32 = 10;
+// const DEFAULT_LIMIT: i32 = 10;
 
 graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
     description: "AuthQuery"
@@ -35,6 +35,8 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
     field me() -> Option<&User> as "User" {
         Some(&self.user)
     }
+
+    /*
 
     field feeds(
         &executor,
@@ -62,7 +64,7 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         users_sources_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
             .map_err(|e| FieldError::from(&e.description().to_string()))
     }
-
+    
     field unfollowed_sources(
         &executor,
         limit: Option<i32> as "Limit",
@@ -71,6 +73,7 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         unfollowed_sources_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
             .map_err(|e| FieldError::from(&e.description().to_string()))
     }
+    
 
     field unreaded_feeds(
         &executor,
@@ -114,4 +117,5 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
         sources_stats_resolver(executor.context().connection.clone(), &self.user)
             .map_err(|e| FieldError::from(e.to_string()))
     }
+    */
 });

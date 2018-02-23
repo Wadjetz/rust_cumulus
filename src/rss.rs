@@ -12,18 +12,11 @@ use errors::*;
 use feeds::{is_feed_exist, insert_feed, Feed};
 use source::Source;
 use sources::find_rss_sources;
-use source_option::{SourceOption, RssSource };
 use users_sources::find_users_by_source;
 use users_feeds::{UserFeed, Reaction, is_user_feed_already_inserted};
 use mercury::{fetch_readable};
 use user::User;
 use pg::PgDatabase;
-
-pub fn fetch_feeds_channel(url: &str) -> Result<Option<RssFeed>> {
-    let mut response = reqwest::get(url)?;
-    let feed = parser::parse(&mut response);
-    Ok(feed)
-}
 
 pub fn run_rss_job(rss_job_interval: Duration, client: Client, pool: Pool<PostgresConnectionManager>) {
     thread::spawn(move || {
@@ -42,18 +35,13 @@ fn process_feeds(client: &Client, pool: &Pool<PostgresConnectionManager>) -> Res
     let sources = find_rss_sources(&pg, i32::max_value(), 0)?;
     for source in sources {
         let subscribers = find_users_by_source(&pg, &source)?;
-        match source.options()? {
-            SourceOption::Rss(rss_source) => {
-                process_rss_source(&subscribers, &source, &rss_source, client, &pg)?;
-            },
-            SourceOption::Twitter(_) => {}
-        }
+        process_rss_source(&subscribers, &source, client, &pg)?;
     }
     Ok(())
 }
 
-fn process_rss_source(subscribers: &Vec<User>, source: &Source, rss_source: &RssSource, client: &Client, pg: &PgDatabase) -> Result<()> {
-    if let Ok(Some(feeds_channel)) = fetch_feeds_channel(&rss_source.xml_url) {
+fn process_rss_source(subscribers: &Vec<User>, source: &Source, client: &Client, pg: &PgDatabase) -> Result<()> {
+    if let Ok(Some(feeds_channel)) = fetch_feeds_channel(&source.url) {
         for rss_feed in &feeds_channel.entries {
             for link in &rss_feed.alternate {
                 if !is_feed_exist(&pg, &link.href, source)? {

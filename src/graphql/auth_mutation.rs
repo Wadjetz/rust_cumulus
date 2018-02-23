@@ -3,8 +3,9 @@ use juniper::{FieldError, FieldResult};
 use graphql::query::Query;
 use user::User;
 use source::Source;
-use users_sources;
-use users_feeds;
+use users_sources_resolvers;
+// use users_sources;
+// use users_feeds;
 
 #[derive(Debug)]
 pub struct AuthMutation {
@@ -32,12 +33,13 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
 
     field fallow_source(
         &executor,
-        source_uuid: String as "source_uuid",
+        source_uuid: String as "Source uuid",
     ) -> FieldResult<Source> {
-        users_sources::fallow_source_resolver(executor.context().connection.clone(), &source_uuid, &self.user)
+        users_sources_resolvers::fallow_source_resolver(&executor.context().diesel_pool.clone(), &source_uuid, &self.user)
             .map_err(|e| FieldError::from(e.to_string()))
     }
 
+    /*
     field feed_reaction(
         &executor,
         feed_uuid: String as "feed_uuid",
@@ -47,4 +49,5 @@ graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
             .map(|_| String::from("ok"))
             .map_err(|e| FieldError::from(e.to_string()))
     }
+    */
 });

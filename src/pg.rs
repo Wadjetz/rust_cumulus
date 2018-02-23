@@ -1,25 +1,25 @@
 use r2d2::Pool;
 use r2d2_postgres::{TlsMode, PostgresConnectionManager};
-use r2d2::PooledConnection;
-use postgres::rows::Row;
-use postgres::error::{UNIQUE_VIOLATION};
-use postgres::types::ToSql;
-use rocket::http::Status;
-use rocket::request::{self, FromRequest};
-use rocket::{Request, State, Outcome};
-use std::ops::Deref;
+// use r2d2::PooledConnection;
+// use postgres::rows::Row;
+// use postgres::error::{UNIQUE_VIOLATION};
+// use postgres::types::ToSql;
+// use rocket::http::Status;
+// use rocket::request::{self, FromRequest};
+// use rocket::{Request, State, Outcome};
+// use std::ops::Deref;
 
 use config;
-use errors::*;
+// use errors::*;
 
-pub struct DbConn(pub PooledConnection<PostgresConnectionManager>);
+// pub struct DbConn(pub PooledConnection<PostgresConnectionManager>);
 
 pub fn create_db_pool(app_config: &config::Config) -> Pool<PostgresConnectionManager> {
     let database_url = app_config.database_url.clone();
     let manager = PostgresConnectionManager::new(database_url, TlsMode::None).expect("Create PostgresConnectionManager error");
     Pool::new(manager).expect("Failed to create pool")
 }
-
+/*
 pub trait Insertable {
     fn insert_query(&self) -> String;
     fn insert_params(&self) -> Box<[&ToSql]>;
@@ -106,3 +106,4 @@ impl From<DbConn> for PgDatabase {
         PgDatabase::new(conn.0)
     }
 }
+*/

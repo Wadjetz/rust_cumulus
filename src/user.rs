@@ -18,8 +18,8 @@ pub struct User {
     pub email: String,
     #[validate(length(min = "6"))]
     pub password: String,
-    pub created: Option<NaiveDateTime>,
-    pub updated: Option<NaiveDateTime>,
+    pub created: NaiveDateTime,
+    pub updated: NaiveDateTime,
 }
 
 graphql_object!(User: () |&self| {
@@ -35,29 +35,14 @@ graphql_object!(User: () |&self| {
         &self.email
     }
 
-    field created() -> &Option<NaiveDateTime> {
+    field created() -> &NaiveDateTime {
         &self.created
     }
 
-    field updated() -> &Option<NaiveDateTime> {
+    field updated() -> &NaiveDateTime {
         &self.updated
     }
 });
-
-// TODO remove
-use postgres::rows::Row;
-impl<'a> From<Row<'a>> for User {
-    fn from(row: Row) -> Self {
-        User {
-            uuid: row.get("uuid"),
-            login: row.get("login"),
-            email: row.get("email"),
-            password: row.get("password"),
-            created: row.get("created"),
-            updated: row.get("updated"),
-        }
-    }
-}
 
 impl User {
     pub fn new_secure(login: String, email: String, password: String) -> Result<User> {
@@ -67,8 +52,8 @@ impl User {
             login,
             email,
             password: hashed_password,
-            created: Some(Utc::now().naive_utc()),
-            updated: Some(Utc::now().naive_utc()),
+            created: Utc::now().naive_utc(),
+            updated: Utc::now().naive_utc(),
         };
         Ok(user)
     }

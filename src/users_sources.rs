@@ -11,24 +11,6 @@ use source::Source;
 use users_feeds::Reaction;
 use pg::{Insertable, PgDatabase};
 
-#[derive(Debug)]
-pub struct UserSource {
-    pub uuid: Uuid,
-    pub user_uuid: Uuid,
-    pub source_uuid: Uuid,
-}
-
-impl UserSource {
-    #[allow(dead_code)]
-    pub fn new(user_uuid: Uuid, source_uuid: Uuid) -> Self {
-        UserSource {
-            uuid: Uuid::new_v4(),
-            user_uuid,
-            source_uuid,
-        }
-    }
-}
-
 impl<'a> From<Row<'a>> for UserSource {
     fn from(row: Row) -> Self {
         UserSource {

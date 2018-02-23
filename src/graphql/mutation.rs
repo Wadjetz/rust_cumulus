@@ -5,7 +5,7 @@ use config;
 use graphql::query::Query;
 use graphql::auth_mutation::AuthMutation;
 use source::Source;
-use sources_resolvers::add_rss_source_resolver;
+use sources_resolvers;
 use user::User;
 use users_resolvers;
 use errors;
@@ -29,7 +29,7 @@ graphql_object!(Mutation: Query as "Mutation" |&self| {
 
     field auth(
         &executor,
-        token: String as "Auth token"
+        token: String
     ) -> FieldResult<AuthMutation> as "Auth" {
         users_resolvers::auth_resolver(&executor.context().diesel_pool.clone(), &config::CONFIG, token)
             .map_err(|e| errors::ErrorKind::WrongCredentials)
@@ -38,9 +38,9 @@ graphql_object!(Mutation: Query as "Mutation" |&self| {
 
     field add_rss_source(
         &executor,
-        xml_url: String as "xml_url",
+        url: String,
     ) -> FieldResult<Source> {
-        add_rss_source_resolver(executor.context().connection.clone(), &xml_url)
+        sources_resolvers::add_rss_source_resolver(&executor.context().diesel_pool.clone(), &url)
             .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 });

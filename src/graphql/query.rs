@@ -11,8 +11,10 @@ use config;
 use graphql::auth_query::AuthQuery;
 use graphql::mutation::Mutation;
 use source::Source;
-use sources::find_sources_resolver;
+use sources_resolvers;
 use users_resolvers;
+
+const DEFAULT_LIMIT: i32 = 10;
 
 pub struct Query {
     pub connection: Pool<PostgresConnectionManager>,
@@ -28,8 +30,6 @@ impl Query {
 impl Context for Query {}
 
 pub type Schema = RootNode<'static, Query, Mutation>;
-
-const DEFAULT_LIMIT: i32 = 10;
 
 graphql_object!(Query: Query as "Query" |&self| {
     description: "The root query object of the schema"
@@ -57,7 +57,7 @@ graphql_object!(Query: Query as "Query" |&self| {
         limit: Option<i32> as "Limit",
         offset: Option<i32> as "Offset",
     ) -> FieldResult<Vec<Source>> {
-        find_sources_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0))
+        sources_resolvers::find_sources_resolver(&executor.context().diesel_pool.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0))
             .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 });

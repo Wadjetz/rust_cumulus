@@ -5,12 +5,12 @@ use diesel::PgConnection;
 use diesel::Connection;
 
 use config::Config;
-use reqwest;
+// use reqwest;
 use rocket;
 use graphql::query::{Schema, Query};
 use graphql::mutation::Mutation;
 use pg::create_db_pool;
-use rss;
+// use rss;
 use routes;
 
 pub fn create_diesel_pool(config: &Config) -> Pool<ConnectionManager<PgConnection>> {
@@ -34,8 +34,8 @@ pub fn run() {
     let diesel_connection = establish_connection(&conf);
     embedded_migrations::run(&diesel_connection).expect("Migration Error");
 
-    let client = reqwest::Client::new();
-    rss::run_rss_job(conf.rss_job_interval.clone(), client, connection.clone());
+    // let client = reqwest::Client::new();
+    // rss::run_rss_job(conf.rss_job_interval.clone(), client, connection.clone());
     rocket::ignite()
         .manage(Query::new(connection.clone(), diesel_pool.clone()))
         .manage(create_db_pool(&conf))
