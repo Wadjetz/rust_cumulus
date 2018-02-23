@@ -4,7 +4,7 @@ use juniper::{FieldError, FieldResult};
 use config;
 use graphql::query::Query;
 use graphql::auth_mutation::AuthMutation;
-use mindstream::sources::{Source, add_rss_source_resolver};
+use sources::{Source, add_rss_source_resolver};
 use user::User;
 use users_resolvers;
 use errors;

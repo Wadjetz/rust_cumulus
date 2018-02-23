@@ -2,9 +2,9 @@ use juniper::{FieldError, FieldResult};
 
 use graphql::query::Query;
 use user::User;
-use mindstream::sources::Source;
-use mindstream::users_sources;
-use mindstream::users_feeds;
+use sources::Source;
+use users_sources;
+use users_feeds;
 
 #[derive(Debug)]
 pub struct AuthMutation {

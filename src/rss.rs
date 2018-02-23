@@ -9,11 +9,11 @@ use feed_rs::parser;
 use feed_rs::feed::{Feed as RssFeed};
 
 use errors::*;
-use mindstream::feeds::{is_feed_exist, insert_feed, Feed};
-use mindstream::sources::{Source, SourceOption, RssSource, find_rss_sources};
-use mindstream::users_sources::find_users_by_source;
-use mindstream::users_feeds::{UserFeed, Reaction, is_user_feed_already_inserted};
-use mindstream::mercury::{fetch_readable};
+use feeds::{is_feed_exist, insert_feed, Feed};
+use sources::{Source, SourceOption, RssSource, find_rss_sources};
+use users_sources::find_users_by_source;
+use users_feeds::{UserFeed, Reaction, is_user_feed_already_inserted};
+use mercury::{fetch_readable};
 use user::User;
 use pg::PgDatabase;
 

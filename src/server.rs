@@ -10,7 +10,7 @@ use rocket;
 use graphql::query::{Schema, Query};
 use graphql::mutation::Mutation;
 use pg::create_db_pool;
-use mindstream::rss;
+use rss;
 use routes;
 
 pub fn create_diesel_pool(config: &Config) -> Pool<ConnectionManager<PgConnection>> {

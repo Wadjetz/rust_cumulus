@@ -11,8 +11,8 @@ use feed_rs::entry::Entry;
 
 use errors::*;
 use graphql::query::Query;
-use mindstream::sources::Source;
-use mindstream::mercury::ReadableData;
+use sources::Source;
+use mercury::ReadableData;
 use pg::{Insertable, PgDatabase};
 
 #[derive(GraphQLObject, Serialize, Deserialize, Debug, Clone)]

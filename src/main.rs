@@ -52,13 +52,19 @@ mod pg;
 mod token;
 mod graphql;
 mod config;
-mod mindstream;
 mod schema;
 mod user;
 mod users_repository;
 mod users_resolvers;
 mod server;
 mod routes;
+
+mod feeds; 
+mod sources; 
+mod users_feeds; 
+mod users_sources; 
+mod mercury; 
+mod rss; 
 
 embed_migrations!("migrations");
 
