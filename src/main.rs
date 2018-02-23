@@ -62,6 +62,7 @@ mod routes;
 mod feeds; 
 mod source;
 mod source_type;
+mod source_option;
 mod sources;
 mod users_feeds; 
 mod users_sources; 
