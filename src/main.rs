@@ -24,12 +24,12 @@ extern crate postgres;
 extern crate postgres_derive;
 extern crate r2d2;
 extern crate r2d2_postgres;
-extern crate strum;
-// #[macro_use]
+#[macro_use]
 extern crate diesel;
-// #[macro_use]
-// extern crate diesel_migrations;
+#[macro_use]
+extern crate diesel_migrations;
 extern crate r2d2_diesel;
+extern crate strum;
 #[macro_use]
 extern crate strum_macros;
 extern crate feed_rs;
@@ -58,7 +58,7 @@ mod users;
 mod server;
 mod routes;
 
-// embed_migrations!("migrations");
+embed_migrations!("migrations");
 
 fn main() {
     server::run();
