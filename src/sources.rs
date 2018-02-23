@@ -1,50 +1,15 @@
-#![allow(dead_code)]
 use postgres::rows::Row;
 use postgres::types::ToSql;
 use r2d2::Pool;
 use r2d2_postgres::PostgresConnectionManager;
 use uuid::Uuid;
-use serde_json;
 use url::Url;
 
 use errors::*;
 use rss::fetch_feeds_channel;
-use graphql::query::Query;
 use pg::{Insertable, PgDatabase};
-use source_type::SourceType;
 use source_option::RssSource;
 use source::Source;
-
-graphql_object!(Source: Query as "Source" |&self| {
-    description: "Source"
-
-    field uuid() -> Uuid as "uuid" {
-        self.uuid
-    }
-
-    field source_type() -> &SourceType as "source_type" {
-        &self.source_type
-    }
-
-    field rss_source() -> Option<RssSource> as "rss_source" {
-        match self.source_type {
-            SourceType::Rss => serde_json::from_value::<RssSource>(self.data.clone()).ok(),
-            _ => None
-        }
-    }
-
-    field error() -> &Option<String> as "error" {
-        &self.error
-    }
-
-    field created() -> String as "created" {
-        format!("{}", self.created)
-    }
-
-    field updated() -> String as "updated" {
-        format!("{}", self.updated)
-    }
-});
 
 impl<'a> From<Row<'a>> for Source {
     fn from(row: Row) -> Self {
@@ -72,6 +37,7 @@ impl Insertable for Source {
     }
 }
 
+#[allow(dead_code)]
 pub fn add_source_resolver(pool: Pool<PostgresConnectionManager>, title: String, xml_url: String, html_url: String) -> Result<Source> {
     let pg = PgDatabase::from_pool(pool)?;
     let rss_source = RssSource::new(&title, &xml_url, &html_url);

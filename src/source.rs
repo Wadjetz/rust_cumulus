@@ -54,3 +54,34 @@ impl Source {
         }
     }
 }
+
+graphql_object!(Source: () as "Source" |&self| {
+    description: "Source"
+
+    field uuid() -> Uuid as "uuid" {
+        self.uuid
+    }
+
+    field source_type() -> &SourceType as "source_type" {
+        &self.source_type
+    }
+
+    field rss_source() -> Option<RssSource> as "rss_source" {
+        match self.source_type {
+            SourceType::Rss => serde_json::from_value::<RssSource>(self.data.clone()).ok(),
+            _ => None
+        }
+    }
+
+    field error() -> &Option<String> as "error" {
+        &self.error
+    }
+
+    field created() -> String as "created" {
+        format!("{}", self.created)
+    }
+
+    field updated() -> String as "updated" {
+        format!("{}", self.updated)
+    }
+});
