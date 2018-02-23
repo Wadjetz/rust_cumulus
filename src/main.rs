@@ -55,7 +55,8 @@ mod config;
 mod mindstream;
 mod schema;
 mod user;
-mod users;
+mod users_repository;
+mod users_resolvers;
 mod server;
 mod routes;
 

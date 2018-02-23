@@ -2,12 +2,12 @@ use uuid::Uuid;
 use chrono::prelude::*;
 use chrono::NaiveDateTime;
 use validator::Validate;
-use bcrypt::{DEFAULT_COST, hash};
+use bcrypt::{DEFAULT_COST, hash, verify};
 
 use errors::*;
 use schema::users;
 
-#[derive(Debug, PartialEq, GraphQLObject, Identifiable, Queryable, Insertable, Validate)]
+#[derive(Debug, PartialEq, Identifiable, Queryable, Insertable, Validate)]
 #[primary_key(uuid)]
 #[table_name="users"]
 pub struct User {
@@ -20,6 +20,43 @@ pub struct User {
     pub password: String,
     pub created: Option<NaiveDateTime>,
     pub updated: Option<NaiveDateTime>,
+}
+
+graphql_object!(User: () |&self| {
+    field uuid() -> &Uuid {
+        &self.uuid
+    }
+
+    field login() -> &str {
+        &self.login
+    }
+
+    field email() -> &str {
+        &self.email
+    }
+
+    field created() -> &Option<NaiveDateTime> {
+        &self.created
+    }
+
+    field updated() -> &Option<NaiveDateTime> {
+        &self.updated
+    }
+});
+
+// TODO remove
+use postgres::rows::Row;
+impl<'a> From<Row<'a>> for User {
+    fn from(row: Row) -> Self {
+        User {
+            uuid: row.get("uuid"),
+            login: row.get("login"),
+            email: row.get("email"),
+            password: row.get("password"),
+            created: row.get("created"),
+            updated: row.get("updated"),
+        }
+    }
 }
 
 impl User {
@@ -39,4 +76,8 @@ impl User {
 
 pub fn hash_password(password: &str) -> Result<String> {
     Ok(hash(password, DEFAULT_COST)?)
+}
+
+pub fn verify_password(password: &str, hashed_password: &str) -> Result<bool> {
+    Ok(verify(password, hashed_password)?)
 }

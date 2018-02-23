@@ -21,6 +21,12 @@ impl AuthQuery {
     }
 }
 
+impl From<User> for AuthQuery {
+    fn from(user: User) -> Self {
+        AuthQuery::new(user)
+    }
+}
+
 const DEFAULT_LIMIT: i32 = 10;
 
 graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {

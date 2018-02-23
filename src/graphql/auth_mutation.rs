@@ -17,6 +17,12 @@ impl AuthMutation {
     }
 }
 
+impl From<User> for AuthMutation {
+    fn from(user: User) -> Self {
+        AuthMutation::new(user)
+    }
+}
+
 graphql_object!(AuthMutation: Query as "AuthMutation" |&self| {
     description: "AuthMutation"
 
