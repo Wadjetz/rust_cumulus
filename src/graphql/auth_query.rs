@@ -47,6 +47,15 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
             .map_err(|e| FieldError::from(&e.description().to_string()))
     }
 
+    field unfollowed_sources(
+        &executor,
+        limit: Option<i32> as "Limit",
+        offset: Option<i32> as "Offset",
+    ) -> FieldResult<Vec<Source>> {
+        users_sources_resolvers::unfollowed_sources_resolver(&executor.context().diesel_pool.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
+            .map_err(|e| FieldError::from(&e.description().to_string()))
+    }
+
     /*
 
     field feeds(
@@ -67,16 +76,6 @@ graphql_object!(AuthQuery: Query as "AuthQuery" |&self| {
             .map_err(|e| FieldError::from(&e.description().to_string()))
     }
     
-    field unfollowed_sources(
-        &executor,
-        limit: Option<i32> as "Limit",
-        offset: Option<i32> as "Offset",
-    ) -> FieldResult<Vec<Source>> {
-        unfollowed_sources_resolver(executor.context().connection.clone(), limit.unwrap_or(DEFAULT_LIMIT), offset.unwrap_or(0), &self.user)
-            .map_err(|e| FieldError::from(&e.description().to_string()))
-    }
-    
-
     field unreaded_feeds(
         &executor,
         limit: Option<i32> as "Limit",

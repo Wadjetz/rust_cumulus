@@ -32,3 +32,12 @@ pub fn my_sources(connection: &PgConnection, limit: i64, offset: i64, user: &Use
     let s: Vec<Source> = sources_and_users_sources.into_iter().map(|tuple| tuple.0).collect();
     Ok(s)
 }
+
+pub fn unfollowed_sources(connection: &PgConnection, limit: i32, offset: i32, user: &User) -> Result<Vec<Source>> {
+    // Ok(diesel::sql_query("SELECT sources.* FROM sources WHERE NOT EXISTS (SELECT uuid FROM users_sources WHERE sources.uuid = users_sources.source_uuid AND users_sources.user_uuid = ?) LIMIT ? OFFSET ?")
+    Ok(diesel::sql_query("SELECT sources.* FROM sources LIMIT ?")
+    .bind::<diesel::sql_types::Integer, _>(limit)
+    .bind::<diesel::sql_types::Uuid, _>(&user.uuid)
+    .bind::<diesel::sql_types::Integer, _>(offset)
+    .get_results::<Source>(connection)?)
+}

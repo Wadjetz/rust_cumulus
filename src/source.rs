@@ -4,7 +4,7 @@ use chrono::NaiveDateTime;
 
 use schema::sources;
 
-#[derive(Debug, PartialEq, Identifiable, Queryable, Insertable, GraphQLObject)]
+#[derive(Debug, PartialEq, Identifiable, QueryableByName, Queryable, Insertable, GraphQLObject)]
 #[primary_key(uuid)]
 #[table_name="sources"]
 pub struct Source {
